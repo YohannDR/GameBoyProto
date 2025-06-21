@@ -7,7 +7,7 @@ GBDK_HOME = "/mnt/c/Users/yohan/Documents/gbdk/"
 
 LCC = $(GBDK_HOME)bin/lcc 
 
-LCCFLAGS = -Iinclude/ -Wl-m -Wa-l
+LCCFLAGS = -Iinclude/ -Wl-m
 
 # GBDK_DEBUG = ON
 ifdef GBDK_DEBUG
