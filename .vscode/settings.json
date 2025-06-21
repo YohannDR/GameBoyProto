@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "dungeon_tiles.h": "c",
+        "version.h": "c",
+        "stdint.h": "c"
+    }
+}
