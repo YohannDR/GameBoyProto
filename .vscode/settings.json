@@ -1,7 +1,11 @@
 {
     "files.associations": {
+        "*.fs": "glsl",
+        "*.s": "armips",
         "dungeon_tiles.h": "c",
         "version.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "types.h": "c",
+        "callbacks.h": "c"
     }
 }

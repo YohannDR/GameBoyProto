@@ -3,16 +3,19 @@
 
 # If you move this project you can change the directory 
 # to match your GBDK root directory (ex: GBDK_HOME = "C:/GBDK/"
-GBDK_HOME = "/mnt/c/Users/yohan/Documents/gbdk/"
+GBDK_HOME = "/mnt/f/gbdk/"
 
 LCC = $(GBDK_HOME)bin/lcc 
 
-LCCFLAGS = -Iinclude/ -Wl-m
+LDFLAGS = -Iinclude/ -Wl-m -Wl-w -no-crt -no-libs
 
 # GBDK_DEBUG = ON
 ifdef GBDK_DEBUG
-	LCCFLAGS += -debug -v
+	LDFLAGS += -debug -v
 endif
+
+# Add --Werror for .c and .s files compilation only, using this flag during linking give a warning
+CFLAGS = $(LDFLAGS) -x --Werror
 
 # Enable verbose output
 ifeq ($(V),1)
@@ -31,7 +34,9 @@ ASMDIR		= asm
 OBJDIR      = obj
 BINS	    = $(OBJDIR)/$(PROJECTNAME).gb
 CSOURCES    = $(shell find $(SRCDIR) -name '*.c')
-ASMSOURCES  = $(CSOURCES:.c=.s) $(shell find $(ASMDIR) -name '*.s')
+# IMPORTANT Make sure to link the files in asm/ first
+# this will make crt0.s the first file to be linked, which is necessary to properly link the ROM
+ASMSOURCES  = $(shell find $(ASMDIR) -name '*.s') $(CSOURCES:.c=.s)
 OBJS		= $(ASMSOURCES:.s=.o)
 
 .PRECIOUS: $(ASMSOURCES) $(OBJS)
@@ -47,17 +52,17 @@ $(BINS): $(OBJS)
 # Compile .c files in to .s assembly files
 %.s: %.c
 	$(MSG) CC $@
-	$Q$(LCC) $(LCCFLAGS) -S -o $@ $<
+	$Q$(LCC) $(CFLAGS) -S -o $@ $<
 
 # Compile .s assembly files in to .o object files
 %.o: %.s
 	$(MSG) AS $@
-	$Q$(LCC) $(LCCFLAGS) -c -o $@ $<
+	$Q$(LCC) $(CFLAGS) -c -o $@ $<
 
 # Link the compiled object files into a .gb ROM file
 $(BINS): $(OBJS)
 	$(MSG) LD $(BINS)
-	$Q$(LCC) $(LCCFLAGS) -o $(BINS) $(OBJS)
+	$Q$(LCC) $(LDFLAGS) -o $(BINS) $(OBJS)
 
 prepare:
 	mkdir -p $(OBJDIR)
