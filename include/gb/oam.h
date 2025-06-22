@@ -1,5 +1,5 @@
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef GB_OAM_H
+#define GB_OAM_H
 
 #include "types.h"
 #include "macros.h"
@@ -20,5 +20,8 @@ struct Oam {
 
 // Wram buffer for the Oam, mapped directly to shadow oam and automatically transfered to actual oam during v-blank
 extern struct Oam gOamBuffer[40];
+extern u8 gNextOamSlot;
 
-#endif /* SPRITE_H */
+void ClearAndResetOam(void);
+
+#endif /* GB_OAM_H */

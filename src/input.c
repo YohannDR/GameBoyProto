@@ -10,8 +10,8 @@ void UpdateInput(void)
     u8 input;
     u8 joypad;
 
-    // Setup to read the buttons
-    Write8(REG_JOYPAD, 1 << 5);
+    // Setup to read the d-pad
+    Write8(REG_JOYPAD, 1 << 4);
 
     // Perform dummy reads
     Read8(REG_JOYPAD); Read8(REG_JOYPAD); Read8(REG_JOYPAD);
@@ -20,8 +20,8 @@ void UpdateInput(void)
     // Retrieve button data
     input = joypad & 0x0F;
 
-    // Setup to read the d-pad
-    Write8(REG_JOYPAD, 1 << 4);
+    // Setup to read the buttons
+    Write8(REG_JOYPAD, 1 << 5);
 
     // Perform dummy reads
     Read8(REG_JOYPAD); Read8(REG_JOYPAD); Read8(REG_JOYPAD);

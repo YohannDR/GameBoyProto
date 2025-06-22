@@ -1,4 +1,5 @@
 #include "gb/io.h"
+#include "gb/oam.h"
 #include "gb/display.h"
 #include "gb/interrupt.h"
 
@@ -6,8 +7,8 @@
 #include "io.h"
 #include "callbacks.h"
 #include "game_state.h"
-#include "sprites.h"
 #include "macros.h"
+#include "sprite.h"
 
 static const u8 sTiles[] = {
     0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,
@@ -299,6 +300,8 @@ static void LoadGraphics(void)
         *addr++ = sTilemap[i];
 
     Write8(REG_BGP, 0b11100100);
+    Write8(REG_OBP0, 0b11100100);
+    Write8(REG_OBP1, 0b11100100);
 }
 
 static void InitGame(void)
@@ -310,13 +313,16 @@ static void InitGame(void)
 
     LoadGraphics();
 
+    SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y / 2, STYPE_PLAYER);
+
     // Enable display and background
-    Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE);
+    Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE);
 }
 
 void main(void)
 {
     InitGame();
+    u16 i;
 
     for (;;)
     {
@@ -325,7 +331,11 @@ void main(void)
         // Poll inputs immediatly
         UpdateInput();
 
+        ClearAndResetOam();
+
         // Do stuff...
+        UpdateSprites();
+        DrawSprites();
 
         // Done doing stuff, wait for v-blank
         WaitForVblank();
