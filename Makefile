@@ -7,7 +7,7 @@ GBDK_HOME = "/mnt/f/gbdk/"
 
 LCC = $(GBDK_HOME)bin/lcc 
 
-LDFLAGS = -Iinclude/ -Wl-m -Wl-w -no-crt -no-libs
+LDFLAGS = -Iinclude/ -Wl-m -Wl-w -no-crt -no-libs -Wl-g_gOamBuffer=_shadow_OAM
 
 # GBDK_DEBUG = ON
 ifdef GBDK_DEBUG

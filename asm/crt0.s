@@ -36,6 +36,90 @@
 
 ;       .org    0x60            ; JOY
 
+        .org    0x80
+; Memset function
+; Params :
+;       bc : Length
+;       hl : Address
+;       e  : Value
+Memset::
+        ; Write value
+        ld (hl), e
+        ; Advance pointer
+        inc hl
+        ; Decrement counter
+        dec bc
+        ld a, b
+        ld d, c
+        or d
+        ; Loop if the counter hasn't reached 0
+        jr nz, Memset
+
+        ret
+
+; Memcpy function
+; Params :
+;       bc : Source address
+;       hl : Destination address
+;       e  : Size
+Memcpy::
+        ; Get value from source
+        ld a, (bc)
+        ; Write value to destination
+        ld (hl),a
+
+        ; Incremnt src and dst
+        inc bc
+        inc hl
+
+        ; Decrement counter
+        dec e
+        ; Loop if the counter hasn't reached 0
+        jp nz, Memcpy
+
+        ret
+
+ClearRam::
+        ; Size of ram
+        ld bc, #l__DATA
+        ; Start of ram
+        ld hl, #s__DATA
+        ; Load 0 into e
+        xor a
+        ld e, a
+        jp Memset
+
+ClearOam::
+        ; Size of oam buffer
+        ld bc, #0xA0
+        ; Start of oam buffer
+        ld hl, #_shadow_OAM
+        xor a
+        ld e, a
+        jp Memset
+
+
+CopyTransferOamToRam::
+        ld bc, #_TransferOam
+        ld hl, #.refresh_OAM
+        ld e, #(_TransferOam_End - _TransferOam)
+        jp Memcpy
+
+_TransferOam::
+    ; Routine taken directly from https://gbdev.io/pandocs/OAM_DMA_Transfer.html#oam-dma-transfer
+
+    ; Get high byte of the address of the shadow OAM
+    ld a,#>_shadow_OAM
+    ; Start DMA transfer (starts right after instruction)
+    ldh (0xFF46), a
+    ; Delay for a total of 4×40 = 160 M-cycles
+    ld a, #40
+.wait:
+    dec a           ; 1 M-cycle
+    jr nz, .wait    ; 3 M-cycles
+    ret
+_TransferOam_End::
+
         ;; GameBoy Header
         .org    0x100
 .header:
@@ -93,38 +177,20 @@
 
         ;; ****************************************
         .org    0x150
-
-ClearRam::
-        ; Size of ram
-        ld bc, #l__DATA
-        ; Start of ram
-        ld hl, #s__DATA
-        ; Load 0 into e
-        xor a
-        ld e, a
-0$:
-        ; Write value
-        ld (hl),e
-        ; Advance pointer
-        inc hl
-        ; Decrement counter
-        dec bc
-        ld a, b
-        ld d, c
-        or d
-        ; Loop if the counter hasn't reached 0
-        jr nz,0$
-
-        ret
-
         ;; Initialization code
 CodeStart::
         ; Disable interrupts while we're setting things up
         di
+
         ; Initialize stack pointer
         ld sp, #.STACK
         ; Clear RAM
         call ClearRam
+        ; Clear OAM buffer
+        call ClearOam
+
+        ; The transfer oam function needs to be copied to ram to work properly
+        call CopyTransferOamToRam
 
         ; Now that setup is done, we can safely re-enable interrupts
         ei

@@ -1,6 +1,9 @@
 #include "callbacks.h"
 
-u8 gVblankFired;
+// Whether or not the v-blank intterupt has been fired
+static u8 gVblankFired;
+
+// Function pointers for interrupt callbacks
 
 static Func_T gVblankCallback;
 static Func_T gLcdCallback;
@@ -40,4 +43,17 @@ void CallbackCallTimer(void)
 {
     if (gTimerCallback)
         gTimerCallback();
+}
+
+void WaitForVblank(void)
+{
+    // We need to check specifically for v-blank, since any other interrupt could stop this halt
+    while (!gVblankFired)
+    {
+        // Halt the cpu while waiting for vblank
+        __asm__("halt");
+    }
+
+    // Reset the flag for the next v-blank
+    gVblankFired = FALSE;
 }

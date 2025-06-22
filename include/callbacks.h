@@ -2,12 +2,10 @@
 #define CALLBACKS_H
 
 #include "types.h"
+#include "macros.h"
 
-// Whether or not the v-blank intterupt has been fired
-extern u8 gVblankFired;
-
-void EnableInterrupts(void);
-void DisableInterrupts(void);
+ASM_IMPL void EnableInterrupts(void);
+ASM_IMPL void DisableInterrupts(void);
 
 /**
  * @brief Sets the v-blank callback
@@ -53,5 +51,11 @@ void CallbackSetTimer(Func_T callback);
  * 
  */
 void CallbackCallTimer(void);
+
+/**
+ * @brief Halts the CPU and waits for the next v-blank interrupt
+ * 
+ */
+void WaitForVblank(void);
 
 #endif /* CALLBACKS_H */

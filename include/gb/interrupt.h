@@ -6,7 +6,6 @@
 #define INTR_TIMER  (1 << 2)
 #define INTR_SERIAL (1 << 3)
 
-#define STAT_HBLANK (1 << 2)
 #define STAT_MODE_0 (1 << 3)
 #define STAT_MODE_1 (1 << 4)
 #define STAT_MODE_2 (1 << 5)
