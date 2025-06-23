@@ -11,17 +11,64 @@
 struct Sprite gSpriteData[20];
 
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
-#define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS)
+#define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
+
+static const u8 sSpriteDataDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
+    1,
+    0, 0, 0, 0
+};
+
+static const struct AnimData sSpriteDefaultAnim[] = {
+    [0] = {
+        .oamPointer = sSpriteDataDefaultAnim_Frame0,
+        .duration = UCHAR_MAX
+    },
+    [1] = SPRITE_ANIM_TERMINATOR
+};
 
 static void SpriteDraw(const struct Sprite* sprite)
 {
-    struct Oam* oam = &gOamBuffer[gNextOamSlot];
+    struct Oam* oam;
+    u8* rawOam;
+    const u8* oamData;
+    u8 partCount;
+    u8 i;
+    u8 x;
+    u8 y;
+    u8 properties;
 
-    oam->y = sprite->y;
-    oam->x = sprite->x;
-    oam->tile = 3;
+    // Get the target slot in the oam buffer
+    oam = &gOamBuffer[gNextOamSlot];
+    // Get a raw pointer to that slot
+    rawOam = (u8*)oam;
+    // Get the sprite's current oam data
+    oamData = sprite->animPointer[sprite->currentAnimFrame].oamPointer;
+    // Get the part count, it's always the first element
+    partCount = *oamData++;
 
-    gNextOamSlot++;
+    // Get the sprite's attributes
+    x = sprite->x;
+    y = sprite->y;
+    properties = (sprite->properties & SPRITE_PROPERTY_GFX) << 4;
+
+    for (i = 0; i < partCount; i++)
+    {
+        // First, copy all of the raw oam
+        *rawOam++ = *oamData++;
+        *rawOam++ = *oamData++;
+        *rawOam++ = *oamData++;
+        *rawOam++ = *oamData++;
+
+        // Then apply the attributes
+        oam->y += y;
+        oam->x += x;
+        oam->attributes |= properties;
+
+        oam++;
+    }
+
+    // Update the next free oam slot
+    gNextOamSlot += partCount;
 }
 
 static void SpriteUpdateOnScreenFlag(struct Sprite* sprite)
@@ -34,6 +81,23 @@ static void SpriteUpdateOnScreenFlag(struct Sprite* sprite)
     else
     {
         sprite->status &= ~SPRITE_STATUS_ON_SCREEN;
+    }
+}
+
+static void SpriteUpdateAnimation(struct Sprite* sprite)
+{
+    sprite->animTimer++;
+
+    if (sprite->animTimer >= sprite->animPointer[sprite->currentAnimFrame].duration)
+    {
+        sprite->animTimer = 0;
+        sprite->currentAnimFrame++;
+
+        if (sprite->animPointer[sprite->currentAnimFrame].duration == 0)
+        {
+            sprite->currentAnimFrame = 0;
+            sprite->status |= SPRITE_STATUS_ANIM_ENDED;
+        }
     }
 }
 
@@ -55,11 +119,13 @@ u8 SpawnSprite(u8 x, u8 y, u8 type)
         sprite->x = x;
         sprite->y = y;
         sprite->type = type;
-
+        sprite->ramSlot = i;
+        
         // And zero-out the rest
         sprite->pose = 0;
         sprite->currentAnimFrame = 0;
         sprite->animTimer = 0;
+        sprite->animPointer = sSpriteDefaultAnim;
         sprite->work1 = 0;
         sprite->work2 = 0;
         sprite->work3 = 0;
@@ -83,7 +149,10 @@ void UpdateSprites(void)
         if (!(sprite->status & SPRITE_STATUS_EXISTS))
             continue;
 
+        sprite->status &= ~SPRITE_STATUS_ANIM_ENDED;
+
         SpriteUpdateOnScreenFlag(sprite);
+        SpriteUpdateAnimation(sprite);
 
         // Call AI
         sSpriteAiPointers[sprite->type](sprite);

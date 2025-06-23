@@ -322,7 +322,6 @@ static void InitGame(void)
 void main(void)
 {
     InitGame();
-    u16 i;
 
     for (;;)
     {

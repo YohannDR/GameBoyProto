@@ -14,7 +14,9 @@
 
 ;       .org    0x18            ; empty
 
-;       .org    0x20            ; empty
+        .org    0x20            ; empty
+___sdcc_call_hl::
+        jp (hl)
 
 ;       .org    0x28            ; empty
 
