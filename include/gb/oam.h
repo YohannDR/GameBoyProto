@@ -19,7 +19,8 @@ struct Oam {
 #define OAM_ATTR_LOW_PRIO   (1u << 7)
 
 // Wram buffer for the Oam, mapped directly to shadow oam and automatically transfered to actual oam during v-blank
-extern struct Oam gOamBuffer[40];
+// extern struct Oam gOamBuffer[40];
+extern u8 gOamBuffer[40 * 4];
 extern u8 gNextOamSlot;
 
 void ClearAndResetOam(void);

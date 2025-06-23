@@ -36,6 +36,7 @@ typedef volatile signed long long vs64;
 
 typedef void(*Func_T)(void);
 
-#define AT(addr) __at((addr))
+// Enables some hacky optimizations
+#define HACKY_OPTIMIZATIONS
 
 #endif /* TYPES_H */

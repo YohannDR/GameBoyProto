@@ -93,7 +93,7 @@ enum SpriteType {
 // Whether the sprite has low priority
 #define SPRITE_PROPERTY_LOW_PRIO    (1u << 3)
 
-#define SPRITE_PROPERTY_GFX (SPRITE_PROPERTY_OBP1 | SPRITE_PROPERTY_X_FLIP | SPRITE_PROPERTY_Y_FLIP | OAM_ATTR_LOW_PRIO)
+#define SPRITE_PROPERTY_GFX (SPRITE_PROPERTY_OBP1 | SPRITE_PROPERTY_X_FLIP | SPRITE_PROPERTY_Y_FLIP | SPRITE_PROPERTY_LOW_PRIO)
 
 /**
  * @brief Determines the size of the oam data for a sprite @c AnimData

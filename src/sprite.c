@@ -35,8 +35,7 @@ static const struct AnimData sSpriteDefaultAnim[] = {
 
 void SpriteDraw(void)
 {
-    struct Oam* oam;
-    u8* rawOam;
+    u8* oam;
     const u8* oamData;
     u8 partCount;
     u8 i;
@@ -45,11 +44,22 @@ void SpriteDraw(void)
     u8 properties;
 
     // Get the target slot in the oam buffer
-    oam = &gOamBuffer[gNextOamSlot];
-    // Get a raw pointer to that slot
-    rawOam = (u8*)oam;
+    // The cast to u8 prevents integer promotion, which generates unnecessary code
+    oam = &gOamBuffer[(u8)(gNextOamSlot * 4)];
+
     // Get the sprite's current oam data
+#ifdef HACKY_OPTIMIZATIONS
+    // This is kind of bullshit, but it's the same reason as above
+    // Since the compiler can't know if caf * 3 will overflow above 255, it has to promote it to a u16
+    // which makes the array indexing slower
+    // So the optimization boils down to doing the array indexing ourselves by treating it as a u8* and performing the
+    // multiplication ourselves, which keeps the array index as an u8 during the multiplication
+    // This does have a side effect of breaking indexing if caf > 85, but that reasonably won't happen, probably
+    oamData = *(u8**)(((u8*)gCurrentSprite.animPointer) + (u8)(gCurrentSprite.currentAnimFrame * sizeof(struct AnimData)));
+#else
     oamData = gCurrentSprite.animPointer[gCurrentSprite.currentAnimFrame].oamPointer;
+#endif
+
     // Get the part count, it's always the first element
     partCount = *oamData++;
 
@@ -60,18 +70,11 @@ void SpriteDraw(void)
 
     for (i = 0; i < partCount; i++)
     {
-        // First, copy all of the raw oam
-        *rawOam++ = *oamData++;
-        *rawOam++ = *oamData++;
-        *rawOam++ = *oamData++;
-        *rawOam++ = *oamData++;
-
-        // Then apply the attributes
-        oam->y += y;
-        oam->x += x;
-        oam->attributes |= properties;
-
-        oam++;
+        // Copy all of the raw oam and add the attributes
+        *oam++ = (*oamData++) + y;
+        *oam++ = (*oamData++) + x;
+        *oam++ = (*oamData++) | properties;
+        *oam++ = *oamData++;
     }
 
     // Update the next free oam slot
