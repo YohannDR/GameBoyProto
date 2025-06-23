@@ -23,6 +23,10 @@ struct Oam {
 extern u8 gOamBuffer[40 * 4];
 extern u8 gNextOamSlot;
 
+/**
+ * @brief Clears the oam slots that were used the previous frame
+ * 
+ */
 void ClearAndResetOam(void);
 
 #endif /* GB_OAM_H */
