@@ -78,6 +78,9 @@ prepare:
 
 clean:
 #	rm -f  *.gb *.ihx *.cdb *.adb *.noi *.map
-	find . -name '*.o' -delete
-	rm -f $(CSOURCES:.c=.s)
-	rm -f $(OBJDIR)/*.*
+	$(MSG) rm *.o
+	$Qfind . -name '*.o' -delete
+	$(MSG) rm *.s
+	$Qrm -f $(CSOURCES:.c=.s)
+	$(MSG) rm obj/
+	$Qrm -f $(OBJDIR)/*.*

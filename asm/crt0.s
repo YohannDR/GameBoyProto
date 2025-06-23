@@ -68,7 +68,7 @@ Memcpy::
         ; Get value from source
         ld a, (bc)
         ; Write value to destination
-        ld (hl),a
+        ld (hl), a
 
         ; Incremnt src and dst
         inc bc

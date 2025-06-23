@@ -69,8 +69,6 @@ struct Sprite {
     u8 work4;
 };
 
-typedef void (*SpriteFunc_T)(struct Sprite*);
-
 enum SpriteType {
     STYPE_PLAYER,
 
@@ -113,6 +111,8 @@ enum SpriteType {
 
 // Global array that holds all the sprites
 extern struct Sprite gSpriteData[20];
+// Holds the current sprite being processed
+extern struct Sprite gCurrentSprite;
 
 /**
  * @brief Spawns a new sprite
@@ -129,11 +129,5 @@ u8 SpawnSprite(u8 x, u8 y, u8 type);
  * 
  */
 void UpdateSprites(void);
-
-/**
- * @brief Draws all the sprites
- * 
- */
-void DrawSprites(void);
 
 #endif /* SPRITE_H */

@@ -279,6 +279,24 @@ static const u8 sTilemap[] = {
 
 u8 gFrameCounter;
 struct GameModeInfo gGameMode;
+static u8 gLcdIntrStatus;
+
+static void TestLcdCallback(void)
+{
+    // Toggle status
+    gLcdIntrStatus ^= 1;
+
+    // Switch between firing the interrupt at the beginning of the screen, or in the middle
+    if (gLcdIntrStatus == 0)
+        Write8(REG_LYC, SCREEN_SIZE_Y / 2);
+    else
+        Write8(REG_LYC, 0);
+
+    // Toggle color to split the screen in half
+    Write8(REG_BGP, Read8(REG_BGP) ^ 2);
+    Write8(REG_OBP0, Read8(REG_OBP0) ^ (1 << 3));
+    Write8(REG_OBP1, Read8(REG_OBP1) ^ (1 << 3));
+}
 
 static void LoadGraphics(void)
 {
@@ -309,11 +327,16 @@ static void InitGame(void)
     gGameMode.main = GM_IN_GAME;
 
     // Enable v-blank intterupt
-    Write8(REG_IE, INTR_VBLANK);
+    Write8(REG_IE, INTR_VBLANK | INTR_LCD);
 
     LoadGraphics();
 
     SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y / 2, STYPE_PLAYER);
+    
+    Write8(REG_STAT, Read8(REG_STAT) | STAT_LCY);
+
+    Write8(REG_LYC, SCREEN_SIZE_Y / 2);
+    CallbackSetLcd(TestLcdCallback);
 
     // Enable display and background
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE);
@@ -334,7 +357,6 @@ void main(void)
 
         // Do stuff...
         UpdateSprites();
-        DrawSprites();
 
         // Done doing stuff, wait for v-blank
         WaitForVblank();

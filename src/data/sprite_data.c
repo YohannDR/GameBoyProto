@@ -2,6 +2,6 @@
 
 #include "sprites_AI/player.h"
 
-const SpriteFunc_T sSpriteAiPointers[STYPE_END] = {
+const Func_T sSpriteAiPointers[STYPE_END] = {
     [STYPE_PLAYER] = Player
 };

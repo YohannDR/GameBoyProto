@@ -25,21 +25,26 @@ static const struct AnimData sPlayerAnim[] = {
     [2] = SPRITE_ANIM_TERMINATOR
 };
 
-void Player(struct Sprite* sprite)
+void Player(void)
 {
-    if (sprite->pose == 0)
+    if (gCurrentSprite.pose == 0)
     {
-        sprite->animPointer = sPlayerAnim;
-        sprite->pose = 1;
+        gCurrentSprite.animPointer = sPlayerAnim;
+        gCurrentSprite.pose = 1;
     }
 
     if (gButtonInput & KEY_LEFT)
-        sprite->x--;
+        gCurrentSprite.x--;
     else if (gButtonInput & KEY_RIGHT)
-        sprite->x++;
+        gCurrentSprite.x++;
 
     if (gButtonInput & KEY_UP)
-        sprite->y--;
+        gCurrentSprite.y--;
     else if (gButtonInput & KEY_DOWN)
-        sprite->y++;
+        gCurrentSprite.y++;
+
+    if (gChangedInput & KEY_A)
+        gCurrentSprite.properties ^= SPRITE_PROPERTY_X_FLIP;
+    if (gChangedInput & KEY_B)
+        gCurrentSprite.properties ^= SPRITE_PROPERTY_Y_FLIP;
 }

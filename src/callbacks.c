@@ -16,11 +16,14 @@ void CallbackSetVblank(Func_T callback)
 
 void CallbackCallVblank(void)
 {
+    Func_T func;
+
     // Set this now to prevent the code below from compiling to ___sdcc_call_hl
     gVblankFired = TRUE;
 
-    if (gVblankCallback)
-        gVblankCallback();
+    func = gVblankCallback;
+    if (func)
+        func();
 }
 
 void CallbackSetLcd(Func_T callback)
@@ -30,8 +33,11 @@ void CallbackSetLcd(Func_T callback)
 
 void CallbackCallLcd(void)
 {
-    if (gLcdCallback)
-        gLcdCallback();
+    Func_T func;
+
+    func = gLcdCallback;
+    if (func)
+        func();
 }
 
 void CallbackSetTimer(Func_T callback)
@@ -41,8 +47,11 @@ void CallbackSetTimer(Func_T callback)
 
 void CallbackCallTimer(void)
 {
-    if (gTimerCallback)
-        gTimerCallback();
+    Func_T func;
+
+    func = gTimerCallback;
+    if (func)
+        func();
 }
 
 void WaitForVblank(void)

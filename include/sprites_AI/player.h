@@ -3,6 +3,6 @@
 
 #include "sprite.h"
 
-void Player(struct Sprite* sprite);
+void Player(void);
 
 #endif /* AI_PLAYER_H */

@@ -3,6 +3,6 @@
 
 #include "sprite.h"
 
-extern const SpriteFunc_T sSpriteAiPointers[STYPE_END];
+extern const Func_T sSpriteAiPointers[STYPE_END];
 
 #endif /* DATA_SPRITE_H */
