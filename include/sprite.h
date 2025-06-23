@@ -70,7 +70,8 @@ struct Sprite {
 };
 
 enum SpriteType {
-    STYPE_PLAYER,
+    STYPE_PADDLE,
+    STYPE_BALL,
 
     STYPE_END
 };

@@ -1,8 +1,8 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#define SCREEN_SIZE_X 160
-#define SCREEN_SIZE_Y 144
+#define SCREEN_SIZE_X 160u
+#define SCREEN_SIZE_Y 144u
 
 #define LCDC_BG_ENABLE              (1u << 0)
 #define LCDC_OBJ_ENABLE             (1u << 1)
