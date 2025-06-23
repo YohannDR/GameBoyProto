@@ -1,16 +1,17 @@
 #include "sprites_AI/player.h"
 
+#include "gb/oam.h"
+
 #include "input.h"
 
-static const u8 sPlayerAnim_Frame0[OAM_DATA_SIZE(2)] = {
-    2,
-    0, 0, 3, 0,
-    0, 8, 4, 0
+static const u8 sPlayerAnim_Frame0[OAM_DATA_SIZE(1)] = {
+    1,
+    0, 0, 25, 0,
 };
 
 static const u8 sPlayerAnim_Frame1[OAM_DATA_SIZE(1)] = {
     1,
-    0, 0, 2, 0
+    0, 0, 25, OAM_ATTR_X_FLIP
 };
 
 static const struct AnimData sPlayerAnim[] = {

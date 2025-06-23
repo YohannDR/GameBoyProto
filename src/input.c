@@ -14,7 +14,7 @@ void UpdateInput(void)
     Write8(REG_JOYPAD, 1 << 4);
 
     // Perform dummy reads
-    Read8(REG_JOYPAD); Read8(REG_JOYPAD); Read8(REG_JOYPAD);
+    Read8(REG_JOYPAD); Read8(REG_JOYPAD);
     joypad = Read8(REG_JOYPAD);
 
     // Retrieve button data
@@ -24,7 +24,7 @@ void UpdateInput(void)
     Write8(REG_JOYPAD, 1 << 5);
 
     // Perform dummy reads
-    Read8(REG_JOYPAD); Read8(REG_JOYPAD); Read8(REG_JOYPAD);
+    Read8(REG_JOYPAD); Read8(REG_JOYPAD);
     joypad = Read8(REG_JOYPAD);
 
     // Retrieve button data

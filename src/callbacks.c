@@ -21,6 +21,7 @@ void CallbackCallVblank(void)
     // Set this now to prevent the code below from compiling to ___sdcc_call_hl
     gVblankFired = TRUE;
 
+    // Use a local variable to avoid reading the value of the global variable twice, same for every other callback below
     func = gVblankCallback;
     if (func)
         func();

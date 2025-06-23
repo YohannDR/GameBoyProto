@@ -71,10 +71,15 @@ void SpriteDraw(void)
     for (i = 0; i < partCount; i++)
     {
         // Copy all of the raw oam and add the attributes
+
+        // Y position
         *oam++ = (*oamData++) + y;
+        // X position
         *oam++ = (*oamData++) + x;
-        *oam++ = (*oamData++) | properties;
-        *oam++ = *oamData++;
+        // Tile index
+        *oam++ = (*oamData++);
+        // Attribute flags
+        *oam++ = (*oamData++) ^ properties;
     }
 
     // Update the next free oam slot
