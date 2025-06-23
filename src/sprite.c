@@ -26,7 +26,7 @@ static const struct AnimData sSpriteDefaultAnim[] = {
     [1] = SPRITE_ANIM_TERMINATOR
 };
 
-static void SpriteDraw(const struct Sprite* sprite)
+void SpriteDraw(const struct Sprite* sprite)
 {
     struct Oam* oam;
     u8* rawOam;
@@ -86,14 +86,18 @@ static void SpriteUpdateOnScreenFlag(struct Sprite* sprite)
 
 static void SpriteUpdateAnimation(struct Sprite* sprite)
 {
+    const struct AnimData* anim;
+
+    anim = &sprite->animPointer[sprite->currentAnimFrame];
     sprite->animTimer++;
 
-    if (sprite->animTimer >= sprite->animPointer[sprite->currentAnimFrame].duration)
+    if (sprite->animTimer >= anim->duration)
     {
         sprite->animTimer = 0;
         sprite->currentAnimFrame++;
+        anim++;
 
-        if (sprite->animPointer[sprite->currentAnimFrame].duration == 0)
+        if (anim->duration == 0)
         {
             sprite->currentAnimFrame = 0;
             sprite->status |= SPRITE_STATUS_ANIM_ENDED;

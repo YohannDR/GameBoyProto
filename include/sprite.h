@@ -40,9 +40,9 @@ struct Sprite {
     // Holds a bunch of flags about the sprite
     u8 status;
     // X position
-    u16 x;
+    u8 x;
     // Y position
-    u16 y;
+    u8 y;
     // The type of the sprite, each sprite a unique ID
     u8 type;
     // The slot in the global sprite array of this sprite
