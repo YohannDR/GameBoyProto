@@ -78,7 +78,7 @@ prepare:
 
 clean:
 #	rm -f  *.gb *.ihx *.cdb *.adb *.noi *.map
-	rm -f  $(SRCDIR)/*.s
-	rm -f  $(SRCDIR)/*.o
-	rm -f  $(ASMDIR)/*.o
+	rm -f  $(SRCDIR)/**/*.s
+	rm -f  $(SRCDIR)/**/*.o
+	rm -f  $(ASMDIR)/**/*.o
 	rm -f  $(OBJDIR)/*.*
