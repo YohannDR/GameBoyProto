@@ -12,10 +12,10 @@
 .endm
 
 .macro POP_ALL
-    pop af
-    pop bc
-    pop de
     pop hl
+    pop de
+    pop bc
+    pop af
 .endm
 
     .area _CODE
