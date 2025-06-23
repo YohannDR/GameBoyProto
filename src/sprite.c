@@ -96,7 +96,12 @@ static void SpriteUpdateAnimation(void)
 {
     const struct AnimData* anim;
 
+#ifdef HACKY_OPTIMIZATIONS
+    // See same hack in SpriteDraw for an explanation
+    anim = ((u8*)gCurrentSprite.animPointer) + (u8)(gCurrentSprite.currentAnimFrame * sizeof(struct AnimData));
+#else
     anim = &gCurrentSprite.animPointer[gCurrentSprite.currentAnimFrame];
+#endif
     gCurrentSprite.animTimer++;
 
     if (gCurrentSprite.animTimer >= anim->duration)
