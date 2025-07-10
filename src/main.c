@@ -6,7 +6,9 @@
 #include "data/level_tilemap.h"
 #include "data/level_tileset.h"
 
+#include "bg_clip.h"
 #include "input.h"
+#include "random.h"
 #include "io.h"
 #include "callbacks.h"
 #include "game_state.h"
@@ -36,14 +38,14 @@ static void TestLcdCallback(void)
 
 static void LoadGraphics(void)
 {
-    WaitForVblank();
-
-    Write8(REG_LCDC, 0);
-
     u8* addr;
     u16 i;
     u8 line;
     u16 row;
+
+    WaitForVblank();
+
+    Write8(REG_LCDC, 0);
 
     // Tile data address
     addr = (u8*)(VRAM_BASE + 0x0800);
@@ -68,15 +70,20 @@ static void LoadGraphics(void)
         }
     }
 
-    Write8(REG_BGP, 0b11100100);
+    Write8(REG_BGP,  0b11100100);
     Write8(REG_OBP0, 0b11100100);
     Write8(REG_OBP1, 0b11100100);
 }
 
 static void SetupSprites(void)
 {
-    SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y, STYPE_PADDLE);
-    SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y - 8u, STYPE_BALL);
+    u8 paddleSlot;
+    u8 ballSlot;
+
+    paddleSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y, STYPE_PADDLE);
+    ballSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y - 8u, STYPE_BALL);
+
+    gSpriteData[ballSlot].work1 = paddleSlot;
 }
 
 static void InitGame(void)
@@ -88,6 +95,8 @@ static void InitGame(void)
 
     LoadGraphics();
     SetupSprites();
+    LoadClipdata();
+    SetupRandomSeed();
     
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE);

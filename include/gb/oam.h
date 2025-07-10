@@ -4,13 +4,6 @@
 #include "types.h"
 #include "macros.h"
 
-struct Oam {
-    u8 y;
-    u8 x;
-    u8 tile;
-    u8 attributes;
-};
-
 #define OAM_ATTR_OBP_0      (0u << 4)
 #define OAM_ATTR_OBP_1      (1u << 4)
 #define OAM_ATTR_X_FLIP     (1u << 5)
@@ -18,10 +11,22 @@ struct Oam {
 #define OAM_ATTR_HIGH_PRIO  (0u << 7)
 #define OAM_ATTR_LOW_PRIO   (1u << 7)
 
-// Wram buffer for the Oam, mapped directly to shadow oam and automatically transfered to actual oam during v-blank
-// extern struct Oam gOamBuffer[40];
+// Wram buffer for the oam, mapped directly to shadow oam and automatically transfered to actual oam during v-blank
 extern u8 gOamBuffer[40 * 4];
+
+/**
+ * @brief Cursor in the @c gOamBuffer to indicate where the next free oam slot is
+ * 
+ */
 extern u8 gNextOamSlot;
+
+/**
+ * @brief Gets the pointer to the oam slot in the specified slot
+ *  
+ * @param slot Slot
+ * @return Pointer to the slot in the oam buffer
+ */
+#define OAM_BUFFER_SLOT(slot) (&gOamBuffer[(u8)((slot) * 4)])
 
 /**
  * @brief Clears the oam slots that were used the previous frame

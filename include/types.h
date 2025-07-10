@@ -36,7 +36,7 @@ typedef volatile signed long long vs64;
 
 typedef void(*Func_T)(void);
 
-// Enables some hacky optimizations
-#define HACKY_OPTIMIZATIONS
+// Include this here to basically include it everywhere
+#include "config.h"
 
 #endif /* TYPES_H */

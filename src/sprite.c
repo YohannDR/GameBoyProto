@@ -44,18 +44,11 @@ void SpriteDraw(void)
     u8 properties;
 
     // Get the target slot in the oam buffer
-    // The cast to u8 prevents integer promotion, which generates unnecessary code
-    oam = &gOamBuffer[(u8)(gNextOamSlot * 4)];
+    oam = OAM_BUFFER_SLOT(gNextOamSlot);
 
     // Get the sprite's current oam data
 #ifdef HACKY_OPTIMIZATIONS
-    // This is kind of bullshit, but it's the same reason as above
-    // Since the compiler can't know if caf * 3 will overflow above 255, it has to promote it to a u16
-    // which makes the array indexing slower
-    // So the optimization boils down to doing the array indexing ourselves by treating it as a u8* and performing the
-    // multiplication ourselves, which keeps the array index as an u8 during the multiplication
-    // This does have a side effect of breaking indexing if caf > 85, but that reasonably won't happen, probably
-    oamData = *(u8**)(((u8*)gCurrentSprite.animPointer) + (u8)(gCurrentSprite.currentAnimFrame * sizeof(struct AnimData)));
+    oamData = HACKY_ARRAY_INDEXING(gCurrentSprite.animPointer, gCurrentSprite.currentAnimFrame, struct AnimData)->oamPointer;
 #else
     oamData = gCurrentSprite.animPointer[gCurrentSprite.currentAnimFrame].oamPointer;
 #endif
@@ -97,8 +90,7 @@ static void SpriteUpdateAnimation(void)
     const struct AnimData* anim;
 
 #ifdef HACKY_OPTIMIZATIONS
-    // See same hack in SpriteDraw for an explanation
-    anim = ((u8*)gCurrentSprite.animPointer) + (u8)(gCurrentSprite.currentAnimFrame * sizeof(struct AnimData));
+    anim = HACKY_ARRAY_INDEXING(gCurrentSprite.animPointer, gCurrentSprite.currentAnimFrame, struct AnimData);
 #else
     anim = &gCurrentSprite.animPointer[gCurrentSprite.currentAnimFrame];
 #endif

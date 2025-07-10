@@ -84,6 +84,10 @@ enum SpriteType {
 #define SPRITE_STATUS_NOT_DRAWN     (1u << 2)
 // READ ONLY Whether the sprite has finished its current animation
 #define SPRITE_STATUS_ANIM_ENDED    (1u << 3)
+// Whether the sprite is moving right
+#define SPRITE_STATUS_MOVING_RIGHT  (1u << 4)
+// Whether the sprite is moving down
+#define SPRITE_STATUS_MOVING_DOWN   (1u << 5)
 
 // Whether the sprite uses object palette 1
 #define SPRITE_PROPERTY_OBP1        (1u << 0)

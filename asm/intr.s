@@ -3,6 +3,7 @@
     .globl _gOamBuffer
     .globl _TransferOam
     .globl _TransferOam_End
+    .globl _ApplyBgChanges
 
 .macro PUSH_ALL
     push af
@@ -36,6 +37,7 @@ _VblankHandler::
 
     ; We also need to update oam during v-blank
     call .refresh_OAM
+    call _ApplyBgChanges
     call _CallbackCallVblank
 
     POP_ALL

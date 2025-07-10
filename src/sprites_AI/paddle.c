@@ -25,6 +25,8 @@ enum PaddlePose {
     MOVING
 };
 
+#define PADDLE_SPEED 2
+
 void Paddle(void)
 {
     if (gCurrentSprite.pose == 0)
@@ -44,11 +46,11 @@ void Paddle(void)
     if (gButtonInput & KEY_LEFT)
     {
         if (gCurrentSprite.x >= 25)
-            gCurrentSprite.x--;
+            gCurrentSprite.x -= PADDLE_SPEED;
     }
     else if (gButtonInput & KEY_RIGHT)
     {
         if (gCurrentSprite.x <= SCREEN_SIZE_X - 17u)
-            gCurrentSprite.x++;
+            gCurrentSprite.x += PADDLE_SPEED;
     }
 }

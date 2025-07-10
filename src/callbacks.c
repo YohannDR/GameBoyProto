@@ -61,7 +61,8 @@ void WaitForVblank(void)
     while (!gVblankFired)
     {
         // Halt the cpu while waiting for vblank
-        __asm__("halt");
+        ASM("halt");
+        ASM("nop");
     }
 
     // Reset the flag for the next v-blank
