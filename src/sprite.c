@@ -111,7 +111,7 @@ static void SpriteUpdateAnimation(void)
 }
 
 
-u8 SpawnSprite(u8 x, u8 y, u8 type)
+u8 SpawnSprite(u8 x, u8 y, u8 type, u8 part)
 {
     u8 i;
     struct Sprite* sprite;
@@ -130,6 +130,7 @@ u8 SpawnSprite(u8 x, u8 y, u8 type)
         gSpriteBuffer.x = x;
         gSpriteBuffer.y = y;
         gSpriteBuffer.type = type;
+        gSpriteBuffer.part = part;
         gSpriteBuffer.ramSlot = i;
         
         // And zero-out the rest

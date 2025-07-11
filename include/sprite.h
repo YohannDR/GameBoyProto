@@ -47,6 +47,8 @@ struct Sprite {
     u8 type;
     // The slot in the global sprite array of this sprite
     u8 ramSlot;
+    // Part of the sprite, can be used to choose the behavior of a sprite
+    u8 part;
     // Determines the behavior of the sprite within its AI
     u8 pose;
 
@@ -69,9 +71,14 @@ struct Sprite {
     u8 work4;
 };
 
+/**
+ * @brief The different types of sprites
+ * 
+ */
 enum SpriteType {
     STYPE_PADDLE,
     STYPE_BALL,
+    STYPE_PARTICLE,
 
     STYPE_END
 };
@@ -125,9 +132,10 @@ extern struct Sprite gCurrentSprite;
  * @param x X position
  * @param y Y position
  * @param type Sprite type
+ * @param part Sprite part, used to determine the specific behavior of a sprite
  * @return u8 Sprite slot if it could spawn, UCHAR_MAX otherwise
  */
-u8 SpawnSprite(u8 x, u8 y, u8 type);
+u8 SpawnSprite(u8 x, u8 y, u8 type, u8 part);
 
 /**
  * @brief Updates the sprites

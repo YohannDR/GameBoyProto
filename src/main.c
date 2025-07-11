@@ -80,8 +80,8 @@ static void SetupSprites(void)
     u8 paddleSlot;
     u8 ballSlot;
 
-    paddleSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y, STYPE_PADDLE);
-    ballSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y - 8u, STYPE_BALL);
+    paddleSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y, STYPE_PADDLE, 0);
+    ballSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y - 8u, STYPE_BALL, 0);
 
     gSpriteData[ballSlot].work1 = paddleSlot;
 }

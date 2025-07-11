@@ -10,6 +10,8 @@
 #include "input.h"
 #include "bg_clip.h"
 
+#include "sprites_AI/particle.h"
+
 static const u8 sBallAnim_Frame0[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 0x8F, 0
@@ -36,6 +38,10 @@ static void DestroyBrick(u8 x, u8 y, u8 leftPart, u8 flag)
         otherX = x + 8;
     else
         otherX = x - 8;
+
+    // Spawn the particles first, before the positions are converted
+    SpawnSprite(otherX, y, STYPE_PARTICLE, PARTICLE_DIR_LEFT);
+    SpawnSprite(otherX, y, STYPE_PARTICLE, PARTICLE_DIR_RIGHT);
 
     x = OBJ_TO_TILE_X(x);
     y = OBJ_TO_TILE_Y(y);
