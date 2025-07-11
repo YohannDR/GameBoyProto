@@ -22,6 +22,7 @@ jobs:
 
             - name: Build
               run: |
+                make clean
                 make -j GBDK_HOME=gbdk/
 
             - name: Rename rom
