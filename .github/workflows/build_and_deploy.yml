@@ -24,8 +24,12 @@ jobs:
               run: |
                 make -j GBDK_HOME=gbdk/
 
+            - name: Rename rom
+              run: |
+                mv `find obj/ -type f -name '*.gb'` "$(date +"%d-%m-%y %k-%M-%S").gb"
+
             - name: Deploy
               uses: ncipollo/release-action@v1
               with:
-                artifacts: "obj/*.gb"
-                tag: "Release"
+                artifacts: "*.gb"
+                tag: "Release date +"%d-%m-%y %k-%M-%S""
