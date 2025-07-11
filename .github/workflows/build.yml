@@ -1,0 +1,22 @@
+name: Ci
+
+on:
+    workflow_dispatch:
+    push:
+        branches: [ main ]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+
+            - name: Get gbdk
+              run: |
+                wget https://github.com/gbdk-2020/gbdk-2020/releases/download/4.4.0/gbdk-linux64.tar.gz
+                tar -xzf gbdk-linux64.tar.gz
+
+            - name: Build
+              run: |
+                make -j GBDK_HOME=gbdk/
