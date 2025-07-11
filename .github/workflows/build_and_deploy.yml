@@ -28,7 +28,12 @@ jobs:
               run: |
                 mv `find obj/ -type f -name '*.gb'` "$(date +"%d-%m-%y %k-%M-%S").gb"
 
+            - name: Get current date
+              id: date
+              run: echo "::set-output name=date::$(date +"%d-%m-%y %k-%M-%S")"
+  
             - name: Deploy
               uses: ncipollo/release-action@v1
               with:
                 artifacts: "*.gb"
+                tag: ${{ steps.date.outputs.date }}
