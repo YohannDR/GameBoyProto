@@ -1,5 +1,6 @@
 #include "sprites_AI/ball.h"
 
+#include "gb/oam.h"
 #include "gb/display.h"
 
 #include "types.h"
@@ -11,7 +12,7 @@
 
 static const u8 sBallAnim_Frame0[OAM_DATA_SIZE(1)] = {
     1,
-    0, 0, 0x8F, 0
+    OAM_POS(0), OAM_POS(0), 0x8F, 0
 };
 
 static const struct AnimData sBallAnim[] = {

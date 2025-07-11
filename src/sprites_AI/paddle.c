@@ -7,9 +7,9 @@
 
 static const u8 sPaddleAnim_Frame0[OAM_DATA_SIZE(3)] = {
     3,
-    0, -8, 0x8C, 0,
-    0, 0, 0x8D, 0,
-    0, 8, 0x8E, 0,
+    OAM_POS(0), OAM_POS(-8), 0x8C, 0,
+    OAM_POS(0), OAM_POS(0),  0x8D, 0,
+    OAM_POS(0), OAM_POS(8),  0x8E, 0,
 };
 
 static const struct AnimData sPaddleAnim[] = {

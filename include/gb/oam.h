@@ -29,6 +29,14 @@ extern u8 gNextOamSlot;
 #define OAM_BUFFER_SLOT(slot) (&gOamBuffer[(u8)((slot) * 4)])
 
 /**
+ * @brief Creates an oam position, takes care of sign conversion
+ * 
+ * @param v Value
+ * @return Converted value
+ */
+#define OAM_POS(v) (u8)((v) < 0 ? 0x100 + (v) : (v))
+
+/**
  * @brief Clears the oam slots that were used the previous frame
  * 
  */

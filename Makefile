@@ -14,7 +14,7 @@ LDFLAGS += -no-crt -no-libs
 
 # I don't like the shadow oam symbol name, so I map my own symbol (gOamBuffer) to the shadow oam instead
 # The reason I also remap the shadow oam to its default address is because otherwise, the gOamBuffer mapping
-# is done before the mapping of te shadow oam, so it ends up being 0
+# is done before the mapping of the shadow oam, so it ends up being 0
 # Mapping it manually to the default value like this ensure the mapping is done in the correct order
 LDFLAGS += -Wl-g_shadow_OAM=0xC000 -Wl-g_gOamBuffer=_shadow_OAM
 
