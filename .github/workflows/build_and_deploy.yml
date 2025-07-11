@@ -8,6 +8,9 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        permissions:
+          contents: write
+
         steps:
             - name: Checkout
               uses: actions/checkout@master
@@ -20,3 +23,9 @@ jobs:
             - name: Build
               run: |
                 make -j GBDK_HOME=gbdk/
+
+            - name: Deploy
+              uses: ncipollo/release-action@v1
+              with:
+                artifacts: "obj/*.gb"
+                bodyFile: "body.md"
