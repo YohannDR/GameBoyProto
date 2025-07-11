@@ -26,11 +26,11 @@ jobs:
 
             - name: Rename rom
               run: |
-                mv `find obj/ -type f -name '*.gb'` "$(date +"%d-%m-%y %k-%M-%S").gb"
+                mv `find obj/ -type f -name '*.gb'` "$(date +"%d-%m-%y %H-%M-%S").gb"
 
             - name: Get current date
               id: date
-              run: echo "::set-output name=date::$(date +"%d-%m-%y-%k-%M-%S")"
+              run: echo "date=$(date +"%d/%m/%y_%H:%M.%S") >> $GITHUB_OUTPUT"
   
             - name: Deploy
               uses: ncipollo/release-action@v1
