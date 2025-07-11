@@ -1,6 +1,5 @@
 {
     "files.associations": {
-        "*.fs": "glsl",
         "*.s": "armips",
         "*.h": "c",
     }

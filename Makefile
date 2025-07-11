@@ -1,13 +1,18 @@
 # Disable built-in rules
 .SUFFIXES:
 
-# If you move this project you can change the directory 
-# to match your GBDK root directory (ex: GBDK_HOME = "C:/GBDK/"
-GBDK_HOME = "/mnt/c/Users/yohan/Documents/gbdk/"
+# TODO find an actual solution to this
+ifndef GBDK_HOME
+#	 GBDK_HOME = "/mnt/c/Users/yohan/Documents/gbdk/"
+GBDK_HOME = "/mnt/f/gbdk/"
+endif
 
 LCC = $(GBDK_HOME)bin/lcc 
 
 LDFLAGS = -Iinclude/ -Wl-m -Wl-w
+
+# Enable optimizations, as suggested by gbdk (https://gbdk.org/docs/api/docs_coding_guidelines.html#autotoc_md80)
+LDFLAGS += -Wf--max-allocs-per-node50000
 
 # Don't include anything from GBDK whatsoever, I do everything manually
 LDFLAGS += -no-crt -no-libs
@@ -24,7 +29,7 @@ ifdef GBDK_DEBUG
 endif
 
 # Add --Werror for .c and .s files compilation only, using this flag during linking give a warning
-CFLAGS = $(LDFLAGS) -x --Werror
+CFLAGS = $(LDFLAGS) -Wf--Werror
 
 # Enable verbose output
 ifeq ($(V),1)
