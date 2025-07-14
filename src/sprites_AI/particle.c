@@ -13,7 +13,7 @@
 
 static const u8 sParticleAnim_Frame0[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 0x8B, 0
+    OAM_POS(0), OAM_POS(0), 0x8A, 0
 };
 
 static const struct AnimData sParticleAnim[] = {
@@ -24,8 +24,8 @@ static const struct AnimData sParticleAnim[] = {
     [1] = SPRITE_ANIM_TERMINATOR
 };
 
-static const u8 sParticleFallSpeed[] = {
-    1, 2, 2, 3, 3, 4, 4, 5, 6
+static const s8 sParticleFallSpeed[] = {
+    -4, -3, -2, -1, -1, 0, 1, 2, 2, 3, 3, 4, 4, 5, 6
 };
 
 void Particle(void)
@@ -36,25 +36,35 @@ void Particle(void)
         gCurrentSprite.pose = 1;
     }
 
-    if (gCurrentSprite.part == PARTICLE_DIR_LEFT)
+    if (gFrameCounter % 4)
     {
-        gCurrentSprite.x -= 1;
+        if (gCurrentSprite.part == PARTICLE_DIR_LEFT)
+        {
+            gCurrentSprite.x -= 1;
+    
+            if (gCurrentSprite.x > SCREEN_SIZE_X - 7u)
+                gCurrentSprite.part = PARTICLE_DIR_RIGHT;
+        }
+        else
+        {
+            gCurrentSprite.x += 1;
+    
+            if (gCurrentSprite.x < 16u)
+                gCurrentSprite.part = PARTICLE_DIR_LEFT;
+        }
+    }
 
-        if (gCurrentSprite.x > SCREEN_SIZE_X - 7u)
-            gCurrentSprite.part = PARTICLE_DIR_RIGHT;
+    if (gCurrentSprite.work1 < ARRAY_SIZE(sParticleFallSpeed))
+    {
+        gCurrentSprite.y += sParticleFallSpeed[gCurrentSprite.work1];
+
+        if (gFrameCounter % 4 == 0)
+            gCurrentSprite.work1++;
     }
     else
     {
-        gCurrentSprite.x += 1;
-
-        if (gCurrentSprite.x < 16u)
-            gCurrentSprite.part = PARTICLE_DIR_LEFT;
+        gCurrentSprite.y += 6;
     }
-
-    gCurrentSprite.y += sParticleFallSpeed[gCurrentSprite.work1];
-
-    if (gCurrentSprite.work1 < ARRAY_SIZE(sParticleFallSpeed) && gFrameCounter % 4 == 0)
-        gCurrentSprite.work1++;
 
     if (gCurrentSprite.y > SCREEN_SIZE_Y)
         gCurrentSprite.status = 0;

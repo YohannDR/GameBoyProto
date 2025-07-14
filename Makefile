@@ -4,7 +4,7 @@
 # TODO find an actual solution to this
 ifndef GBDK_HOME
 #	 GBDK_HOME = "/mnt/c/Users/yohan/Documents/gbdk/"
-GBDK_HOME = "/mnt/f/gbdk/"
+GBDK_HOME = "../gbdk/"
 endif
 
 LCC = $(GBDK_HOME)bin/lcc 
@@ -12,7 +12,7 @@ LCC = $(GBDK_HOME)bin/lcc
 LDFLAGS = -Iinclude/ -Wl-m -Wl-w
 
 # Enable optimizations, as suggested by gbdk (https://gbdk.org/docs/api/docs_coding_guidelines.html#autotoc_md80)
-LDFLAGS += -Wf--max-allocs-per-node50000
+LDFLAGS += -Wf--max-allocs-per-node50000 -Wf--peep-asm -Wf--peep-return
 
 # Don't include anything from GBDK whatsoever, I do everything manually
 LDFLAGS += -no-crt -no-libs
