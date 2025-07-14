@@ -4,6 +4,60 @@
 #include "types.h"
 
 /**
+ * @brief Converts from block to sub pixel coordinates
+ * 
+ * @param block Block coordinates
+ */
+#define BLOCK_TO_SUB_PIXEL(block) ((block) * BLOCK_SIZE)
+
+/**
+ * @brief Converts from block to pixel coordinates
+ * 
+ * @param block Block coordinates
+ */
+#define BLOCK_TO_PIXEL(block) ((block) * BLOCK_SIZE / PIXEL_SIZE)
+
+/**
+ * @brief Converts from sub pixel to block coordinates
+ * 
+ * @param subPixel Sub pixel coordinates
+ */
+#define SUB_PIXEL_TO_BLOCK(subPixel) ((subPixel) / BLOCK_SIZE)
+
+/**
+ * @brief Converts from sub pixel to pixel coordinates
+ * 
+ * @param subPixel Sub pixel coordinates
+ */
+#define SUB_PIXEL_TO_PIXEL(subPixel) ((subPixel) / SUB_PIXEL_RATIO)
+
+/**
+ * @brief Converts from pixel to block coordinates
+ * 
+ * @param pixel Sub pixel coordinates
+ */
+#define PIXEL_TO_BLOCK(pixel) ((pixel) / PIXEL_PER_BLOCK)
+
+/**
+ * @brief Converts from pixel to block coordinates
+ * 
+ * @param pixel Pixel coordinates
+ */
+#define PIXEL_TO_SUB_PIXEL(pixel) ((pixel) * SUB_PIXEL_RATIO)
+
+/**
+ * @brief Width of the screen, in sub pixels
+ * 
+ */
+#define SCREEN_SIZE_X_SUB_PIXEL (PIXEL_TO_SUB_PIXEL(SCREEN_SIZE_X))
+
+/**
+ * @brief Height of the screen, in sub pixels
+ * 
+ */
+#define SCREEN_SIZE_Y_SUB_PIXEL (PIXEL_TO_SUB_PIXEL(SCREEN_SIZE_Y) + BLOCK_SIZE * 2)
+
+/**
  * @brief Gets the size of an array
  * 
  */
@@ -54,8 +108,9 @@
 // it has to promote it to a u16, which makes the array indexing slower because the gameboy only has 8bit registers.
 // So the optimization boils down to doing the array indexing ourselves by treating it as a u8* and performing the
 // multiplication ourselves, which keeps the array index as an u8 during the multiplication.
-// This does have a side effect of breaking indexing if index > 85, so it can't be applied everywhere.
-#define HACKY_ARRAY_INDEXING(array, index, arrayType)                               \
+// This does have a side effect of breaking indexing if the result of the indexing (index * sizeof(arrayType)) ever exceeds 255
+// so it can't be applied everywhere.
+#define HACKY_ARRAY_INDEXING(array, index, arrayType)          \
 ((arrayType*)(((u8*)array) + (u8)(index * sizeof(arrayType))))
 #endif /* HACKY_OPTIMIZATIONS */
 

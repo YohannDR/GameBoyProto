@@ -39,10 +39,10 @@ struct AnimData {
 struct Sprite {
     // Holds a bunch of flags about the sprite
     u8 status;
-    // X position
-    u8 x;
-    // Y position
-    u8 y;
+    // X position, in sub pixels
+    u16 x;
+    // Y position, in sub pixels
+    u16 y;
     // The type of the sprite, each sprite a unique ID
     u8 type;
     // The slot in the global sprite array of this sprite
@@ -135,7 +135,7 @@ extern struct Sprite gCurrentSprite;
  * @param part Sprite part, used to determine the specific behavior of a sprite
  * @return u8 Sprite slot if it could spawn, UCHAR_MAX otherwise
  */
-u8 SpawnSprite(u8 x, u8 y, u8 type, u8 part);
+u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part);
 
 /**
  * @brief Updates the sprites

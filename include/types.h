@@ -1,6 +1,9 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+// Include this here to basically include it everywhere
+#include "config.h"
+
 #define TRUE 1
 #define FALSE 0
 #define NULL ((void*)0)
@@ -32,11 +35,56 @@ typedef volatile signed long long vs64;
 
 #define INT_MIN (-2147483648)
 #define INT_MAX (2147483647)
-#define UINT_MAX ((u32)0xFFFFFFFF)
+#define UINT_MAX (0xFFFFFFFFu)
 
 typedef void(*Func_T)(void);
 
-// Include this here to basically include it everywhere
-#include "config.h"
+/**
+ * @brief The amount of sub pixels a single pixel contains
+ * 
+ */
+#define SUB_PIXEL_RATIO 4
+
+/**
+ * @brief The amount of pixels a full block contains
+ * 
+ */
+#define PIXEL_PER_BLOCK 8
+
+/**
+ * @brief The size, in sub pixels, of a single full block
+ * 
+ */
+#define BLOCK_SIZE (PIXEL_PER_BLOCK * SUB_PIXEL_RATIO)
+
+/**
+ * @brief The size, in sub pixels, of a single pixel
+ * 
+ */
+#define PIXEL_SIZE (BLOCK_SIZE / PIXEL_PER_BLOCK)
+
+/**
+ * @brief A single sub pixel
+ * 
+ */
+#define ONE_SUB_PIXEL (PIXEL_SIZE / PIXEL_SIZE)
+
+/**
+ * @brief The size, in sub pixels, of half of a block
+ * 
+ */
+#define HALF_BLOCK_SIZE (BLOCK_SIZE / 2)
+
+/**
+ * @brief The size, in sub pixels, of a quarter of a block
+ * 
+ */
+#define QUARTER_BLOCK_SIZE (BLOCK_SIZE / 4)
+
+/**
+ * @brief The size, in sub pixels, of three quarters of a block
+ * 
+ */
+#define THREE_QUARTER_BLOCK_SIZE (HALF_BLOCK_SIZE + QUARTER_BLOCK_SIZE)
 
 #endif /* TYPES_H */

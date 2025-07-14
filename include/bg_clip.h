@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-#define OBJ_TO_TILE_X(x) ((x - 8) / 8)
-#define OBJ_TO_TILE_Y(y) ((y - 16) / 8)
+#define OBJ_TO_TILE_X(x) (SUB_PIXEL_TO_BLOCK(x - BLOCK_SIZE))
+#define OBJ_TO_TILE_Y(y) (SUB_PIXEL_TO_BLOCK(y - BLOCK_SIZE * 2))
 
 enum ClipdataValue {
     CLIPDATA_AIR,

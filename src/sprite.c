@@ -57,8 +57,9 @@ void SpriteDraw(void)
     partCount = *oamData++;
 
     // Get the sprite's attributes
-    x = gCurrentSprite.x;
-    y = gCurrentSprite.y;
+    x = SUB_PIXEL_TO_PIXEL(gCurrentSprite.x) - gBackgroundX;
+    y = SUB_PIXEL_TO_PIXEL(gCurrentSprite.y) - gBackgroundY;
+
     properties = (gCurrentSprite.properties & SPRITE_PROPERTY_GFX) << 4;
 
     for (i = 0; i < partCount; i++)
@@ -110,8 +111,7 @@ static void SpriteUpdateAnimation(void)
     }
 }
 
-
-u8 SpawnSprite(u8 x, u8 y, u8 type, u8 part)
+u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part)
 {
     u8 i;
     struct Sprite* sprite;

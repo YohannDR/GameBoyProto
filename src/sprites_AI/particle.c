@@ -24,8 +24,25 @@ static const struct AnimData sParticleAnim[] = {
     [1] = SPRITE_ANIM_TERMINATOR
 };
 
+#define INITIAL_SPEED -(HALF_BLOCK_SIZE)
+#define GRAVITY (PIXEL_SIZE)
+
 static const s8 sParticleFallSpeed[] = {
-    -4, -3, -2, -1, -1, 0, 1, 2, 2, 3, 3, 4, 4, 5, 6
+    INITIAL_SPEED + GRAVITY * 0,
+    INITIAL_SPEED + GRAVITY * 1,
+    INITIAL_SPEED + GRAVITY * 2,
+    INITIAL_SPEED + GRAVITY * 3,
+    INITIAL_SPEED + GRAVITY * 3,
+    INITIAL_SPEED + GRAVITY * 4,
+    INITIAL_SPEED + GRAVITY * 5,
+    INITIAL_SPEED + GRAVITY * 6,
+    INITIAL_SPEED + GRAVITY * 6,
+    INITIAL_SPEED + GRAVITY * 7,
+    INITIAL_SPEED + GRAVITY * 7,
+    INITIAL_SPEED + GRAVITY * 8,
+    INITIAL_SPEED + GRAVITY * 8,
+    INITIAL_SPEED + GRAVITY * 9,
+    INITIAL_SPEED + GRAVITY * 10
 };
 
 void Particle(void)
@@ -40,16 +57,16 @@ void Particle(void)
     {
         if (gCurrentSprite.part == PARTICLE_DIR_LEFT)
         {
-            gCurrentSprite.x -= 1;
+            gCurrentSprite.x -= PIXEL_SIZE;
     
-            if (gCurrentSprite.x > SCREEN_SIZE_X - 7u)
+            if (gCurrentSprite.x > SCREEN_SIZE_X_SUB_PIXEL - BLOCK_SIZE)
                 gCurrentSprite.part = PARTICLE_DIR_RIGHT;
         }
         else
         {
-            gCurrentSprite.x += 1;
+            gCurrentSprite.x += PIXEL_SIZE;
     
-            if (gCurrentSprite.x < 16u)
+            if (gCurrentSprite.x < BLOCK_SIZE * 2)
                 gCurrentSprite.part = PARTICLE_DIR_LEFT;
         }
     }
@@ -63,9 +80,9 @@ void Particle(void)
     }
     else
     {
-        gCurrentSprite.y += 6;
+        gCurrentSprite.y += THREE_QUARTER_BLOCK_SIZE;
     }
 
-    if (gCurrentSprite.y > SCREEN_SIZE_Y)
+    if (gCurrentSprite.y > SCREEN_SIZE_Y_SUB_PIXEL)
         gCurrentSprite.status = 0;
 }

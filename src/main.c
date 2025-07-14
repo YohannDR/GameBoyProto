@@ -6,6 +6,7 @@
 #include "data/level_tilemap.h"
 #include "data/level_tileset.h"
 
+#include "bg.h"
 #include "bg_clip.h"
 #include "input.h"
 #include "random.h"
@@ -17,24 +18,6 @@
 
 u8 gFrameCounter;
 struct GameModeInfo gGameMode;
-static u8 gLcdIntrStatus;
-
-static void TestLcdCallback(void)
-{
-    // Toggle status
-    gLcdIntrStatus ^= 1;
-
-    // Switch between firing the interrupt at the beginning of the screen, or in the middle
-    if (gLcdIntrStatus == 0)
-        Write8(REG_LYC, SCREEN_SIZE_Y / 2);
-    else
-        Write8(REG_LYC, 0);
-
-    // Toggle color to split the screen in half
-    Write8(REG_BGP, Read8(REG_BGP) ^ 2);
-    Write8(REG_OBP0, Read8(REG_OBP0) ^ (1 << 3));
-    Write8(REG_OBP1, Read8(REG_OBP1) ^ (1 << 3));
-}
 
 static void LoadGraphics(void)
 {
@@ -75,13 +58,21 @@ static void LoadGraphics(void)
     Write8(REG_OBP1, 0b11100100);
 }
 
+static void VblankCallback(void)
+{
+    Write8(REG_SCX, gBackgroundX);
+    Write8(REG_SCY, gBackgroundY);
+    Write8(REG_WX, gWindowX);
+    Write8(REG_WY, gWindowY);
+}
+
 static void SetupSprites(void)
 {
     u8 paddleSlot;
     u8 ballSlot;
 
-    paddleSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y, STYPE_PADDLE, 0);
-    ballSlot = SpawnSprite(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y - 8u, STYPE_BALL, 0);
+    paddleSlot = SpawnSprite(SCREEN_SIZE_X_SUB_PIXEL / 2, SCREEN_SIZE_Y_SUB_PIXEL - BLOCK_SIZE * 2, STYPE_PADDLE, 0);
+    ballSlot = SpawnSprite(SCREEN_SIZE_X_SUB_PIXEL / 2, SCREEN_SIZE_Y_SUB_PIXEL - BLOCK_SIZE * 3, STYPE_BALL, 0);
 
     gSpriteData[ballSlot].work1 = paddleSlot;
 }
@@ -97,7 +88,9 @@ static void InitGame(void)
     SetupSprites();
     LoadClipdata();
     SetupRandomSeed();
-    
+
+    CallbackSetVblank(VblankCallback);
+
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE);
 }

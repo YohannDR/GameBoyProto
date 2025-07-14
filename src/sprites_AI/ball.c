@@ -30,14 +30,16 @@ enum BallPose {
     MOVING
 };
 
-static void DestroyBrick(u8 x, u8 y, u8 leftPart, u8 flag)
+#define PADDLE_HITBOX_SIZE (BLOCK_SIZE + THREE_QUARTER_BLOCK_SIZE)
+
+static void DestroyBrick(u16 x, u16 y, u8 leftPart, u8 flag)
 {
-    u8 otherX;
+    u16 otherX;
 
     if (leftPart)
-        otherX = x + 8;
+        otherX = x + BLOCK_SIZE;
     else
-        otherX = x - 8;
+        otherX = x - BLOCK_SIZE;
 
     // Spawn the particles first, before the positions are converted
     SpawnSprite(otherX, y, STYPE_PARTICLE, PARTICLE_DIR_LEFT);
@@ -62,7 +64,7 @@ static void DestroyBrick(u8 x, u8 y, u8 leftPart, u8 flag)
 static void BallCheckBrickOnSide(s8 offset)
 {
     u8 block;
-    u8 xPosition;
+    u16 xPosition;
 
     xPosition = gCurrentSprite.x + offset;
 
@@ -81,7 +83,7 @@ static void BallCheckBrickOnSide(s8 offset)
 static void BallCheckBrickTopDown(s8 offset)
 {
     u8 block;
-    u8 yPosition;
+    u16 yPosition;
 
     yPosition = gCurrentSprite.y + offset;
 
@@ -102,8 +104,8 @@ static void BallRespawn(void)
     struct Sprite* paddle;
 
     // Put at spawn point
-    gCurrentSprite.x = SCREEN_SIZE_X / 2;
-    gCurrentSprite.y = SCREEN_SIZE_Y - 8u;
+    gCurrentSprite.x = SCREEN_SIZE_X_SUB_PIXEL / 2;
+    gCurrentSprite.y = SCREEN_SIZE_Y_SUB_PIXEL - BLOCK_SIZE * 3;
 
     // Clear moving direction
     gCurrentSprite.status &= ~(SPRITE_STATUS_MOVING_RIGHT | SPRITE_STATUS_MOVING_DOWN);
@@ -116,7 +118,7 @@ static void BallRespawn(void)
     paddle = &gSpriteData[gCurrentSprite.work1];
     paddle->pose = WAITING_TO_START;
     paddle->x = gCurrentSprite.x;
-    paddle->y = gCurrentSprite.y + 8u;
+    paddle->y = gCurrentSprite.y + BLOCK_SIZE;
 }
 
 static void BallPaddleCollision(void)
@@ -125,10 +127,10 @@ static void BallPaddleCollision(void)
 
     paddle = &gSpriteData[gCurrentSprite.work1];
 
-    if (gCurrentSprite.y < paddle->y - 4)
+    if (gCurrentSprite.y < paddle->y - HALF_BLOCK_SIZE)
         return;
 
-    if (gCurrentSprite.x > paddle->x - 15u && gCurrentSprite.x < paddle->x + 15u)
+    if (gCurrentSprite.x > paddle->x - PADDLE_HITBOX_SIZE && gCurrentSprite.x < paddle->x + PADDLE_HITBOX_SIZE)
         gCurrentSprite.status &= ~SPRITE_STATUS_MOVING_DOWN;
 }
 
@@ -161,43 +163,43 @@ void Ball(void)
 
     if (gCurrentSprite.status & SPRITE_STATUS_MOVING_RIGHT)
     {
-        gCurrentSprite.x++;
+        gCurrentSprite.x += PIXEL_SIZE;
 
-        if (gCurrentSprite.x > SCREEN_SIZE_X - 7u)
+        if (gCurrentSprite.x > SCREEN_SIZE_X_SUB_PIXEL - BLOCK_SIZE)
             gCurrentSprite.status &= ~SPRITE_STATUS_MOVING_RIGHT;
 
-        BallCheckBrickOnSide(4);
+        BallCheckBrickOnSide(HALF_BLOCK_SIZE);
     }
     else
     {
-        gCurrentSprite.x--;
+        gCurrentSprite.x -= PIXEL_SIZE;
 
-        if (gCurrentSprite.x < 16u)
+        if (gCurrentSprite.x < BLOCK_SIZE * 2)
             gCurrentSprite.status |= SPRITE_STATUS_MOVING_RIGHT;
 
-        BallCheckBrickOnSide(-4);
+        BallCheckBrickOnSide(-HALF_BLOCK_SIZE);
     }
 
     if (gCurrentSprite.status & SPRITE_STATUS_MOVING_DOWN)
     {
-        gCurrentSprite.y++;
+        gCurrentSprite.y += PIXEL_SIZE;
         BallPaddleCollision();
 
-        if (gCurrentSprite.y > SCREEN_SIZE_Y + 16u)
+        if (gCurrentSprite.y > SCREEN_SIZE_Y_SUB_PIXEL - BLOCK_SIZE * 2)
         {
             BallRespawn();
             return;
         }
 
-        BallCheckBrickTopDown(4);
+        BallCheckBrickTopDown(HALF_BLOCK_SIZE);
     }
     else
     {
-        gCurrentSprite.y--;
+        gCurrentSprite.y -= PIXEL_SIZE;
 
-        if (gCurrentSprite.y < 24u)
+        if (gCurrentSprite.y < BLOCK_SIZE * 3)
             gCurrentSprite.status |= SPRITE_STATUS_MOVING_DOWN;
 
-        BallCheckBrickTopDown(-4);
+        BallCheckBrickTopDown(-HALF_BLOCK_SIZE);
     }
 }
