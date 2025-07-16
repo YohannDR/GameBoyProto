@@ -2,15 +2,11 @@
 #define BG_CLIP_H
 
 #include "types.h"
-
-#define OBJ_TO_TILE_X(x) (SUB_PIXEL_TO_BLOCK(x - BLOCK_SIZE))
-#define OBJ_TO_TILE_Y(y) (SUB_PIXEL_TO_BLOCK(y - BLOCK_SIZE * 2))
+#include "macros.h"
 
 enum ClipdataValue {
     CLIPDATA_AIR,
-    CLIPDATA_WALL,
-    CLIPDATA_LEFT_BRICK,
-    CLIPDATA_RIGHT_BRICK
+    CLIPDATA_SOLID
 };
 
 /**
@@ -26,7 +22,7 @@ void LoadClipdata(void);
  * @param y Y
  * @return u8 Clipdata value
  */
-u8 GetClipdataValue(u8 x, u8 y);
+u8 GetClipdataValue(u16 x, u16 y);
 
 /**
  * @brief Sets a clipdata value at a given position
@@ -35,7 +31,7 @@ u8 GetClipdataValue(u8 x, u8 y);
  * @param y Y
  * @param value Clipdata value
  */
-void SetClipdataValue(u8 x, u8 y, u8 value);
+void SetClipdataValue(u16 x, u16 y, u8 value);
 
 /**
  * @brief Sets a background tilemap value at a given position
@@ -44,7 +40,7 @@ void SetClipdataValue(u8 x, u8 y, u8 value);
  * @param y Y
  * @param value Background tile value
  */
-void SetBgValue(u8 x, u8 y, u8 value);
+void SetBgValue(u16 x, u16 y, u8 value);
 
 /**
  * @brief Draws a number of the screen
@@ -53,7 +49,7 @@ void SetBgValue(u8 x, u8 y, u8 value);
  * @param y Y
  * @param number Number
  */
-void DrawNumber(u8 x, u8 y, u8 number);
+void DrawNumber(u16 x, u16 y, u8 number);
 
 /**
  * @brief Applies the background value changes during v-blank

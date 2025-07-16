@@ -128,6 +128,7 @@ UpdateRight:
 
     jr 0$
 
+; TODO vertical scrolling
 UpdateTop:
     ret
 UpdateBottom:

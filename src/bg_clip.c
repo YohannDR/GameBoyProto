@@ -2,6 +2,7 @@
 #include "macros.h"
 
 #include "gb/memory.h"
+#include "math.h"
 
 #include "data/level_tilemap.h"
 
@@ -12,16 +13,16 @@ struct BgTileChange {
 };
 
 static const u8 sTilemapClipdataValues[] = {
-    [0x80 - 0x80] = CLIPDATA_AIR,
-    [0x81 - 0x80] = CLIPDATA_WALL,
-    [0x82 - 0x80] = CLIPDATA_WALL,
-    [0x83 - 0x80] = CLIPDATA_WALL,
-    [0x84 - 0x80] = CLIPDATA_WALL,
-    [0x85 - 0x80] = CLIPDATA_WALL,
-    [0x86 - 0x80] = CLIPDATA_WALL,
-    [0x87 - 0x80] = CLIPDATA_WALL,
-    [0x88 - 0x80] = CLIPDATA_LEFT_BRICK,
-    [0x89 - 0x80] = CLIPDATA_RIGHT_BRICK
+    [0] = CLIPDATA_AIR,
+    [1] = CLIPDATA_AIR,
+    [2] = CLIPDATA_SOLID,
+    [3] = CLIPDATA_AIR,
+    [4] = CLIPDATA_AIR,
+    [5] = CLIPDATA_AIR,
+    [6] = CLIPDATA_AIR,
+    [7] = CLIPDATA_AIR,
+    [8] = CLIPDATA_AIR,
+    [9] = CLIPDATA_AIR
 };
 
 static u8 gClipdata[LEVEL01_TILEMAP_WIDTH * LEVEL01_TILEMAP_HEIGHT];
@@ -38,28 +39,35 @@ void LoadClipdata(void)
     }
 }
 
-u8 GetClipdataValue(u8 x, u8 y)
+u8 GetClipdataValue(u16 x, u16 y)
 {
-    return gClipdata[y * LEVEL01_TILEMAP_WIDTH + x];
+    return gClipdata[ComputeIndexFromSpriteCoords(x, LEVEL01_TILEMAP_WIDTH, y)];
 }
 
-void SetClipdataValue(u8 x, u8 y, u8 value)
+void SetClipdataValue(u16 x, u16 y, u8 value)
 {
-    gClipdata[y * LEVEL01_TILEMAP_WIDTH + x] = value;
+    gClipdata[ComputeIndexFromSpriteCoords(x, LEVEL01_TILEMAP_WIDTH, y)] = value;
 }
 
-void SetBgValue(u8 x, u8 y, u8 value)
+void SetBgValue(u16 x, u16 y, u8 value)
 {
+    struct BgTileChange* ptr;
+
     if (gBgTileChangeSlot >= ARRAY_SIZE(gBgTileChanges))
         return;
 
-    gBgTileChanges[gBgTileChangeSlot].x = x;
-    gBgTileChanges[gBgTileChangeSlot].y = y;
-    gBgTileChanges[gBgTileChangeSlot].newTile = value;
+    #ifdef HACKY_OPTIMIZATIONS
+    ptr = HACKY_ARRAY_INDEXING(gBgTileChanges, gBgTileChangeSlot, struct BgTileChange);
+    #else
+    ptr = &gBgTileChanges[gBgTileChangeSlot];
+    #endif
+    ptr->x = x / 32 - 1;
+    ptr->y = y / 32 - 2;
+    ptr->newTile = value;
     gBgTileChangeSlot++;
 }
 
-void DrawNumber(u8 x, u8 y, u8 number)
+void DrawNumber(u16 x, u16 y, u8 number)
 {
     const u8 baseTile = 0x90;
 
