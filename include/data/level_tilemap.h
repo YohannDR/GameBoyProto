@@ -3,9 +3,9 @@
 
 #include "types.h"
 
-#define LEVEL01_TILEMAP_WIDTH 20
+#define LEVEL01_TILEMAP_WIDTH 96
 #define LEVEL01_TILEMAP_HEIGHT 18
 
-extern const u8 sLevelTilemap[LEVEL01_TILEMAP_WIDTH * LEVEL01_TILEMAP_HEIGHT];
+extern const u8 sLevelTilemap[LEVEL01_TILEMAP_WIDTH * LEVEL01_TILEMAP_HEIGHT + 2];
 
 #endif /* _LEVEL01_TILEMAP_H */

@@ -1,10 +1,5 @@
 	.module intr
 
-    .globl _gOamBuffer
-    .globl _TransferOam
-    .globl _TransferOam_End
-    .globl _ApplyBgChanges
-
 .macro PUSH_ALL
     push af
     push bc
@@ -39,6 +34,7 @@ _VblankHandler::
     call .refresh_OAM
     call _ApplyBgChanges
     call _CallbackCallVblank
+    call _TilemapUpdateVblank
 
     POP_ALL
     reti

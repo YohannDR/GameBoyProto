@@ -76,9 +76,7 @@ struct Sprite {
  * 
  */
 enum SpriteType {
-    STYPE_PADDLE,
-    STYPE_BALL,
-    STYPE_PARTICLE,
+    STYPE_PLAYER,
 
     STYPE_END
 };
