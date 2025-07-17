@@ -20,10 +20,12 @@ void LoadTilemap(const u8* tilemap)
     u8 j;
     u8* addr;
 
+    // A tilemap should always start with its width and height, then the data
     gTilemap.width = *tilemap++;
     gTilemap.height = *tilemap++;
     gTilemap.tilemap = tilemap;
 
+    // Set default screen boundaries
     gTilemap.left = gBackgroundInfo.blockX;
     gTilemap.right = gBackgroundInfo.blockX + DEFAULT_LOAD_X;
     gTilemap.top = gBackgroundInfo.blockY;
@@ -50,19 +52,23 @@ void CheckForTilemapUpdate(void)
     u8 left;
     u8 right;
 
+    // Update block coordinates
     gBackgroundInfo.blockX = PIXEL_TO_BLOCK(gBackgroundInfo.x);
     gBackgroundInfo.blockY = PIXEL_TO_BLOCK(gBackgroundInfo.y);
 
     gTilemapUpdateDirection = TILEMAP_UPDATE_NONE;
 
+    // Get crrent boundaries
     left = gBackgroundInfo.blockX;
     right = gBackgroundInfo.blockX + 20;
 
+    // Check if any has been crossed, and flag for update
     if (right == gTilemap.right - 1)
     {
         gTilemapUpdateDirection = TILEMAP_UPDATE_RIGHT;
         gTilemap.right++;
         gTilemap.left++;
+        return;
     }
 
     if (left == gTilemap.left - 1)
@@ -70,5 +76,6 @@ void CheckForTilemapUpdate(void)
         gTilemapUpdateDirection = TILEMAP_UPDATE_LEFT;
         gTilemap.right--;
         gTilemap.left--;
+        return;
     }
 }

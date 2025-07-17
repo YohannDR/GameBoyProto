@@ -72,17 +72,13 @@ static void InitGame(void)
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE);
 }
-u16 Test(u16 y, u8 width, u16 x)
-{
-    return (u8)(y / 32 - 2) * width + (u8)(x / 32 - 1);
-}
+
 void main(void)
 {
     InitGame();
 
     for (;;)
     {
-        GetClipdataValue(0x500, 0x750);
         gFrameCounter++;
 
         // Poll inputs immediatly
