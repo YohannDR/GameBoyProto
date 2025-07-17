@@ -60,7 +60,7 @@ void CheckForTilemapUpdate(void)
 
     // Get crrent boundaries
     left = gBackgroundInfo.blockX;
-    right = gBackgroundInfo.blockX + 20;
+    right = gBackgroundInfo.blockX + SCREEN_SIZE_X_BLOCK;
 
     // Check if any has been crossed, and flag for update
     if (right == gTilemap.right - 1)

@@ -2,6 +2,7 @@
 #define MACROS_H
 
 #include "types.h"
+#include "gb/display.h"
 
 /**
  * @brief Converts from block to sub pixel coordinates
@@ -56,6 +57,9 @@
  * 
  */
 #define SCREEN_SIZE_Y_SUB_PIXEL (PIXEL_TO_SUB_PIXEL(SCREEN_SIZE_Y) + BLOCK_SIZE * 2)
+
+#define SCREEN_SIZE_X_BLOCK (PIXEL_TO_BLOCK(SCREEN_SIZE_X))
+#define SCREEN_SIZE_Y_BLOCK (PIXEL_TO_BLOCK(SCREEN_SIZE_Y))
 
 /**
  * @brief Gets the size of an array

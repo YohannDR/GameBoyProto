@@ -8,6 +8,7 @@
 
 #include "bg.h"
 #include "bg_clip.h"
+#include "player.h"
 #include "input.h"
 #include "random.h"
 #include "io.h"
@@ -66,6 +67,7 @@ static void InitGame(void)
     LoadClipdata();
     SetupRandomSeed();
     SetupSprites();
+    PlayerInit();
 
     CallbackSetVblank(VblankCallback);
 

@@ -2,7 +2,9 @@
 #include "macros.h"
 
 #include "gb/memory.h"
+
 #include "math.h"
+#include "bg.h"
 
 #include "data/level_tilemap.h"
 
@@ -25,28 +27,31 @@ static const u8 sTilemapClipdataValues[] = {
     [9] = CLIPDATA_AIR
 };
 
-static u8 gClipdata[LEVEL01_TILEMAP_WIDTH * LEVEL01_TILEMAP_HEIGHT];
+u8 gClipdata[LEVEL01_TILEMAP_WIDTH * LEVEL01_TILEMAP_HEIGHT];
 static struct BgTileChange gBgTileChanges[10];
 static u8 gBgTileChangeSlot;
 
 void LoadClipdata(void)
 {
     u16 i;
+    u16 size;
 
-    for (i = 0; i < ARRAY_SIZE(sLevelTilemap); i++)
+    size = gTilemap.width * gTilemap.height;
+
+    for (i = 0; i < size; i++)
     {
-        gClipdata[i] = sTilemapClipdataValues[sLevelTilemap[i] - 0x80];
+        gClipdata[i] = sTilemapClipdataValues[gTilemap.tilemap[i]];
     }
 }
 
 u8 GetClipdataValue(u16 x, u16 y)
 {
-    return gClipdata[ComputeIndexFromSpriteCoords(x, LEVEL01_TILEMAP_WIDTH, y)];
+    return gClipdata[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
 }
 
 void SetClipdataValue(u16 x, u16 y, u8 value)
 {
-    gClipdata[ComputeIndexFromSpriteCoords(x, LEVEL01_TILEMAP_WIDTH, y)] = value;
+    gClipdata[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)] = value;
 }
 
 void SetBgValue(u16 x, u16 y, u8 value)
