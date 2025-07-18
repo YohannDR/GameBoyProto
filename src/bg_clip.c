@@ -31,6 +31,8 @@ u8 gClipdata[LEVEL01_TILEMAP_WIDTH * LEVEL01_TILEMAP_HEIGHT];
 static struct BgTileChange gBgTileChanges[10];
 static u8 gBgTileChangeSlot;
 
+struct CollisionInfo gCollisionInfo;
+
 void LoadClipdata(void)
 {
     u16 i;
@@ -46,7 +48,16 @@ void LoadClipdata(void)
 
 u8 GetClipdataValue(u16 x, u16 y)
 {
-    return gClipdata[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
+    u8 clipdata;
+
+    gCollisionInfo.top = y & BLOCK_POSITION_FLAG;
+    gCollisionInfo.bottom = gCollisionInfo.top + BLOCK_SIZE;
+    gCollisionInfo.left = x & BLOCK_POSITION_FLAG;
+    gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
+
+    clipdata = gClipdata[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
+
+    return clipdata;
 }
 
 void SetClipdataValue(u16 x, u16 y, u8 value)

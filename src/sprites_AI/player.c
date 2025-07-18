@@ -6,6 +6,8 @@
 #include "input.h"
 #include "bg.h"
 #include "bg_clip.h"
+#include "io.h"
+#include "bg_clip.h"
 #include "sprite.h"
 #include "macros.h"
 
@@ -36,7 +38,7 @@ struct HitboxData {
 #define PLAYER_WIDTH  (BLOCK_SIZE * 2)
 
 static const struct HitboxData sHitboxLeft = {
-    .axisOffset = -ONE_SUB_PIXEL,
+    .axisOffset = -QUARTER_BLOCK_SIZE,
     .pointsOffset = {
         [0] = -PLAYER_HEIGHT / 4,
         [1] = -PLAYER_HEIGHT / 2,
@@ -45,7 +47,7 @@ static const struct HitboxData sHitboxLeft = {
 };
 
 static const struct HitboxData sHitboxRight = {
-    .axisOffset = PLAYER_WIDTH + ONE_SUB_PIXEL,
+    .axisOffset = PLAYER_WIDTH,
     .pointsOffset = {
         [0] = -PLAYER_HEIGHT / 4,
         [1] = -PLAYER_HEIGHT / 2,
@@ -54,7 +56,7 @@ static const struct HitboxData sHitboxRight = {
 };
 
 static const struct HitboxData sHitboxTop = {
-    .axisOffset = -(PLAYER_HEIGHT + ONE_SUB_PIXEL),
+    .axisOffset = -(PLAYER_HEIGHT + PIXEL_SIZE),
     .pointsOffset = {
         [0] = 0,
         [1] = PLAYER_WIDTH / 2,
@@ -63,7 +65,7 @@ static const struct HitboxData sHitboxTop = {
 };
 
 static const struct HitboxData sHitboxBottom = {
-    .axisOffset = -ONE_SUB_PIXEL,
+    .axisOffset = PIXEL_SIZE,
     .pointsOffset = {
         [0] = 0,
         [1] = PLAYER_WIDTH / 2,
@@ -98,7 +100,7 @@ static void HandleHorizontalMovement(void)
     }
 }
 
-void HandleVerticalMovement(void)
+static void HandleVerticalMovement(void)
 {
     if (gChangedInput & KEY_B)
     {
@@ -119,129 +121,61 @@ void HandleVerticalMovement(void)
 
 static void HandleLeftCollision(void)
 {
-    u8 clipdata;
     u16 mainAxis;
 
     mainAxis = gCurrentSprite.x + sHitboxLeft.axisOffset;
 
-    clipdata = GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxLeft.pointsOffset[0]);
-
-    if (clipdata == CLIPDATA_SOLID)
+    if (GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxLeft.pointsOffset[0]) == CLIPDATA_SOLID || 
+        GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxLeft.pointsOffset[1]) == CLIPDATA_SOLID || 
+        GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxLeft.pointsOffset[2]) == CLIPDATA_SOLID)
     {
         gPlayerMovement.xVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxLeft.pointsOffset[1]);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.xVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxLeft.pointsOffset[2]);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.xVelocity = 0;
-        return;
+        gCurrentSprite.x = gCollisionInfo.right;
     }
 }
 
-void HandleRightCollision(void)
+static void HandleRightCollision(void)
 {
-    u8 clipdata;
     u16 mainAxis;
 
     mainAxis = gCurrentSprite.x + sHitboxRight.axisOffset;
 
-    clipdata = GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxRight.pointsOffset[0]);
-
-    if (clipdata == CLIPDATA_SOLID)
+    if (GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxRight.pointsOffset[0]) == CLIPDATA_SOLID || 
+        GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxRight.pointsOffset[1]) == CLIPDATA_SOLID || 
+        GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxRight.pointsOffset[2]) == CLIPDATA_SOLID)
     {
         gPlayerMovement.xVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxRight.pointsOffset[1]);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.xVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(mainAxis, gCurrentSprite.y + sHitboxRight.pointsOffset[2]);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.xVelocity = 0;
-        return;
+        gCurrentSprite.x = gCollisionInfo.left - PLAYER_WIDTH;
     }
 }
 
-static void HandleBottomCollision(void)
+void HandleBottomCollision(void)
 {
-    u8 clipdata;
     u16 mainAxis;
 
     mainAxis = gCurrentSprite.y + sHitboxBottom.axisOffset;
 
-    clipdata = GetClipdataValue(gCurrentSprite.x + sHitboxBottom.pointsOffset[0], mainAxis);
-
-    if (clipdata == CLIPDATA_SOLID)
+    if (GetClipdataValue(gCurrentSprite.x + sHitboxBottom.pointsOffset[0], mainAxis) == CLIPDATA_SOLID || 
+        GetClipdataValue(gCurrentSprite.x + sHitboxBottom.pointsOffset[1], mainAxis) == CLIPDATA_SOLID || 
+        GetClipdataValue(gCurrentSprite.x + sHitboxBottom.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
     {
         gPlayerMovement.yVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(gCurrentSprite.x + sHitboxBottom.pointsOffset[1], mainAxis);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.yVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(gCurrentSprite.x + sHitboxBottom.pointsOffset[2], mainAxis);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.yVelocity = 0;
-        return;
+        gCurrentSprite.y = gCollisionInfo.top;
     }
 }
 
 static void HandleTopCollision(void)
 {
-    u8 clipdata;
     u16 mainAxis;
 
     mainAxis = gCurrentSprite.y + sHitboxTop.axisOffset;
 
-    clipdata = GetClipdataValue(gCurrentSprite.x + sHitboxTop.pointsOffset[0], mainAxis);
-
-    if (clipdata == CLIPDATA_SOLID)
+    if (GetClipdataValue(gCurrentSprite.x + sHitboxTop.pointsOffset[0], mainAxis) == CLIPDATA_SOLID ||
+        GetClipdataValue(gCurrentSprite.x + sHitboxTop.pointsOffset[1], mainAxis) == CLIPDATA_SOLID ||
+        GetClipdataValue(gCurrentSprite.x + sHitboxTop.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
     {
         gPlayerMovement.yVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(gCurrentSprite.x + sHitboxTop.pointsOffset[1], mainAxis);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.yVelocity = 0;
-        return;
-    }
-
-    clipdata = GetClipdataValue(gCurrentSprite.x + sHitboxTop.pointsOffset[2], mainAxis);
-
-    if (clipdata == CLIPDATA_SOLID)
-    {
-        gPlayerMovement.yVelocity = 0;
-        return;
+        gCurrentSprite.y = gCollisionInfo.bottom + PLAYER_HEIGHT;
     }
 }
 
@@ -252,10 +186,10 @@ static void HandleTerrainCollision(void)
     else if (gPlayerMovement.xVelocity > 0)
         HandleRightCollision();
 
-    if (gPlayerMovement.yVelocity > 0)
-        HandleBottomCollision();
-    else if (gPlayerMovement.yVelocity < 0)
+    if (gPlayerMovement.yVelocity < 0)
         HandleTopCollision();
+    else if (gPlayerMovement.yVelocity > 0)
+        HandleBottomCollision();
 }
 
 static void ApplyMovement(void)

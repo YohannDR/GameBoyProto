@@ -10,6 +10,23 @@ enum ClipdataValue {
 };
 
 /**
+ * @brief Contains information about the last block collision checked
+ * 
+ */
+struct CollisionInfo {
+    // The Y coordinate of the top of the block
+    u16 top;
+    // The Y coordinate of the bottom of the block
+    u16 bottom;
+    // The X coordinate of the left of the block
+    u16 left;
+    // The X coordinate of the right of the block
+    u16 right;
+};
+
+extern struct CollisionInfo gCollisionInfo;
+
+/**
  * @brief Loads the clipdata
  * 
  */

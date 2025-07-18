@@ -87,4 +87,10 @@ typedef void(*Func_T)(void);
  */
 #define THREE_QUARTER_BLOCK_SIZE (HALF_BLOCK_SIZE + QUARTER_BLOCK_SIZE)
 
+/**
+ * @brief Mask to filter out the sub pixel coordinates, effectively clamping to a block
+ * 
+ */
+#define BLOCK_POSITION_FLAG ((u16)~BLOCK_SIZE + ONE_SUB_PIXEL)
+
 #endif /* TYPES_H */
