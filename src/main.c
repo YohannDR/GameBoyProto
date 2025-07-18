@@ -53,7 +53,7 @@ static void VblankCallback(void)
 
 static void SetupSprites(void)
 {
-    SpawnSprite(SCREEN_SIZE_X_SUB_PIXEL / 2, SCREEN_SIZE_Y_SUB_PIXEL / 2, STYPE_PLAYER, 0);
+    SpawnSprite(BLOCK_SIZE * 8, BLOCK_SIZE * 17, STYPE_PLAYER, 0);
 }
 
 static void InitGame(void)

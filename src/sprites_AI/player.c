@@ -150,7 +150,7 @@ static void HandleRightCollision(void)
     }
 }
 
-void HandleBottomCollision(void)
+static void HandleBottomCollision(void)
 {
     u16 mainAxis;
 
@@ -226,5 +226,5 @@ void Player(void)
     HandleVerticalMovement();
     HandleTerrainCollision();
     ApplyMovement();
-    HandleScrolling();
+    // HandleScrolling();
 }
