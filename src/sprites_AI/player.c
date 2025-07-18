@@ -77,9 +77,9 @@ static void HandleHorizontalMovement(void)
 {
     if (gButtonInput & KEY_LEFT)
     {
-        gPlayerMovement.xVelocity -= gPlayerMovement.xAcceleration;
-        if (gPlayerMovement.xVelocity < -gPlayerMovement.xVelocityCap)
-            gPlayerMovement.xVelocity = -gPlayerMovement.xVelocityCap;
+        gPlayerMovement.xVelocity -= gPlayerPhysics.xAcceleration;
+        if (gPlayerMovement.xVelocity < -gPlayerPhysics.xVelocityCap)
+            gPlayerMovement.xVelocity = -gPlayerPhysics.xVelocityCap;
     }
     else
     {
@@ -89,9 +89,9 @@ static void HandleHorizontalMovement(void)
 
     if (gButtonInput & KEY_RIGHT)
     {
-        gPlayerMovement.xVelocity += gPlayerMovement.xAcceleration;
-        if (gPlayerMovement.xVelocity > gPlayerMovement.xVelocityCap)
-            gPlayerMovement.xVelocity = gPlayerMovement.xVelocityCap;
+        gPlayerMovement.xVelocity += gPlayerPhysics.xAcceleration;
+        if (gPlayerMovement.xVelocity > gPlayerPhysics.xVelocityCap)
+            gPlayerMovement.xVelocity = gPlayerPhysics.xVelocityCap;
     }
     else
     {
@@ -102,20 +102,21 @@ static void HandleHorizontalMovement(void)
 
 static void HandleVerticalMovement(void)
 {
-    if (gChangedInput & KEY_B)
+    if (gPlayerMovement.grounded && gChangedInput & KEY_B)
     {
-        gPlayerMovement.yVelocity = -HALF_BLOCK_SIZE;
+        gPlayerMovement.yVelocity = gPlayerPhysics.jumpingVelocity;
+        gPlayerMovement.grounded = FALSE;
     }
 
     if (gPlayerMovement.yVelocity > 0)
     {
-        gPlayerMovement.yVelocity += gPlayerMovement.gravityDownwards;
-        if (gPlayerMovement.yVelocity > gPlayerMovement.yVelocityCap)
-            gPlayerMovement.yVelocity = gPlayerMovement.yVelocityCap;
+        gPlayerMovement.yVelocity += gPlayerPhysics.gravityDownwards;
+        if (gPlayerMovement.yVelocity > gPlayerPhysics.yVelocityCap)
+            gPlayerMovement.yVelocity = gPlayerPhysics.yVelocityCap;
     }
     else
     {
-        gPlayerMovement.yVelocity += gPlayerMovement.gravityUpwards;
+        gPlayerMovement.yVelocity += gPlayerPhysics.gravityUpwards;
     }
 }
 
@@ -160,7 +161,12 @@ void HandleBottomCollision(void)
         GetClipdataValue(gCurrentSprite.x + sHitboxBottom.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
     {
         gPlayerMovement.yVelocity = 0;
+        gPlayerMovement.grounded = TRUE;
         gCurrentSprite.y = gCollisionInfo.top;
+    }
+    else
+    {
+        gPlayerMovement.grounded = FALSE;
     }
 }
 

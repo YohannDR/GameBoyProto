@@ -1,21 +1,21 @@
 #include "player.h"
 
+struct PlayerPhysics gPlayerPhysics;
 struct PlayerMovement gPlayerMovement;
 
-static void PlayerInitMovement(void)
+static void PlayerInitPhysics(void)
 {
-    gPlayerMovement.xVelocity = 0;
-    gPlayerMovement.yVelocity = 0;
+    gPlayerPhysics.xAcceleration = ONE_SUB_PIXEL;
+    gPlayerPhysics.xVelocityCap = QUARTER_BLOCK_SIZE;
+    gPlayerPhysics.yVelocityCap = QUARTER_BLOCK_SIZE;
 
-    gPlayerMovement.xAcceleration = ONE_SUB_PIXEL;
-    gPlayerMovement.xVelocityCap = QUARTER_BLOCK_SIZE;
-    gPlayerMovement.yVelocityCap = QUARTER_BLOCK_SIZE;
+    gPlayerPhysics.gravityUpwards = ONE_SUB_PIXEL;
+    gPlayerPhysics.gravityDownwards = PIXEL_SIZE / 2;
 
-    gPlayerMovement.gravityUpwards = ONE_SUB_PIXEL;
-    gPlayerMovement.gravityDownwards = PIXEL_SIZE / 2;
+    gPlayerPhysics.jumpingVelocity = -HALF_BLOCK_SIZE;
 }
 
 void PlayerInit(void)
 {
-    PlayerInitMovement();
+    PlayerInitPhysics();
 }
