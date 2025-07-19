@@ -26,11 +26,7 @@ struct CollisionInfo {
 
 extern struct CollisionInfo gCollisionInfo;
 
-/**
- * @brief Loads the clipdata
- * 
- */
-void LoadClipdata(void);
+void LoadClipdata(const u8* clipdata);
 
 /**
  * @brief Gets a clipdata value at a given position

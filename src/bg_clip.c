@@ -6,44 +6,30 @@
 #include "math.h"
 #include "bg.h"
 
-#include "data/level_tilemap.h"
-
 struct BgTileChange {
     u8 x;
     u8 y;
     u8 newTile;
 };
 
-static const u8 sTilemapClipdataValues[] = {
-    [0] = CLIPDATA_AIR,
-    [1] = CLIPDATA_AIR,
-    [2] = CLIPDATA_SOLID,
-    [3] = CLIPDATA_AIR,
-    [4] = CLIPDATA_AIR,
-    [5] = CLIPDATA_AIR,
-    [6] = CLIPDATA_AIR,
-    [7] = CLIPDATA_AIR,
-    [8] = CLIPDATA_AIR,
-    [9] = CLIPDATA_AIR
-};
-
-u8 gClipdata[LEVEL01_TILEMAP_WIDTH * LEVEL01_TILEMAP_HEIGHT];
+u8 gClipdata[0x14 * 0x12 * 4];
 static struct BgTileChange gBgTileChanges[10];
 static u8 gBgTileChangeSlot;
 
 struct CollisionInfo gCollisionInfo;
 
-void LoadClipdata(void)
+void LoadClipdata(const u8* clipdata)
 {
-    u16 i;
     u16 size;
+    u16 i;
+    u8* dst;
 
-    size = gTilemap.width * gTilemap.height;
+    size = *clipdata++;
+    size *= *clipdata++;
+    dst = gClipdata;
 
     for (i = 0; i < size; i++)
-    {
-        gClipdata[i] = sTilemapClipdataValues[gTilemap.tilemap[i]];
-    }
+        *dst++ = *clipdata++;
 }
 
 u8 GetClipdataValue(u16 x, u16 y)

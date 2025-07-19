@@ -1,0 +1,29 @@
+#ifndef ROOM_H
+#define ROOM_H
+
+#include "types.h"
+#include "sprite.h"
+#include "bg_clip.h"
+
+struct RoomSprite {
+    u8 x;
+    u8 y;
+    u8 id;
+    u8 part;
+};
+
+struct RoomInfo {
+    const u8* graphics;
+    const u8* tilemap;
+    const u8* clipdata;
+    u8 bgPalette;
+    const struct RoomSprite* spriteData;
+};
+
+#define ROOM_SPRITE_TERMINATOR { .x = UCHAR_MAX, .y = UCHAR_MAX, .id = STYPE_NONE, .part = 0 }
+
+extern u8 gCurrentRoom;
+
+void LoadRoom(u8 room);
+
+#endif /* ROOM_H */
