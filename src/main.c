@@ -12,6 +12,7 @@
 #include "input.h"
 #include "random.h"
 #include "io.h"
+#include "fading.h"
 #include "callbacks.h"
 #include "game_state.h"
 #include "macros.h"
@@ -38,9 +39,13 @@ static void LoadGraphics(void)
     // Load tile map
     LoadTilemap(sLevelTilemap);
 
-    Write8(REG_BGP,  0b11100100);
-    Write8(REG_OBP0, 0b11100100);
-    Write8(REG_OBP1, 0b11100100);
+    gBackgroundPalette = 0b11100100;
+    gObj0Palette = 0b11100100;
+    gObj1Palette = 0b11100100;
+
+    Write8(REG_BGP, gBackgroundPalette);
+    Write8(REG_OBP0, gObj0Palette);
+    Write8(REG_OBP1, gObj1Palette);
 }
 
 static void VblankCallback(void)
@@ -90,6 +95,7 @@ void main(void)
 
         // Do stuff...
         UpdateSprites();
+        FadingUpdate();
 
         CheckForTilemapUpdate();
         // Done doing stuff, wait for v-blank

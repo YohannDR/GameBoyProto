@@ -13,4 +13,11 @@
 #define LCDC_WINDOW_TILEMAP_SELECT  (1u << 6)
 #define LCDC_LCD_ENABLE             (1u << 7)
 
+#define COLOR_WHITE         0b00u
+#define COLOR_LIGHT_GRAY    0b01u
+#define COLOR_DARK_GRAY     0b10u
+#define COLOR_BLACK         0b11u
+
+#define MAKE_PALETTE(c1, c2, c3, c4) ((c1) | (c2) << 2 | (c3) << 4 | (c4) << 6)
+
 #endif /* DISPLAY_H */

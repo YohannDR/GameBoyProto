@@ -9,6 +9,7 @@
 #include "io.h"
 #include "bg_clip.h"
 #include "sprite.h"
+#include "fading.h"
 #include "macros.h"
 
 static const u8 sPlayerOam_Frame0[OAM_DATA_SIZE(6)] = {
@@ -227,4 +228,20 @@ void Player(void)
     HandleTerrainCollision();
     ApplyMovement();
     // HandleScrolling();
+
+    if (gChangedInput & KEY_A)
+    {
+        if (gCurrentSprite.work1)
+        {
+            FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette);
+            FadingStart(FADING_TARGET_OBJ0, gObj0Palette);
+        }
+        else
+        {
+            FadingStart(FADING_TARGET_BACKGROUND, MAKE_PALETTE(COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE));
+            FadingStart(FADING_TARGET_OBJ0, MAKE_PALETTE(COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK));
+        }
+
+        gCurrentSprite.work1 ^= 1;
+    }
 }
