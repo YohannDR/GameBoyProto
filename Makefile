@@ -1,9 +1,7 @@
 # Disable built-in rules
 .SUFFIXES:
 
-# TODO find an actual solution to this
 ifndef GBDK_HOME
-#	 GBDK_HOME = "/mnt/c/Users/yohan/Documents/gbdk/"
 GBDK_HOME = "../gbdk/"
 endif
 
