@@ -24,11 +24,11 @@ static void LoadSprites(const struct RoomSprite* sprites)
         if (sprites->x == UCHAR_MAX)
             break;
 
-        x = sprites->x * BLOCK_SIZE;
-        y = sprites->y * BLOCK_SIZE;
+        x = (u8)(sprites->x + 1) * BLOCK_SIZE;
+        y = (u8)(sprites->y + 2) * BLOCK_SIZE;
         id = sprites->id;
         part = sprites->part;
-        SpawnSprite(x, y, id, part);
+        SpawnSprite(x, y, id, part, LoadSpriteGraphics(id));
         sprites++;
     }
 }
@@ -51,11 +51,10 @@ void LoadRoom(u8 room)
     Write8(REG_OBP0, gObj0Palette);
     Write8(REG_OBP1, gObj1Palette);
 
-    LoadSprites(roomInfo->spriteData);
-
     WaitForVblank();
     Write8(REG_LCDC, 0);
 
+    LoadSprites(roomInfo->spriteData);
     LoadGraphics(roomInfo->graphics);
     LoadTilemap(roomInfo->tilemap);
     LoadClipdata(roomInfo->clipdata);

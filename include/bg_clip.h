@@ -6,7 +6,9 @@
 
 enum ClipdataValue {
     CLIPDATA_AIR,
-    CLIPDATA_SOLID
+    CLIPDATA_SOLID,
+
+    CLIPDATA_END
 };
 
 /**

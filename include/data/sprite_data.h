@@ -4,5 +4,6 @@
 #include "sprite.h"
 
 extern const Func_T sSpriteAiPointers[STYPE_END];
+extern const u8* const sSpriteGraphicsPointers[STYPE_END];
 
 #endif /* DATA_SPRITE_H */

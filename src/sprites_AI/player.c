@@ -12,14 +12,20 @@
 #include "fading.h"
 #include "macros.h"
 
+const u8 sPlayerGraphics[] = {
+    1,
+
+    0x3C,0x00,0x42,0x00,0xB9,0x00,0xA5,0x00,0xB9,0x00,0xA5,0x00,0x42,0x00,0x3C,0x00
+};
+
 static const u8 sPlayerOam_Frame0[OAM_DATA_SIZE(6)] = {
     6,
-    OAM_POS(-8),  OAM_POS(0), 0x19, 0,
-    OAM_POS(-8),  OAM_POS(8), 0x19, 0,
-    OAM_POS(-16), OAM_POS(0), 0x19, 0,
-    OAM_POS(-16), OAM_POS(8), 0x19, 0,
-    OAM_POS(-24), OAM_POS(0), 0x19, 0,
-    OAM_POS(-24), OAM_POS(8), 0x19, 0,
+    OAM_POS(-8),  OAM_POS(0), 0x00, 0,
+    OAM_POS(-8),  OAM_POS(8), 0x00, 0,
+    OAM_POS(-16), OAM_POS(0), 0x00, 0,
+    OAM_POS(-16), OAM_POS(8), 0x00, 0,
+    OAM_POS(-24), OAM_POS(0), 0x00, 0,
+    OAM_POS(-24), OAM_POS(8), 0x00, 0,
 };
 
 static const struct AnimData sPlayerAnim[] = {

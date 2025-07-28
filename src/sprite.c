@@ -1,6 +1,7 @@
 #include "sprite.h"
 
 #include "gb/oam.h"
+#include "gb/io.h"
 #include "gb/display.h"
 
 #include "macros.h"
@@ -16,6 +17,22 @@ struct Sprite gCurrentSprite;
 
 // Similar to gCurrentSprite, but used by other functions, this is necessary to avoid cloberring gCurrentSprite
 static struct Sprite gSpriteBuffer;
+
+/**
+ * @brief Info about allocated sprite graphics
+ * 
+ */
+struct SpriteGraphics {
+    u8 spriteId;
+    u8 gfxSlot;
+};
+
+/**
+ * @brief Currently allocated sprite graphics
+ * 
+ */
+static struct SpriteGraphics gSpriteGraphics[10];
+static u8 gSpriteGraphicsFreeIndex;
 
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
@@ -71,7 +88,7 @@ void SpriteDraw(void)
         // X position
         *oam++ = (*oamData++) + x;
         // Tile index
-        *oam++ = (*oamData++);
+        *oam++ = (*oamData++) + gCurrentSprite.gfxSlot;
         // Attribute flags
         *oam++ = (*oamData++) ^ properties;
     }
@@ -111,7 +128,7 @@ static void SpriteUpdateAnimation(void)
     }
 }
 
-u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part)
+u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
 {
     u8 i;
     struct Sprite* sprite;
@@ -132,6 +149,7 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part)
         gSpriteBuffer.type = type;
         gSpriteBuffer.part = part;
         gSpriteBuffer.ramSlot = i;
+        gSpriteBuffer.gfxSlot = gfxSlot;
         
         // And zero-out the rest
         gSpriteBuffer.pose = 0;
@@ -149,6 +167,68 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part)
     }
 
     return UCHAR_MAX;
+}
+
+u8 LoadSpriteGraphics(u8 spriteId)
+{
+    u8 i;
+    u8* dst;
+    const u8* src;
+    u8 size;
+    u8 gfxSlot;
+
+    for (i = 0; i < ARRAY_SIZE(gSpriteGraphics); i++)
+    {
+        if (gSpriteGraphics[i].spriteId == spriteId)
+        {
+            // Graphics for this sprite have already been loaded
+            return gSpriteGraphics[i].gfxSlot;
+        }
+
+        if (gSpriteGraphics[i].spriteId != STYPE_NONE)
+        {
+            // This slot is already used
+            continue;
+        }
+
+        gfxSlot = gSpriteGraphicsFreeIndex;
+
+        // Found free slot
+        gSpriteGraphics[i].spriteId = spriteId;
+        gSpriteGraphics[i].gfxSlot = gSpriteGraphicsFreeIndex;
+
+        src = sSpriteGraphicsPointers[spriteId];
+        size = *src++;
+
+        dst = (u8*)(VRAM_BASE + gSpriteGraphicsFreeIndex * 16);
+        gSpriteGraphicsFreeIndex += size;
+
+        // We can safely re-use i here, we don't use it again and we return right after
+        for (i = 0; i < size; i++)
+        {
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+        }
+
+
+        return gfxSlot;
+    }
+
+    return 0;
 }
 
 void UpdateSprites(void)

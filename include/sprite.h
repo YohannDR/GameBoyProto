@@ -60,6 +60,8 @@ struct Sprite {
     const struct AnimData* animPointer;
     // Holds a bunch of flags about the sprite
     u8 properties;
+    // Where the graphics for that sprite are allocated in VRAM (id of the first tile)
+    u8 gfxSlot;
 
     // Work variable, essentially free space
     u8 work1;
@@ -132,9 +134,20 @@ extern struct Sprite gCurrentSprite;
  * @param y Y position
  * @param type Sprite type
  * @param part Sprite part, used to determine the specific behavior of a sprite
+ * @param gfxSlot Graphics slot
  * @return u8 Sprite slot if it could spawn, UCHAR_MAX otherwise
  */
-u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part);
+u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot);
+
+/**
+ * @brief Loads graphics (if necessary) for a sprite
+ * 
+ * IMPORTANT : This function assumes it has access to VRAM, so only use it in a blanking context (v-blank, h-blank, or forced blank)
+ * 
+ * @param spriteId Sprite id
+ * @return u8 Graphics tile index
+ */
+u8 LoadSpriteGraphics(u8 spriteId);
 
 /**
  * @brief Updates the sprites
