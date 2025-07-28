@@ -39,13 +39,13 @@ static u8 gSpriteGraphicsFreeIndex;
 
 static const u8 sSpriteDataDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
     1,
-    0, 0, 0, 0
+    OAM_POS(0), OAM_POS(0), 0, 0
 };
 
 static const struct AnimData sSpriteDefaultAnim[] = {
     [0] = {
         .oamPointer = sSpriteDataDefaultAnim_Frame0,
-        .duration = UCHAR_MAX
+        .duration = 255
     },
     [1] = SPRITE_ANIM_TERMINATOR
 };
@@ -223,7 +223,6 @@ u8 LoadSpriteGraphics(u8 spriteId)
             *dst++ = *src++;
             *dst++ = *src++;
         }
-
 
         return gfxSlot;
     }

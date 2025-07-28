@@ -20,20 +20,34 @@ const u8 sPlayerGraphics[] = {
 
 static const u8 sPlayerOam_Frame0[OAM_DATA_SIZE(6)] = {
     6,
-    OAM_POS(-8),  OAM_POS(0), 0x00, 0,
-    OAM_POS(-8),  OAM_POS(8), 0x00, 0,
-    OAM_POS(-16), OAM_POS(0), 0x00, 0,
-    OAM_POS(-16), OAM_POS(8), 0x00, 0,
-    OAM_POS(-24), OAM_POS(0), 0x00, 0,
-    OAM_POS(-24), OAM_POS(8), 0x00, 0,
+    OAM_POS(-8), OAM_POS(0), 0, 0,
+    OAM_POS(-8), OAM_POS(8), 0, 0,
+    OAM_POS(-16), OAM_POS(0), 0, 0,
+    OAM_POS(-16), OAM_POS(8), 0, 0,
+    OAM_POS(-24), OAM_POS(0), 0, 0,
+    OAM_POS(-24), OAM_POS(8), 0, 0,
+};
+
+static const u8 sPlayerOam_Frame1[OAM_DATA_SIZE(6)] = {
+    6,
+    OAM_POS(-8), OAM_POS(0), 0, 0,
+    OAM_POS(-8), OAM_POS(8), 0, 0,
+    OAM_POS(-16), OAM_POS(0), 0, 0,
+    OAM_POS(-16), OAM_POS(8), 0, 0,
+    OAM_POS(-24), OAM_POS(0), 0, 0,
+    OAM_POS(-24), OAM_POS(8), 0, 0,
 };
 
 static const struct AnimData sPlayerAnim[] = {
     [0] = {
         .oamPointer = sPlayerOam_Frame0,
-        .duration = UCHAR_MAX
+        .duration = 100
     },
-    [1] = SPRITE_ANIM_TERMINATOR
+    [1] = {
+        .oamPointer = sPlayerOam_Frame1,
+        .duration = 100
+    },
+    [2] = SPRITE_ANIM_TERMINATOR
 };
 
 struct HitboxData {
