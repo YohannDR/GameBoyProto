@@ -12,43 +12,7 @@
 #include "fading.h"
 #include "macros.h"
 
-const u8 sPlayerGraphics[] = {
-    1,
-
-    0x3C,0x00,0x42,0x00,0xB9,0x00,0xA5,0x00,0xB9,0x00,0xA5,0x00,0x42,0x00,0x3C,0x00
-};
-
-static const u8 sPlayerAnim_Frame0[OAM_DATA_SIZE(6)] = {
-    6,
-    OAM_POS(-8), OAM_POS(0), 0, 0,
-    OAM_POS(-8), OAM_POS(8), 0, 0,
-    OAM_POS(-16), OAM_POS(0), 0, 0,
-    OAM_POS(-16), OAM_POS(8), 0, 0,
-    OAM_POS(-24), OAM_POS(0), 0, 0,
-    OAM_POS(-24), OAM_POS(8), 0, 0,
-};
-
-static const u8 sPlayerAnim_Frame1[OAM_DATA_SIZE(6)] = {
-    6,
-    OAM_POS(-8), OAM_POS(0), 0, 0,
-    OAM_POS(-8), OAM_POS(8), 0, 0,
-    OAM_POS(-16), OAM_POS(0), 0, 0,
-    OAM_POS(-16), OAM_POS(8), 0, 0,
-    OAM_POS(-24), OAM_POS(0), 0, 0,
-    OAM_POS(-24), OAM_POS(8), 0, 0,
-};
-
-static const struct AnimData sPlayerAnim[] = {
-    [0] = {
-        .oamPointer = sPlayerAnim_Frame0,
-        .duration = 100
-    },
-    [1] = {
-        .oamPointer = sPlayerAnim_Frame1,
-        .duration = 100
-    },
-    [2] = SPRITE_ANIM_TERMINATOR
-};
+extern const struct AnimData sPlayerAnim[];
 
 struct HitboxData {
     s8 axisOffset;
@@ -265,3 +229,41 @@ void Player(void)
         gCurrentSprite.work1 ^= 1;
     }
 }
+
+const u8 sPlayerGraphics[] = {
+    1,
+
+    0x3C, 0x00, 0x42, 0x00, 0xB9, 0x00, 0xA5, 0x00, 0xB9, 0x00, 0xA5, 0x00, 0x42, 0x00, 0x3C, 0x00,
+};
+
+static const u8 sPlayerAnim_Frame0[OAM_DATA_SIZE(6)] = {
+    6,
+    OAM_POS(-8), OAM_POS(0), 0, 0,
+    OAM_POS(-8), OAM_POS(8), 0, 0,
+    OAM_POS(-16), OAM_POS(0), 0, 0,
+    OAM_POS(-16), OAM_POS(8), 0, 0,
+    OAM_POS(-24), OAM_POS(0), 0, 0,
+    OAM_POS(-24), OAM_POS(8), 0, 0,
+};
+
+static const u8 sPlayerAnim_Frame1[OAM_DATA_SIZE(6)] = {
+    6,
+    OAM_POS(-8), OAM_POS(0), 0, 0,
+    OAM_POS(-8), OAM_POS(8), 0, 0,
+    OAM_POS(-16), OAM_POS(0), 0, 0,
+    OAM_POS(-16), OAM_POS(8), 0, 0,
+    OAM_POS(-24), OAM_POS(0), 0, 0,
+    OAM_POS(-24), OAM_POS(8), 0, 0,
+};
+
+const struct AnimData sPlayerAnim[] = {
+    [0] = {
+        .oamPointer = sPlayerAnim_Frame0,
+        .duration = 100,
+    },
+    [1] = {
+        .oamPointer = sPlayerAnim_Frame1,
+        .duration = 100,
+    },
+    [2] = SPRITE_ANIM_TERMINATOR
+};

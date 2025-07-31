@@ -9,6 +9,8 @@
 
 #include "data/sprite_data.h"
 
+extern const struct AnimData sSpriteDefaultAnim[];
+
 struct Sprite gSpriteData[20];
 
 // This might seem sub-optimal, as this requires a lot of memcpy per frame (2 * sprite amount)
@@ -36,19 +38,6 @@ static u8 gSpriteGraphicsFreeIndex;
 
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
-
-static const u8 sSpriteDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
-    1,
-    OAM_POS(0), OAM_POS(0), 0, 0
-};
-
-static const struct AnimData sSpriteDefaultAnim[] = {
-    [0] = {
-        .oamPointer = sSpriteDefaultAnim_Frame0,
-        .duration = 255
-    },
-    [1] = SPRITE_ANIM_TERMINATOR
-};
 
 void SpriteDraw(void)
 {
@@ -259,3 +248,16 @@ void UpdateSprites(void)
         *sprite = gCurrentSprite;
     }
 }
+
+static const u8 sSpriteDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
+    1,
+    OAM_POS(0), OAM_POS(0), 0, 0,
+};
+
+const struct AnimData sSpriteDefaultAnim[] = {
+    [0] = {
+        .oamPointer = sSpriteDefaultAnim_Frame0,
+        .duration = 255,
+    },
+    [1] = SPRITE_ANIM_TERMINATOR
+};

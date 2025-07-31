@@ -12,6 +12,6 @@ const struct RoomInfo sRooms[] = {
         .tilemap = sRoom0_Tilemap,
         .clipdata = sRoom0_Clipdata,
         .bgPalette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK),
-        .spriteData = sRoom0_SpriteData
-    }
+        .spriteData = sRoom0_SpriteData,
+    },
 };
