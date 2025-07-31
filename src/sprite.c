@@ -37,14 +37,14 @@ static u8 gSpriteGraphicsFreeIndex;
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
 
-static const u8 sSpriteDataDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
+static const u8 sSpriteDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 0, 0
 };
 
 static const struct AnimData sSpriteDefaultAnim[] = {
     [0] = {
-        .oamPointer = sSpriteDataDefaultAnim_Frame0,
+        .oamPointer = sSpriteDefaultAnim_Frame0,
         .duration = 255
     },
     [1] = SPRITE_ANIM_TERMINATOR
