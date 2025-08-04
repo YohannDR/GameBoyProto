@@ -5,6 +5,8 @@
 
 struct Camera gCamera;
 
+#define SCROLL_VELOCITY_CAP (HALF_BLOCK_SIZE)
+
 static void CheckForTilemapUpdate(void)
 {
     u8 blockX;
@@ -46,6 +48,48 @@ static void UpdateCamera(void)
     CheckForTilemapUpdate();
 }
 
+static u16 GetCameraTargetX(void)
+{
+    u16 playerX;
+    u16 width;
+
+    playerX = gPlayerData.x + BLOCK_SIZE;
+    width = gTilemap.width * BLOCK_SIZE;
+
+    // Check is on the far left of the scroll, i.e. if the distance between the start and the coords X is smaller than the anchor
+    if (playerX < SCREEN_SIZE_X_SUB_PIXEL / 2)
+    {
+        // Screen should be at the left limit of the scroll then
+        return 0;
+    }
+
+    // Check isn't on the far right of the scroll, i.e. if the distance between the end and the coords X is smaller than the anchor
+    if (playerX <= width - SCREEN_SIZE_X_SUB_PIXEL / 2)
+    {
+        // In the middle of the scroll otherwhise, set the position to the coords - anchor
+        return playerX - SCREEN_SIZE_X_SUB_PIXEL / 2;
+    }
+
+    // Screen should "stop" before the right limit, so set it to right - screen size
+    return width - SCREEN_SIZE_X_SUB_PIXEL;
+}
+
+static void ComputeScroll(void)
+{
+    gCamera.xVelocity = GetCameraTargetX() - gCamera.x;
+
+    if (gCamera.xVelocity < 0)
+    {
+        if (gCamera.xVelocity < -SCROLL_VELOCITY_CAP)
+            gCamera.xVelocity = -SCROLL_VELOCITY_CAP;
+    }
+    else
+    {
+        if (gCamera.xVelocity > SCROLL_VELOCITY_CAP)
+            gCamera.xVelocity = SCROLL_VELOCITY_CAP;
+    }
+}
+
 void SetCameraPosition(u16 x, u16 y)
 {
     gCamera.x = x;
@@ -62,7 +106,6 @@ void SetCameraPosition(u16 x, u16 y)
 
 void ScrollUpdate(void)
 {
-    gCamera.xVelocity = gPlayerMovement.xVelocity;
-
+    ComputeScroll();
     UpdateCamera();
 }

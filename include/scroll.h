@@ -18,6 +18,7 @@ struct Camera {
 
 extern struct Camera gCamera;
 
+void SetupCameraForRoomTransition(u16 x, u16 y);
 void SetCameraPosition(u16 x, u16 y);
 void ScrollUpdate(void);
 
