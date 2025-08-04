@@ -4,7 +4,7 @@
 
 #include "sprite.h"
 
-#include "data/rooms/room0.h"
+#include "data/rooms.h"
 
 const struct RoomInfo sRooms[] = {
     [0] = {

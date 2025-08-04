@@ -44,9 +44,9 @@ static void InitGame(void)
     LoadGraphics(sTilesets[0]);
 
     SetCameraPosition(0, 0);
+    PlayerInit();
     LoadRoom(0);
     SetupRandomSeed();
-    PlayerInit();
 
     CallbackSetVblank(VblankCallback);
 }

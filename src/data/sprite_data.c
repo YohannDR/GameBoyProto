@@ -1,7 +1,5 @@
 #include "data/sprite_data.h"
 
-#include "sprites_AI/player.h"
-
 static void Dummy(void) {}
 
 static const u8 sDummyGraphics[] = {
@@ -10,10 +8,10 @@ static const u8 sDummyGraphics[] = {
 
 const Func_T sSpriteAiPointers[STYPE_END] = {
     [STYPE_NONE] = Dummy,
-    [STYPE_PLAYER] = Player
+    [STYPE_DUMMY] = Dummy
 };
 
 const u8* const sSpriteGraphicsPointers[STYPE_END] = {
     [STYPE_NONE] = sDummyGraphics,
-    [STYPE_PLAYER] = sPlayerGraphics,
+    [STYPE_DUMMY] = sDummyGraphics,
 };

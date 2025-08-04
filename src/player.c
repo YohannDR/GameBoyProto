@@ -1,7 +1,69 @@
 #include "player.h"
 
+#include "gb/oam.h"
+#include "gb/io.h"
+
+#include "player.h"
+#include "input.h"
+#include "callbacks.h"
+#include "bg.h"
+#include "bg_clip.h"
+#include "io.h"
+#include "bg_clip.h"
+#include "sprite.h"
+#include "fading.h"
+#include "macros.h"
+
+struct PlayerData gPlayerData;
 struct PlayerPhysics gPlayerPhysics;
 struct PlayerMovement gPlayerMovement;
+
+extern const struct AnimData sPlayerAnim[];
+extern const u8 sPlayerGraphics[];
+
+struct HitboxData {
+    s8 axisOffset;
+    s8 pointsOffset[3];
+};
+
+#define PLAYER_HEIGHT (BLOCK_SIZE * 3)
+#define PLAYER_WIDTH  (BLOCK_SIZE * 2)
+
+static const struct HitboxData sHitboxLeft = {
+    .axisOffset = -QUARTER_BLOCK_SIZE,
+    .pointsOffset = {
+        [0] = -PLAYER_HEIGHT / 4,
+        [1] = -PLAYER_HEIGHT / 2,
+        [2] = -(PLAYER_HEIGHT - PIXEL_SIZE)
+    }
+};
+
+static const struct HitboxData sHitboxRight = {
+    .axisOffset = PLAYER_WIDTH,
+    .pointsOffset = {
+        [0] = -PLAYER_HEIGHT / 4,
+        [1] = -PLAYER_HEIGHT / 2,
+        [2] = -(PLAYER_HEIGHT - PIXEL_SIZE)
+    }
+};
+
+static const struct HitboxData sHitboxTop = {
+    .axisOffset = -(PLAYER_HEIGHT + PIXEL_SIZE),
+    .pointsOffset = {
+        [0] = 0,
+        [1] = PLAYER_WIDTH / 2,
+        [2] = PLAYER_WIDTH - PIXEL_SIZE
+    }
+};
+
+static const struct HitboxData sHitboxBottom = {
+    .axisOffset = PIXEL_SIZE,
+    .pointsOffset = {
+        [0] = 0,
+        [1] = PLAYER_WIDTH / 2,
+        [2] = PLAYER_WIDTH - PIXEL_SIZE
+    }
+};
 
 static void PlayerInitPhysics(void)
 {
@@ -158,8 +220,6 @@ static void PlayerLoadGraphics(void)
 
     dst = (u8*)VRAM_BASE;
 
-    WaitForVblank();
-
     for (i = 0; i < tileCount; i++)
     {
         *dst++ = *src++;
@@ -184,6 +244,10 @@ static void PlayerLoadGraphics(void)
 void PlayerInit(void)
 {
     PlayerInitPhysics();
+    PlayerLoadGraphics();
+
+    gPlayerData.x = BLOCK_SIZE * 8;
+    gPlayerData.y = BLOCK_SIZE * 17;
 }
 
 void PlayerUpdate(void)
