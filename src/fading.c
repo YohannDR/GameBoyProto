@@ -83,11 +83,11 @@ static void FadingApply(u8* pal, u8 target)
     }
 }
 
-void FadingStart(u8 target, u8 color)
+void FadingStart(u8 target, u8 color, u8 interval)
 {
     gColorFading.target |= target;
     gColorFading.timer = 0;
-    gColorFading.interval = 3;
+    gColorFading.interval = interval;
 
     if (target & FADING_TARGET_BACKGROUND)
         gColorFading.targetPalettes[0] = color;

@@ -7,5 +7,6 @@ extern const u8 sRoom0_Graphics[];
 extern const u8 sRoom0_Tilemap[];
 extern const u8 sRoom0_Clipdata[];
 extern const struct RoomSprite sRoom0_SpriteData[];
+extern const u8 sRoom0_DoorData[];
 
 #endif /* ROOM_0_H */

@@ -16,15 +16,6 @@ struct TilemapInfo {
     // Height of the tilemap
     u8 height;
 
-    // Current left boundary of the loaded tilemap
-    u8 left;
-    // Current right boundary of the loaded tilemap
-    u8 right;
-    // Current top boundary of the loaded tilemap
-    u8 top;
-    // Current bottom boundary of the loaded tilemap
-    u8 bottom;
-
     // Reserved field, used in an assembly function
     u8 reserved;
 };
@@ -72,11 +63,7 @@ extern u8 gTilemapUpdateDirection;
  */
 void LoadTilemap(const u8* tilemap);
 
-/**
- * @brief Checks if the tilemap should be updated due to scrolling
- * 
- */
-void CheckForTilemapUpdate(void);
+void LoadTilemapForTransition(const u8* tilemap);
 
 /**
  * @brief Updates the tilemap during v-blank

@@ -7,6 +7,7 @@
 #include "bg_clip.h"
 #include "player.h"
 #include "input.h"
+#include "scroll.h"
 #include "room.h"
 #include "random.h"
 #include "io.h"
@@ -16,6 +17,9 @@
 #include "macros.h"
 #include "math.h"
 #include "sprite.h"
+#include "door.h"
+
+#include "data/tilesets.h"
 
 u8 gFrameCounter;
 struct GameModeInfo gGameMode;
@@ -32,9 +36,14 @@ static void InitGame(void)
 {
     gGameMode.main = GM_IN_GAME;
 
-    // Enable v-blank intterupt
+    // Enable v-blank interrupt
     Write8(REG_IE, INTR_VBLANK);
 
+    WaitForVblank();
+    Write8(REG_LCDC, 0);
+    LoadGraphics(sTilesets[0]);
+
+    SetCameraPosition(0, 0);
     LoadRoom(0);
     SetupRandomSeed();
     PlayerInit();
@@ -57,9 +66,13 @@ void main(void)
 
         // Do stuff...
         UpdateSprites();
-        FadingUpdate();
+        PlayerUpdate();
+        // DoorUpdate();
 
-        CheckForTilemapUpdate();
+        PlayerDraw();
+        FadingUpdate();
+        ScrollUpdate();
+
         // Done doing stuff, wait for v-blank
         WaitForVblank();
     }

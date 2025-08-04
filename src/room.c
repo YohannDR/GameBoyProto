@@ -9,8 +9,11 @@
 #include "gb/io.h"
 
 #include "data/room_data.h"
+#include "data/tilesets.h"
+#include "data/doors.h"
 
 u8 gCurrentRoom;
+u8 gCurrentTileset;
 
 static void LoadSprites(const struct RoomSprite* sprites)
 {
@@ -33,7 +36,22 @@ static void LoadSprites(const struct RoomSprite* sprites)
     }
 }
 
-ASM_IMPL void LoadGraphics(const u8* graphics);
+static void LoadDoors(const u8* doorData)
+{
+    u8 doorId;
+
+    DoorReset();
+
+    for (;;)
+    {
+        doorId = *doorData++;
+
+        if (doorId == DOOR_NONE)
+            break;
+
+        DoorLoad(&sDoors[doorId]);
+    }
+}
 
 void LoadRoom(u8 room)
 {
@@ -51,14 +69,29 @@ void LoadRoom(u8 room)
     Write8(REG_OBP0, gObj0Palette);
     Write8(REG_OBP1, gObj1Palette);
 
-    WaitForVblank();
-    Write8(REG_LCDC, 0);
-
-    LoadSprites(roomInfo->spriteData);
-    LoadGraphics(roomInfo->graphics);
-    LoadTilemap(roomInfo->tilemap);
     LoadClipdata(roomInfo->clipdata);
+    LoadDoors(roomInfo->doorData);
+    // LoadSprites(roomInfo->spriteData);
+
+    LoadTilemap(roomInfo->tilemap);
 
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE);
+}
+
+void TransitionToRoom(u8 room)
+{
+    (void)room;
+    /*
+    const struct RoomInfo* roomInfo;
+
+    gCurrentRoom = room;
+
+    roomInfo = &sRooms[gCurrentRoom];
+
+    LoadTilemapForTransition(roomInfo->tilemap);
+    LoadClipdata(roomInfo->clipdata);
+    LoadDoors(roomInfo->doorData);
+    // LoadSprites(roomInfo->spriteData);
+    */
 }

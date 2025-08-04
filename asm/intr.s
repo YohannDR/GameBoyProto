@@ -35,6 +35,7 @@ _VblankHandler::
     call _ApplyBgChanges
     call _CallbackCallVblank
     call _TilemapUpdateVblank
+    call _UpdateTransitionVblank
 
     POP_ALL
     reti

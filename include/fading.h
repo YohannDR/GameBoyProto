@@ -44,7 +44,7 @@ extern struct FadingInfo gColorFading;
  * @param target Palette to target
  * @param color Target color
  */
-void FadingStart(u8 target, u8 color);
+void FadingStart(u8 target, u8 color, u8 interval);
 
 /**
  * @brief Updates the palette fading

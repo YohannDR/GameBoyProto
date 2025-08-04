@@ -25,7 +25,7 @@ _TilemapUpdateVblank:
 
 UpdateLeft:
     ; Get background X block position
-	ld	a, (_gBackgroundInfo + 4)
+	ld	a, (_gCamera + 6)
 	ld	c, a
 	ld	b, #0x0
 
@@ -49,14 +49,14 @@ UpdateLeft:
     ld b, h
     ld c, l
 
-	ld	hl, #_gTilemap + 8
+	ld	hl, #_gTilemap + 4
 	ld	(hl), #0x12
 
 0$:
     ld a, (de)
     ld (bc), a
 
-    ld	hl, #_gTilemap + 8
+    ld	hl, #_gTilemap + 4
 	dec (hl)
     ret Z
 
@@ -77,8 +77,7 @@ UpdateLeft:
 
 UpdateRight:
     ; Get background X block position
-	ld	a, (_gBackgroundInfo + 4)
-	add a, #0x15
+	ld	a, (_gCamera + 7)
 	ld	c, a
 	ld	b, #0x0
 
@@ -102,14 +101,14 @@ UpdateRight:
     ld b, h
     ld c, l
 
-	ld	hl, #_gTilemap + 8
+	ld	hl, #_gTilemap + 4
 	ld	(hl), #0x12
 
 0$:
     ld a, (de)
     ld (bc), a
 
-    ld	hl, #_gTilemap + 8
+    ld	hl, #_gTilemap + 4
 	dec (hl)
     ret Z
 
