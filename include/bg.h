@@ -57,13 +57,30 @@ extern struct TilemapInfo gTilemap;
 extern u8 gTilemapUpdateDirection;
 
 /**
+ * @brief This buffer holds the tiles that will be used to udpate the tilemap, it can contains either a column or a line.
+ * 
+ * The buffer is updated during normal frame processing and used during v-blank, this allows to alleviate the v-blank code
+ * since it already receives the processed buffer and just has to perform the copy.
+ * 
+ * Moreover, this also allows applying modifications to the tilemap without having to fully copy it into a RAM buffer,
+ * since now we can easily decide what to send to the tilemap instead of just copying it from ROM.
+ * 
+ */
+extern u8 gTilemapUpdateBuffer[MAX(SCREEN_SIZE_X_BLOCK, SCREEN_SIZE_Y_BLOCK)];
+
+/**
  * @brief Loads a specified tilemap
  * 
  * @param tilemap Tilemap
  */
 void LoadTilemap(const u8* tilemap);
 
-void LoadTilemapForTransition(const u8* tilemap);
+/**
+ * @brief Sets up a tilemap update in the desired direction
+ * 
+ * @param direction Direction
+ */
+void SetupTilemapUpdate(u8 direction);
 
 /**
  * @brief Updates the tilemap during v-blank

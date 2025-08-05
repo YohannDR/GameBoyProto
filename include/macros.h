@@ -76,6 +76,14 @@
 #define MOD_AND(value, mod) ((value) & ((mod) - 1))
 
 /**
+ * @brief Returns the maximum value between 2 values
+ * 
+ * @param a First value
+ * @param b Second value
+ */
+#define MAX(a, b) ((a) < (b) ? (b) : (a))
+
+/**
  * @brief This macro does nothing, it's only used to indicate that a function is implemented in asm rather than C
  * 
  */

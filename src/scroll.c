@@ -20,7 +20,7 @@ static void CheckForTilemapUpdate(void)
     {
         gCamera.left--;
         gCamera.right--;
-        gTilemapUpdateDirection = TILEMAP_UPDATE_LEFT;
+        SetupTilemapUpdate(TILEMAP_UPDATE_LEFT);
         return;
     }
 
@@ -30,7 +30,7 @@ static void CheckForTilemapUpdate(void)
     {
         gCamera.left++;
         gCamera.right++;
-        gTilemapUpdateDirection = TILEMAP_UPDATE_RIGHT;
+        SetupTilemapUpdate(TILEMAP_UPDATE_RIGHT);
         return;
     }
 }

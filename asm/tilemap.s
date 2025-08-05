@@ -1,44 +1,36 @@
-	.module tilemap
+    .module tilemap
 
     .globl _TilemapUpdateVblank
 
 _TilemapUpdateVblank:
-	ld	a, (#_gTilemapUpdateDirection)
-	or	a, a
-	ret	Z
+    ld a, (#_gTilemapUpdateDirection)
+    or a, a
+    ret Z
 
-	ld	a, (#_gTilemapUpdateDirection)
+    ld a, (#_gTilemapUpdateDirection)
     dec a
-    jr	Z, UpdateLeft
+    jr Z, UpdateLeft
 
-	ld	a, (#_gTilemapUpdateDirection)
+    ld a, (#_gTilemapUpdateDirection)
     sub a, #0x02
-    jr	Z, UpdateRight
+    jr Z, UpdateRight
 
-	ld	a, (#_gTilemapUpdateDirection)
+    ld a, (#_gTilemapUpdateDirection)
     sub a, #0x03
-    jr	Z, UpdateTop
+    jr Z, UpdateTop
 
-	ld	a, (#_gTilemapUpdateDirection)
+    ld a, (#_gTilemapUpdateDirection)
     sub a, #0x04
-    jr	Z, UpdateBottom
+    jr Z, UpdateBottom
 
 UpdateLeft:
     ; Get background X block position
-	ld	a, (_gCamera + 6)
-	ld	c, a
-	ld	b, #0x0
+    ld a, (_gCamera + 6)
+    ld c, a
+    ld b, #0x0
 
     ; Get tilemap pointer (in de)
-    ld hl, #(_gTilemap)
-    ld	a, (hl+)
-	ld	e, a
-	ld	d, (hl)
-    ld h, d
-    ld l, e
-    add hl, bc
-    ld d, h
-    ld e, l
+    ld de, #(_gTilemapUpdateBuffer)
 
     ; Get vram dst address (in bc)
     ld hl, #(0x9800)
@@ -49,48 +41,19 @@ UpdateLeft:
     ld b, h
     ld c, l
 
-	ld	hl, #_gTilemap + 4
-	ld	(hl), #0x12
-
-0$:
-    ld a, (de)
-    ld (bc), a
-
-    ld	hl, #_gTilemap + 4
-	dec (hl)
-    ret Z
-
-    ld hl, #0x0020
-    add hl, bc
-    ld b, h
-    ld c, l
-
-    ; Get tilemap width
-    ld a, (#(_gTilemap + 2))
-    ld l, a
-    ld h, #0x00
-    add hl, de
-    ld d, h
-    ld e, l
-
-    jr 0$
+    ld hl, #_gTilemap + 4
+    ld (hl), #0x12
+    
+    jr UpdateHorizontalLoop
 
 UpdateRight:
     ; Get background X block position
-	ld	a, (_gCamera + 7)
-	ld	c, a
-	ld	b, #0x0
+    ld a, (_gCamera + 7)
+    ld c, a
+    ld b, #0x0
 
     ; Get tilemap pointer (in de)
-    ld hl, #(_gTilemap)
-    ld	a, (hl+)
-	ld	e, a
-	ld	d, (hl)
-    ld h, d
-    ld l, e
-    add hl, bc
-    ld d, h
-    ld e, l
+    ld de, #(_gTilemapUpdateBuffer)
 
     ; Get vram dst address (in bc)
     ld hl, #(0x9800)
@@ -101,31 +64,32 @@ UpdateRight:
     ld b, h
     ld c, l
 
-	ld	hl, #_gTilemap + 4
-	ld	(hl), #0x12
+    ; Use reserved tilemap byte as loop counter
+    ld hl, #_gTilemap + 4
+    ld (hl), #0x12
 
-0$:
+UpdateHorizontalLoop:
     ld a, (de)
     ld (bc), a
 
-    ld	hl, #_gTilemap + 4
-	dec (hl)
+    ; Check counter
+    ld hl, #_gTilemap + 4
+    dec (hl)
     ret Z
 
+    ; Advance VRAM pointer
     ld hl, #0x0020
     add hl, bc
     ld b, h
     ld c, l
 
-    ; Get tilemap width
-    ld a, (#(_gTilemap + 2))
-    ld l, a
-    ld h, #0x00
-    add hl, de
-    ld d, h
-    ld e, l
+    ; Advance buffer pointer
+    ; Since the buffer is somewhat small, we might be able to get away with just increasing e
+    ; but that would require the buffer to have a compatible RAM address, so this'll have to be investigated latter
+    ; near the end of production once RAM is basically fully determined
+    inc de
 
-    jr 0$
+    jr UpdateHorizontalLoop
 
 ; TODO vertical scrolling
 UpdateTop:
