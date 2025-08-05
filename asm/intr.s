@@ -1,4 +1,4 @@
-	.module intr
+    .module intr
 
 .macro PUSH_ALL
     push af

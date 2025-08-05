@@ -32,9 +32,9 @@ _ComputeIndexFromSpriteCoords:
     ; Result of the multiplication is in bc
 
     ; x / 32 - 1
-	ldhl sp,	#2
-	ld a, (hl+)
-	ld h, (hl)
+    ldhl sp, #2
+    ld a, (hl+)
+    ld h, (hl)
     ld l, a
     add hl, hl
     add hl, hl
@@ -53,8 +53,8 @@ _ComputeIndexFromSpriteCoords:
     ld c, l
 
     ; Pop return address
-	pop	hl
+    pop hl
     ; Pop old width parameter
-	pop	af
+    pop af
     ; Return using a jump, since the stack has been tampered with
-	jp (hl)
+    jp (hl)
