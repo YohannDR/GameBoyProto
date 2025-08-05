@@ -15,10 +15,10 @@ struct RoomSprite {
 
 struct RoomInfo {
     const u8* tilemap;
-    const u8* clipdata;
     u8 bgPalette;
     const struct RoomSprite* spriteData;
     const u8* doorData;
+    u8 collisionTable;
 };
 
 #define ROOM_SPRITE_TERMINATOR { .x = UCHAR_MAX, .y = UCHAR_MAX, .id = STYPE_NONE, .part = 0 }

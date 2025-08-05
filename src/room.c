@@ -10,6 +10,7 @@
 
 #include "data/room_data.h"
 #include "data/tilesets.h"
+#include "data/collision_tables.h"
 #include "data/doors.h"
 
 u8 gCurrentRoom;
@@ -69,8 +70,8 @@ void LoadRoom(u8 room)
     Write8(REG_OBP0, gObj0Palette);
     Write8(REG_OBP1, gObj1Palette);
 
-    LoadClipdata(roomInfo->clipdata);
     LoadDoors(roomInfo->doorData);
+    gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
     // LoadSprites(roomInfo->spriteData);
 
     LoadTilemap(roomInfo->tilemap);
@@ -89,8 +90,8 @@ void TransitionToRoom(u8 room)
 
     roomInfo = &sRooms[gCurrentRoom];
 
+    gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
     LoadTilemapForTransition(roomInfo->tilemap);
-    LoadClipdata(roomInfo->clipdata);
     LoadDoors(roomInfo->doorData);
     // LoadSprites(roomInfo->spriteData);
     */

@@ -27,8 +27,7 @@ struct CollisionInfo {
 };
 
 extern struct CollisionInfo gCollisionInfo;
-
-void LoadClipdata(const u8* clipdata);
+extern const u8* gCurrentCollisionTable;
 
 /**
  * @brief Gets a clipdata value at a given position
@@ -38,15 +37,6 @@ void LoadClipdata(const u8* clipdata);
  * @return u8 Clipdata value
  */
 u8 GetClipdataValue(u16 x, u16 y);
-
-/**
- * @brief Sets a clipdata value at a given position
- * 
- * @param x X
- * @param y Y
- * @param value Clipdata value
- */
-void SetClipdataValue(u16 x, u16 y, u8 value);
 
 /**
  * @brief Sets a background tilemap value at a given position

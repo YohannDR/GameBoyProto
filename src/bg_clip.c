@@ -12,25 +12,11 @@ struct BgTileChange {
     u8 newTile;
 };
 
-u8 gClipdata[0x14 * 0x12 * 4];
 static struct BgTileChange gBgTileChanges[10];
 static u8 gBgTileChangeSlot;
 
 struct CollisionInfo gCollisionInfo;
-
-void LoadClipdata(const u8* clipdata)
-{
-    u16 size;
-    u16 i;
-    u8* dst;
-
-    size = *clipdata++;
-    size *= *clipdata++;
-    dst = gClipdata;
-
-    for (i = 0; i < size; i++)
-        *dst++ = *clipdata++;
-}
+const u8* gCurrentCollisionTable;
 
 u8 GetClipdataValue(u16 x, u16 y)
 {
@@ -41,14 +27,10 @@ u8 GetClipdataValue(u16 x, u16 y)
     gCollisionInfo.left = x & BLOCK_POSITION_FLAG;
     gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
 
-    clipdata = gClipdata[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
+    clipdata = gTilemap.tilemap[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
+    clipdata = gCurrentCollisionTable[clipdata];
 
     return clipdata;
-}
-
-void SetClipdataValue(u16 x, u16 y, u8 value)
-{
-    gClipdata[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)] = value;
 }
 
 void SetBgValue(u16 x, u16 y, u8 value)
