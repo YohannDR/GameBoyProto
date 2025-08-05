@@ -45,6 +45,13 @@ void LoadTilemap(const u8* tilemap)
     }
 }
 
+void LoadTilemapForTransition(const u8* tilemap)
+{
+    gTilemap.width = *tilemap++;
+    gTilemap.height = *tilemap++;
+    gTilemap.tilemap = tilemap;
+}
+
 void SetupTilemapUpdate(u8 direction)
 {
     u8 offset;

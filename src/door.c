@@ -3,7 +3,9 @@
 #include "bg.h"
 #include "fading.h"
 #include "macros.h"
+#include "scroll.h"
 #include "room.h"
+#include "game_state.h"
 #include "player.h"
 
 #include "data/doors.h"
@@ -48,6 +50,8 @@ void DoorUpdate(void)
         if (gPlayerData.y > door->y + door->height * BLOCK_SIZE)
             continue;
 
+        gGameMode.main = GM_TRANSITION;
+
         if (door->tileset != gCurrentTileset && door->tileset != UCHAR_MAX)
         {
             gDoorTransition.type = TRANSITION_TYPE_LOADING;
@@ -55,13 +59,50 @@ void DoorUpdate(void)
         }
         else
         {
-            /*
+            TransitionToRoom(sDoors[door->targetDoor].ownerRoom);
             gDoorTransition.type = TRANSITION_TYPE_NORMAL;
             gDoorTransition.stage = TRANSITION_STAGE_NORMAL_SCROLLING;
             gDoorTransition.direction = door->targetDoor == 1 ? TILEMAP_UPDATE_RIGHT : TILEMAP_UPDATE_LEFT;
             gDoorTransition.timer = 0;
-            TransitionToRoom(sDoors[door->targetDoor].ownerRoom);
-            */
+
+            gCamera.left = 0;
+            gCamera.right = 0;
         }
+    }
+}
+
+#define ROOM_TRANSITION_SPEED HALF_BLOCK_SIZE
+
+void TransitionUpdate(void)
+{
+    u8 newBlock;
+
+    gDoorTransition.timer++;
+
+    newBlock = gDoorTransition.timer % (BLOCK_SIZE / ROOM_TRANSITION_SPEED);
+
+    if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+    {
+        gBackgroundInfo.x += SUB_PIXEL_TO_PIXEL(ROOM_TRANSITION_SPEED);
+        gPlayerData.x += ROOM_TRANSITION_SPEED;
+
+        if (!newBlock)
+            gCamera.right++;
+    }
+    else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+    {
+        gBackgroundInfo.x -= SUB_PIXEL_TO_PIXEL(ROOM_TRANSITION_SPEED);
+        gPlayerData.x -= ROOM_TRANSITION_SPEED;
+
+        if (!newBlock)
+            gCamera.left--;
+    }
+
+    if (!newBlock)
+        SetupTilemapUpdate(gDoorTransition.direction);
+
+    if (gDoorTransition.timer == SCREEN_SIZE_X_SUB_PIXEL / ROOM_TRANSITION_SPEED)
+    {
+        gGameMode.main = GM_IN_GAME;
     }
 }

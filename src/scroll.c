@@ -1,6 +1,8 @@
 #include "scroll.h"
 
 #include "bg.h"
+#include "game_state.h"
+#include "room.h"
 #include "player.h"
 
 struct Camera gCamera;
@@ -53,7 +55,7 @@ static u16 GetCameraTargetX(void)
     u16 playerX;
     u16 width;
 
-    playerX = gPlayerData.x + BLOCK_SIZE;
+    playerX = gPlayerData.x + BLOCK_SIZE - gRoomOriginX;
     width = gTilemap.width * BLOCK_SIZE;
 
     // Check is on the far left of the scroll, i.e. if the distance between the start and the coords X is smaller than the anchor
@@ -106,6 +108,12 @@ void SetCameraPosition(u16 x, u16 y)
 
 void ScrollUpdate(void)
 {
-    ComputeScroll();
-    UpdateCamera();
+    if (gGameMode.main == GM_IN_GAME)
+    {
+        ComputeScroll();
+        UpdateCamera();
+    }
+
+    gBackgroundInfo.blockX = PIXEL_TO_BLOCK(gBackgroundInfo.x);
+    gBackgroundInfo.blockY = PIXEL_TO_BLOCK(gBackgroundInfo.y);
 }

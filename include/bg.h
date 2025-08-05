@@ -75,6 +75,8 @@ extern u8 gTilemapUpdateBuffer[MAX(SCREEN_SIZE_X_BLOCK, SCREEN_SIZE_Y_BLOCK)];
  */
 void LoadTilemap(const u8* tilemap);
 
+void LoadTilemapForTransition(const u8* tilemap);
+
 /**
  * @brief Sets up a tilemap update in the desired direction
  * 

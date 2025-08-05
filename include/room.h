@@ -19,12 +19,16 @@ struct RoomInfo {
     const struct RoomSprite* spriteData;
     const u8* doorData;
     u8 collisionTable;
+    u16 originX;
+    u16 originY;
 };
 
 #define ROOM_SPRITE_TERMINATOR { .x = UCHAR_MAX, .y = UCHAR_MAX, .id = STYPE_NONE, .part = 0 }
 
 extern u8 gCurrentRoom;
 extern u8 gCurrentTileset;
+extern u16 gRoomOriginX;
+extern u16 gRoomOriginY;
 
 void LoadRoom(u8 room);
 void TransitionToRoom(u8 room);

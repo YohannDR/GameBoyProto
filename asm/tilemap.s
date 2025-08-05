@@ -25,36 +25,20 @@ _TilemapUpdateVblank:
 
 UpdateLeft:
     ; Get background X block position
-    ld a, (_gCamera + 6)
+    ld a, (_gBackgroundInfo + 4)
     ld c, a
     ld b, #0x0
 
-    ; Get tilemap pointer (in de)
-    ld de, #(_gTilemapUpdateBuffer)
-
-    ; Get vram dst address (in bc)
-    ld hl, #(0x9800)
-    ld a, c
-    and a, #0x1F
-    ld c, a
-    add hl, bc
-    ld b, h
-    ld c, l
-
-    ld hl, #_gTilemap + 4
-    ld (hl), #0x12
-    
-    jr UpdateHorizontalLoop
+    jr UpdateHorizontal
 
 UpdateRight:
     ; Get background X block position
-    ld a, (_gCamera + 7)
+    ld a, (_gBackgroundInfo + 4)
+	add a, #0x15
     ld c, a
     ld b, #0x0
 
-    ; Get tilemap pointer (in de)
-    ld de, #(_gTilemapUpdateBuffer)
-
+UpdateHorizontal:
     ; Get vram dst address (in bc)
     ld hl, #(0x9800)
     ld a, c
@@ -63,6 +47,9 @@ UpdateRight:
     add hl, bc
     ld b, h
     ld c, l
+
+    ; Get tilemap pointer (in de)
+    ld de, #(_gTilemapUpdateBuffer)
 
     ; Use reserved tilemap byte as loop counter
     ld hl, #_gTilemap + 4

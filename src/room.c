@@ -15,6 +15,8 @@
 
 u8 gCurrentRoom;
 u8 gCurrentTileset;
+u16 gRoomOriginX;
+u16 gRoomOriginY;
 
 static void LoadSprites(const struct RoomSprite* sprites)
 {
@@ -72,6 +74,8 @@ void LoadRoom(u8 room)
 
     LoadDoors(roomInfo->doorData);
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
+    gRoomOriginX = roomInfo->originX;
+    gRoomOriginY = roomInfo->originY;
     // LoadSprites(roomInfo->spriteData);
 
     LoadTilemap(roomInfo->tilemap);
@@ -82,8 +86,6 @@ void LoadRoom(u8 room)
 
 void TransitionToRoom(u8 room)
 {
-    (void)room;
-    /*
     const struct RoomInfo* roomInfo;
 
     gCurrentRoom = room;
@@ -91,8 +93,10 @@ void TransitionToRoom(u8 room)
     roomInfo = &sRooms[gCurrentRoom];
 
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
+    gRoomOriginX = roomInfo->originX;
+    gRoomOriginY = roomInfo->originY;
     LoadTilemapForTransition(roomInfo->tilemap);
     LoadDoors(roomInfo->doorData);
+
     // LoadSprites(roomInfo->spriteData);
-    */
 }

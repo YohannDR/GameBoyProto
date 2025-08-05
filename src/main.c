@@ -64,14 +64,23 @@ void main(void)
 
         ClearAndResetOam();
 
-        // Do stuff...
-        UpdateSprites();
-        PlayerUpdate();
-        // DoorUpdate();
-
-        PlayerDraw();
-        FadingUpdate();
-        ScrollUpdate();
+        if (gGameMode.main == GM_IN_GAME)
+        {
+            // Do stuff...
+            UpdateSprites();
+            PlayerUpdate();
+            DoorUpdate();
+            PlayerDraw();
+            FadingUpdate();
+            ScrollUpdate();
+        }
+        else if (gGameMode.main == GM_TRANSITION)
+        {
+            PlayerDraw();
+            TransitionUpdate();
+            FadingUpdate();
+            ScrollUpdate();
+        }
 
         // Done doing stuff, wait for v-blank
         WaitForVblank();
