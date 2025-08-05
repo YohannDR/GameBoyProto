@@ -59,14 +59,23 @@ void DoorUpdate(void)
         }
         else
         {
-            TransitionToRoom(sDoors[door->targetDoor].ownerRoom);
             gDoorTransition.type = TRANSITION_TYPE_NORMAL;
             gDoorTransition.stage = TRANSITION_STAGE_NORMAL_SCROLLING;
             gDoorTransition.direction = door->targetDoor == 1 ? TILEMAP_UPDATE_RIGHT : TILEMAP_UPDATE_LEFT;
             gDoorTransition.timer = 0;
 
-            gCamera.left = 0;
-            gCamera.right = 0;
+            TransitionToRoom(sDoors[door->targetDoor].ownerRoom);
+
+            if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+            {
+                gCamera.left = 0;
+                gCamera.right = 0;
+            }
+            else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+            {
+                gCamera.left = gTilemap.width;
+                gCamera.right = gTilemap.width;
+            }
         }
     }
 }
@@ -84,7 +93,7 @@ void TransitionUpdate(void)
     if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
     {
         gBackgroundInfo.x += SUB_PIXEL_TO_PIXEL(ROOM_TRANSITION_SPEED);
-        gPlayerData.x += ROOM_TRANSITION_SPEED;
+        gPlayerData.x += ROOM_TRANSITION_SPEED / 2;
 
         if (!newBlock)
             gCamera.right++;
@@ -92,7 +101,7 @@ void TransitionUpdate(void)
     else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
     {
         gBackgroundInfo.x -= SUB_PIXEL_TO_PIXEL(ROOM_TRANSITION_SPEED);
-        gPlayerData.x -= ROOM_TRANSITION_SPEED;
+        gPlayerData.x -= ROOM_TRANSITION_SPEED / 2;
 
         if (!newBlock)
             gCamera.left--;
@@ -104,5 +113,6 @@ void TransitionUpdate(void)
     if (gDoorTransition.timer == SCREEN_SIZE_X_SUB_PIXEL / ROOM_TRANSITION_SPEED)
     {
         gGameMode.main = GM_IN_GAME;
+        gDoorTransition.type = TRANSITION_STAGE_NORMAL_NONE;
     }
 }
