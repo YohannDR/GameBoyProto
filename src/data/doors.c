@@ -2,25 +2,25 @@
 
 const struct Door sDoors[] = {
     [0] = {
-        .x = SCREEN_SIZE_X_SUB_PIXEL * 2 - BLOCK_SIZE * 2,
-        .y = BLOCK_SIZE * 14,
+        .x = 38,
+        .y = 11,
         .ownerRoom = 0,
-        .height = 3,
+        .height = 4,
         .width = 2,
         .targetDoor = 1,
-        .exitX = -BLOCK_SIZE,
+        .exitX = -32,
         .exitY = 0,
-        .tileset = UCHAR_MAX
+        .tileset = 255,
     },
     [1] = {
-        .x = SCREEN_SIZE_X_SUB_PIXEL * 2 + BLOCK_SIZE,
-        .y = BLOCK_SIZE * 14,
+        .x = 0,
+        .y = 11,
         .ownerRoom = 1,
-        .height = 3,
+        .height = 4,
         .width = 2,
         .targetDoor = 0,
-        .exitX = BLOCK_SIZE,
+        .exitX = -32,
         .exitY = 0,
-        .tileset = UCHAR_MAX
-    }
+        .tileset = 255,
+    },
 };
