@@ -26,6 +26,7 @@ _TilemapUpdateVblank:
 UpdateLeft:
     ; Get background X block position
     ld a, (_gBackgroundInfo + 4)
+    sub a, #0x01
     ld c, a
     ld b, #0x0
 
@@ -34,7 +35,7 @@ UpdateLeft:
 UpdateRight:
     ; Get background X block position
     ld a, (_gBackgroundInfo + 4)
-	add a, #0x15
+	add a, #0x14
     ld c, a
     ld b, #0x0
 

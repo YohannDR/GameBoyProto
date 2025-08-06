@@ -303,8 +303,8 @@ void PlayerDraw(void)
     partCount = *oamData++;
 
     // Get the sprite's attributes
-    x = SUB_PIXEL_TO_PIXEL(gPlayerData.x) - gBackgroundInfo.x;
-    y = SUB_PIXEL_TO_PIXEL(gPlayerData.y) - gBackgroundInfo.y;
+    x = SUB_PIXEL_TO_PIXEL(gPlayerData.x) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
+    y = SUB_PIXEL_TO_PIXEL(gPlayerData.y) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
 
     for (i = 0; i < partCount; i++)
     {

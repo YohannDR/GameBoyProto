@@ -68,14 +68,15 @@ void DoorUpdate(void)
 
             if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
             {
-                gCamera.left = 0;
+                gCamera.left = UCHAR_MAX;
                 gCamera.right = 0;
             }
             else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
             {
-                gCamera.left = gTilemap.width;
+                gCamera.left = gTilemap.width - 1;
                 gCamera.right = gTilemap.width;
             }
+            SetupTilemapUpdate(gDoorTransition.direction);
         }
     }
 }
@@ -88,31 +89,68 @@ void TransitionUpdate(void)
 
     gDoorTransition.timer++;
 
-    newBlock = gDoorTransition.timer % (BLOCK_SIZE / ROOM_TRANSITION_SPEED);
-
-    if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+    if (gDoorTransition.stage == TRANSITION_STAGE_NORMAL_SCROLLING)
     {
-        gBackgroundInfo.x += SUB_PIXEL_TO_PIXEL(ROOM_TRANSITION_SPEED);
-        gPlayerData.x += ROOM_TRANSITION_SPEED / 2;
+        newBlock = gDoorTransition.timer % (BLOCK_SIZE / ROOM_TRANSITION_SPEED);
 
+        if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+        {
+            gBackgroundInfo.x += ROOM_TRANSITION_SPEED;
+            gPlayerData.x += ROOM_TRANSITION_SPEED / 2;
+    
+            if (!newBlock)
+            {
+                gCamera.right++;
+                gBackgroundInfo.blockX++;
+            }
+        }
+        else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+        {
+            gBackgroundInfo.x -= ROOM_TRANSITION_SPEED;
+            gPlayerData.x -= ROOM_TRANSITION_SPEED / 2;
+    
+            if (!newBlock)
+            {
+                gCamera.left--;
+                gBackgroundInfo.blockX--;
+            }
+        }
+    
         if (!newBlock)
-            gCamera.right++;
+            SetupTilemapUpdate(gDoorTransition.direction);
+
+        if (gDoorTransition.timer == SCREEN_SIZE_X_SUB_PIXEL / ROOM_TRANSITION_SPEED)
+            gDoorTransition.stage = TRANSITION_STAGE_NORMAL_LAST_UPDATE;
     }
-    else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+    else if (gDoorTransition.stage == TRANSITION_STAGE_NORMAL_LAST_UPDATE)
     {
-        gBackgroundInfo.x -= SUB_PIXEL_TO_PIXEL(ROOM_TRANSITION_SPEED);
-        gPlayerData.x -= ROOM_TRANSITION_SPEED / 2;
+        if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+        {
+            gBackgroundInfo.blockX++;
+            SetupTilemapUpdate(TILEMAP_UPDATE_RIGHT);
+        }
+        else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+        {
+            gBackgroundInfo.blockX--;
+            SetupTilemapUpdate(TILEMAP_UPDATE_LEFT);
+        }
 
-        if (!newBlock)
-            gCamera.left--;
+        gDoorTransition.stage = TRANSITION_STAGE_NORMAL_ENDING;
     }
-
-    if (!newBlock)
-        SetupTilemapUpdate(gDoorTransition.direction);
-
-    if (gDoorTransition.timer == SCREEN_SIZE_X_SUB_PIXEL / ROOM_TRANSITION_SPEED)
+    else
     {
         gGameMode.main = GM_IN_GAME;
         gDoorTransition.type = TRANSITION_STAGE_NORMAL_NONE;
+
+        if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+        {
+            gCamera.x = 0;
+            gCamera.y = 0;
+        }
+        else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+        {
+            gCamera.x = gTilemap.width * BLOCK_SIZE - SCREEN_SIZE_X_SUB_PIXEL;
+            gCamera.y = 0;
+        }
     }
 }

@@ -45,7 +45,7 @@ void LoadTilemap(const u8* tilemap)
     }
 }
 
-void LoadTilemapForTransition(const u8* tilemap)
+void BindTilemap(const u8* tilemap)
 {
     gTilemap.width = *tilemap++;
     gTilemap.height = *tilemap++;

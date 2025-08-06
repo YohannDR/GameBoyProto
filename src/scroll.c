@@ -12,13 +12,12 @@ struct Camera gCamera;
 static void CheckForTilemapUpdate(void)
 {
     u8 blockX;
-    u8 right;
 
     gTilemapUpdateDirection = TILEMAP_UPDATE_NONE;
 
     blockX = SUB_PIXEL_TO_BLOCK(gCamera.x);
 
-    if (gCamera.left == blockX + 1)
+    if (gCamera.xVelocity < 0 && gCamera.left == blockX)
     {
         gCamera.left--;
         gCamera.right--;
@@ -26,9 +25,7 @@ static void CheckForTilemapUpdate(void)
         return;
     }
 
-    right = blockX + SCREEN_SIZE_X_BLOCK;
-
-    if (gCamera.right == right - 1)
+    if (gCamera.xVelocity > 0 && gCamera.right == blockX + SCREEN_SIZE_X_BLOCK - 1)
     {
         gCamera.left++;
         gCamera.right++;
@@ -44,8 +41,8 @@ static void UpdateCamera(void)
     gCamera.y += gCamera.yVelocity;
 
     // Also apply it to the background
-    gBackgroundInfo.x += SUB_PIXEL_TO_PIXEL(gCamera.xVelocity);
-    gBackgroundInfo.y += SUB_PIXEL_TO_PIXEL(gCamera.yVelocity);
+    gBackgroundInfo.x += gCamera.xVelocity;
+    gBackgroundInfo.y += gCamera.yVelocity;
 
     CheckForTilemapUpdate();
 }
@@ -76,7 +73,7 @@ static u16 GetCameraTargetX(void)
     return width - SCREEN_SIZE_X_SUB_PIXEL;
 }
 
-static void ComputeScroll(void)
+void ComputeScroll(void)
 {
     gCamera.xVelocity = GetCameraTargetX() - gCamera.x;
 
@@ -101,7 +98,7 @@ void SetCameraPosition(u16 x, u16 y)
     gCamera.yVelocity = 0;
 
     gCamera.left = SUB_PIXEL_TO_BLOCK(x);
-    gCamera.right = gCamera.left + SCREEN_SIZE_X_BLOCK;
+    gCamera.right = gCamera.left + SCREEN_SIZE_X_BLOCK + 1;
     gCamera.top = SUB_PIXEL_TO_BLOCK(y);
     gCamera.bottom = gCamera.top + SCREEN_SIZE_Y_BLOCK;
 }
@@ -112,8 +109,8 @@ void ScrollUpdate(void)
     {
         ComputeScroll();
         UpdateCamera();
-    }
 
-    gBackgroundInfo.blockX = PIXEL_TO_BLOCK(gBackgroundInfo.x);
-    gBackgroundInfo.blockY = PIXEL_TO_BLOCK(gBackgroundInfo.y);
+        gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
+        gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
+    }
 }

@@ -95,7 +95,7 @@ void TransitionToRoom(u8 room)
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
     gRoomOriginX = roomInfo->originX;
     gRoomOriginY = roomInfo->originY;
-    LoadTilemapForTransition(roomInfo->tilemap);
+    BindTilemap(roomInfo->tilemap);
     LoadDoors(roomInfo->doorData);
 
     // LoadSprites(roomInfo->spriteData);

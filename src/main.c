@@ -26,8 +26,8 @@ struct GameModeInfo gGameMode;
 
 static void VblankCallback(void)
 {
-    Write8(REG_SCX, gBackgroundInfo.x);
-    Write8(REG_SCY, gBackgroundInfo.y);
+    Write8(REG_SCX, SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x));
+    Write8(REG_SCY, SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y));
     Write8(REG_WX, gWindowX);
     Write8(REG_WY, gWindowY);
 }

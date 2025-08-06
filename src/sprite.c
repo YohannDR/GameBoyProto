@@ -63,8 +63,8 @@ void SpriteDraw(void)
     partCount = *oamData++;
 
     // Get the sprite's attributes
-    x = SUB_PIXEL_TO_PIXEL(gCurrentSprite.x) - gBackgroundInfo.x;
-    y = SUB_PIXEL_TO_PIXEL(gCurrentSprite.y) - gBackgroundInfo.y;
+    x = SUB_PIXEL_TO_PIXEL(gCurrentSprite.x) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
+    y = SUB_PIXEL_TO_PIXEL(gCurrentSprite.y) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
 
     properties = (gCurrentSprite.properties & SPRITE_PROPERTY_GFX) << 4;
 

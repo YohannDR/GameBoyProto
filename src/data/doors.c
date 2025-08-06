@@ -2,7 +2,7 @@
 
 const struct Door sDoors[] = {
     [0] = {
-        .x = BLOCK_SIZE * 13,
+        .x = SCREEN_SIZE_X_SUB_PIXEL * 2 - BLOCK_SIZE * 2,
         .y = BLOCK_SIZE * 14,
         .ownerRoom = 0,
         .height = 3,
@@ -13,7 +13,7 @@ const struct Door sDoors[] = {
         .tileset = UCHAR_MAX
     },
     [1] = {
-        .x = SCREEN_SIZE_X_SUB_PIXEL + BLOCK_SIZE * 1,
+        .x = SCREEN_SIZE_X_SUB_PIXEL * 2 + BLOCK_SIZE,
         .y = BLOCK_SIZE * 14,
         .ownerRoom = 1,
         .height = 3,

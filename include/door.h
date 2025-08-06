@@ -52,6 +52,8 @@ enum TransitionType {
 enum TransitionStageNormal {
     TRANSITION_STAGE_NORMAL_NONE,
     TRANSITION_STAGE_NORMAL_SCROLLING,
+    TRANSITION_STAGE_NORMAL_LAST_UPDATE,
+    TRANSITION_STAGE_NORMAL_ENDING,
 };
 
 // Currently loaded doors
