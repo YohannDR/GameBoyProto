@@ -24,6 +24,9 @@ void DoorReset(void)
 void DoorLoad(const struct Door* door)
 {
     gDoors[gCurrentNumberOfDoors] = *door;
+    gDoors[gCurrentNumberOfDoors].x = gRoomOriginX + (gDoors[gCurrentNumberOfDoors].x + 1) * BLOCK_SIZE;
+    gDoors[gCurrentNumberOfDoors].y = gRoomOriginY + (gDoors[gCurrentNumberOfDoors].y + 2) * BLOCK_SIZE;
+
     gCurrentNumberOfDoors++;
 }
 
@@ -38,7 +41,7 @@ void DoorUpdate(void)
     door = gDoors;
     for (i = 0; i < gCurrentNumberOfDoors; i++, door++)
     {
-        if (gPlayerData.x < door->x)
+        if (gPlayerData.x + BLOCK_SIZE * 2 < door->x)
             continue;
 
         if (gPlayerData.y < door->y)
@@ -47,7 +50,7 @@ void DoorUpdate(void)
         if (gPlayerData.x > door->x + door->width * BLOCK_SIZE)
             continue;
 
-        if (gPlayerData.y > door->y + door->height * BLOCK_SIZE)
+        if (gPlayerData.y - BLOCK_SIZE * 3 > door->y + door->height * BLOCK_SIZE)
             continue;
 
         gGameMode.main = GM_TRANSITION;
