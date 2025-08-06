@@ -3,13 +3,11 @@
 #include "gb/oam.h"
 #include "gb/io.h"
 
-#include "player.h"
 #include "input.h"
 #include "callbacks.h"
 #include "bg.h"
 #include "bg_clip.h"
 #include "io.h"
-#include "bg_clip.h"
 #include "sprite.h"
 #include "fading.h"
 #include "macros.h"
@@ -323,7 +321,6 @@ void PlayerDraw(void)
     // Update the next free oam slot
     gNextOamSlot += partCount;
 }
-#include "player.h"
 
 const u8 sPlayerGraphics[] = {
     1,

@@ -248,7 +248,6 @@ void UpdateSprites(void)
         *sprite = gCurrentSprite;
     }
 }
-#include "sprite.h"
 
 static const u8 sSpriteDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
     1,

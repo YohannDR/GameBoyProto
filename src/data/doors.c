@@ -1,5 +1,4 @@
 #include "data/doors.h"
-#include "data/doors.h"
 
 const struct Door sDoors[] = {
     [0] = {
