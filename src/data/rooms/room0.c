@@ -1,4 +1,5 @@
 #include "data/rooms/room0.h"
+#include "data/rooms/room0.h"
 
 const u8 sRoom0_Graphics[] = {
     26,

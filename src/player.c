@@ -323,6 +323,7 @@ void PlayerDraw(void)
     // Update the next free oam slot
     gNextOamSlot += partCount;
 }
+#include "player.h"
 
 const u8 sPlayerGraphics[] = {
     1,

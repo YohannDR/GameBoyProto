@@ -1,4 +1,5 @@
 #include "data/rooms/room1.h"
+#include "data/rooms/room1.h"
 
 const u8 sRoom1_Tilemap[] = {
     40, 18,
