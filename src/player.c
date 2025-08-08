@@ -65,14 +65,12 @@ static const struct HitboxData sHitboxBottom = {
 
 static void PlayerInitPhysics(void)
 {
-    gPlayerPhysics.xAcceleration = ONE_SUB_PIXEL;
-    gPlayerPhysics.xVelocityCap = QUARTER_BLOCK_SIZE;
-    gPlayerPhysics.yVelocityCap = QUARTER_BLOCK_SIZE;
-
-    gPlayerPhysics.gravityUpwards = ONE_SUB_PIXEL;
-    gPlayerPhysics.gravityDownwards = PIXEL_SIZE / 2;
-
-    gPlayerPhysics.jumpingVelocity = -HALF_BLOCK_SIZE;
+    gPlayerPhysics.xAcceleration = 1;
+    gPlayerPhysics.xVelocityCap = 8;
+    gPlayerPhysics.yVelocityCap = 8;
+    gPlayerPhysics.gravityUpwards = 1;
+    gPlayerPhysics.gravityDownwards = 2;
+    gPlayerPhysics.jumpingVelocity = -16;
 }
 
 static void HandleHorizontalMovement(void)
