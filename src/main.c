@@ -51,6 +51,11 @@ static void InitGame(void)
     CallbackSetVblank(VblankCallback);
 }
 
+static u16 Test(u16 a)
+{
+    return (a & ~32) | (a % 32 + 1);
+}
+
 void main(void)
 {
     InitGame();

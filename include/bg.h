@@ -18,6 +18,9 @@ struct TilemapInfo {
 
     // Reserved field, used in an assembly function
     u8 reserved;
+    // Vram address for the tilemap update
+    u16 tilemapUpdateVramAddrHorizontal;
+    u16 tilemapUpdateVramAddrVertical;
 };
 
 /**
@@ -45,6 +48,8 @@ struct BackgroundInfo {
     u8 blockX;
     // Block Y position
     u8 blockY;
+    u8 tilemapAnchorX;
+    u8 tilemapAnchorY;
 };
 
 extern struct BackgroundInfo gBackgroundInfo;
@@ -54,10 +59,12 @@ extern u8 gWindowY;
 
 extern struct TilemapInfo gTilemap;
 
-extern u8 gTilemapUpdateDirection;
+extern u8 gTilemapUpdateVerticalDirection;
+extern u8 gTilemapUpdateHorizontalDirection;
 
 /**
- * @brief This buffer holds the tiles that will be used to udpate the tilemap, it can contains either a column or a line.
+ * @brief These buffers holds the tiles that will be used to udpate the tilemap.
+ * There's one buffer of a line update (horizontal) and one for a column update (vertical).
  * 
  * The buffer is updated during normal frame processing and used during v-blank, this allows to alleviate the v-blank code
  * since it already receives the processed buffer and just has to perform the copy.
@@ -66,7 +73,8 @@ extern u8 gTilemapUpdateDirection;
  * since now we can easily decide what to send to the tilemap instead of just copying it from ROM.
  * 
  */
-extern u8 gTilemapUpdateBuffer[MAX(SCREEN_SIZE_X_BLOCK, SCREEN_SIZE_Y_BLOCK)];
+extern u8 gTilemapUpdateBufferHorizontal[SCREEN_SIZE_X_BLOCK + 3];
+extern u8 gTilemapUpdateBufferVertical[SCREEN_SIZE_Y_BLOCK + 2];
 
 /**
  * @brief Loads a specified tilemap

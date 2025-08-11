@@ -9,11 +9,16 @@ struct Camera gCamera;
 
 #define SCROLL_VELOCITY_CAP (HALF_BLOCK_SIZE)
 
+#define SCROLL_X_ANCHOR (SCREEN_SIZE_X_SUB_PIXEL / 2)
+#define SCROLL_Y_ANCHOR (SCREEN_SIZE_X_SUB_PIXEL / 2)
+
 static void CheckForTilemapUpdate(void)
 {
     u8 blockX;
+    u8 blockY;
 
-    gTilemapUpdateDirection = TILEMAP_UPDATE_NONE;
+    gTilemapUpdateVerticalDirection = TILEMAP_UPDATE_NONE;
+    gTilemapUpdateHorizontalDirection = TILEMAP_UPDATE_NONE;
 
     blockX = SUB_PIXEL_TO_BLOCK(gCamera.x);
 
@@ -22,15 +27,27 @@ static void CheckForTilemapUpdate(void)
         gCamera.left--;
         gCamera.right--;
         SetupTilemapUpdate(TILEMAP_UPDATE_LEFT);
-        return;
     }
-
-    if (gCamera.xVelocity > 0 && gCamera.right == blockX + SCREEN_SIZE_X_BLOCK - 1)
+    else if ((gCamera.xVelocity > 0 && gCamera.right == blockX + SCREEN_SIZE_X_BLOCK - 1))
     {
         gCamera.left++;
         gCamera.right++;
         SetupTilemapUpdate(TILEMAP_UPDATE_RIGHT);
-        return;
+    }
+
+    blockY = SUB_PIXEL_TO_BLOCK(gCamera.y);
+
+    if (gCamera.yVelocity < 0 && gCamera.top == blockY)
+    {
+        gCamera.bottom--;
+        gCamera.top--;
+        SetupTilemapUpdate(TILEMAP_UPDATE_TOP);
+    }
+    else if (gCamera.yVelocity > 0 && gCamera.bottom == blockY + SCREEN_SIZE_Y_BLOCK - 1)
+    {
+        gCamera.bottom++;
+        gCamera.top++;
+        SetupTilemapUpdate(TILEMAP_UPDATE_BOTTOM);
     }
 }
 
@@ -44,6 +61,12 @@ static void UpdateCamera(void)
     gBackgroundInfo.x += gCamera.xVelocity;
     gBackgroundInfo.y += gCamera.yVelocity;
 
+    gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
+    gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
+
+    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX;
+    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY;
+
     CheckForTilemapUpdate();
 }
 
@@ -56,21 +79,47 @@ static u16 GetCameraTargetX(void)
     width = gTilemap.width * BLOCK_SIZE;
 
     // Check is on the far left of the scroll, i.e. if the distance between the start and the coords X is smaller than the anchor
-    if (playerX < SCREEN_SIZE_X_SUB_PIXEL / 2)
+    if (playerX < SCROLL_X_ANCHOR)
     {
         // Screen should be at the left limit of the scroll then
         return 0;
     }
 
     // Check isn't on the far right of the scroll, i.e. if the distance between the end and the coords X is smaller than the anchor
-    if (playerX <= width - SCREEN_SIZE_X_SUB_PIXEL / 2)
+    if (playerX <= width - SCROLL_X_ANCHOR)
     {
         // In the middle of the scroll otherwhise, set the position to the coords - anchor
-        return playerX - SCREEN_SIZE_X_SUB_PIXEL / 2;
+        return playerX - SCROLL_X_ANCHOR;
     }
 
     // Screen should "stop" before the right limit, so set it to right - screen size
     return width - SCREEN_SIZE_X_SUB_PIXEL;
+}
+
+static u16 GetCameraTargetY(void)
+{
+    u16 playerY;
+    u16 height;
+
+    playerY = gPlayerData.y - gRoomOriginY;
+    height = gTilemap.height * BLOCK_SIZE;
+
+    // Check is on the far top of the scroll, i.e. if the distance between the start and the coords Y is smaller than the anchor
+    if (playerY < SCROLL_Y_ANCHOR)
+    {
+        // Screen should be at the top limit of the scroll then
+        return 0;
+    }
+
+    // Check isn't on the bottom of the scroll, i.e. if the distance between the end and the coords Y is smaller than the anchor
+    if (playerY <= height - SCROLL_Y_ANCHOR)
+    {
+        // In the middle of the scroll otherwhise, set the position to the coords - anchor
+        return playerY - SCROLL_Y_ANCHOR;
+    }
+
+    // Screen should "stop" before the bottom limit, so set it to bottom - screen size
+    return height - SCREEN_SIZE_Y_SUB_PIXEL;
 }
 
 void ComputeScroll(void)
@@ -87,6 +136,19 @@ void ComputeScroll(void)
         if (gCamera.xVelocity > SCROLL_VELOCITY_CAP)
             gCamera.xVelocity = SCROLL_VELOCITY_CAP;
     }
+
+    gCamera.yVelocity = GetCameraTargetY() - gCamera.y;
+
+    if (gCamera.yVelocity < 0)
+    {
+        if (gCamera.yVelocity < -SCROLL_VELOCITY_CAP)
+            gCamera.yVelocity = -SCROLL_VELOCITY_CAP;
+    }
+    else
+    {
+        if (gCamera.yVelocity > SCROLL_VELOCITY_CAP)
+            gCamera.yVelocity = SCROLL_VELOCITY_CAP;
+    }
 }
 
 void SetCameraPosition(u16 x, u16 y)
@@ -100,7 +162,7 @@ void SetCameraPosition(u16 x, u16 y)
     gCamera.left = SUB_PIXEL_TO_BLOCK(x);
     gCamera.right = gCamera.left + SCREEN_SIZE_X_BLOCK + 1;
     gCamera.top = SUB_PIXEL_TO_BLOCK(y);
-    gCamera.bottom = gCamera.top + SCREEN_SIZE_Y_BLOCK;
+    gCamera.bottom = gCamera.top + SCREEN_SIZE_Y_BLOCK + 1;
 }
 
 void ScrollUpdate(void)
@@ -109,8 +171,5 @@ void ScrollUpdate(void)
     {
         ComputeScroll();
         UpdateCamera();
-
-        gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
-        gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
     }
 }
