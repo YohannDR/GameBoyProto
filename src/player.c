@@ -24,9 +24,6 @@ struct HitboxData {
     s8 pointsOffset[3];
 };
 
-#define PLAYER_HEIGHT (BLOCK_SIZE * 3)
-#define PLAYER_WIDTH  (BLOCK_SIZE * 2)
-
 static const struct HitboxData sHitboxLeft = {
     .axisOffset = -QUARTER_BLOCK_SIZE,
     .pointsOffset = {

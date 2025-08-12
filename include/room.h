@@ -29,6 +29,8 @@ extern u8 gCurrentRoom;
 extern u8 gCurrentTileset;
 extern u16 gRoomOriginX;
 extern u16 gRoomOriginY;
+extern u16 gPreviousRoomOriginX;
+extern u16 gPreviousRoomOriginY;
 
 void LoadRoom(u8 room);
 void TransitionToRoom(u8 room);

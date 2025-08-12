@@ -72,12 +72,12 @@ void main(void)
         if (gGameMode.main == GM_IN_GAME)
         {
             // Do stuff...
-            UpdateSprites();
+            ScrollUpdate();
             PlayerUpdate();
             DoorUpdate();
             PlayerDraw();
             FadingUpdate();
-            ScrollUpdate();
+            UpdateSprites();
         }
         else if (gGameMode.main == GM_TRANSITION)
         {

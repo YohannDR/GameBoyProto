@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+#define PLAYER_HEIGHT (BLOCK_SIZE * 3)
+#define PLAYER_WIDTH  (BLOCK_SIZE * 2)
+
 struct PlayerData {
     u16 x;
     u16 y;

@@ -10,15 +10,15 @@ struct Camera gCamera;
 #define SCROLL_VELOCITY_CAP (HALF_BLOCK_SIZE)
 
 #define SCROLL_X_ANCHOR (SCREEN_SIZE_X_SUB_PIXEL / 2)
-#define SCROLL_Y_ANCHOR (SCREEN_SIZE_X_SUB_PIXEL / 2)
+#define SCROLL_Y_ANCHOR (SCREEN_SIZE_Y_SUB_PIXEL / 2)
 
 static void CheckForTilemapUpdate(void)
 {
     u8 blockX;
     u8 blockY;
 
-    gTilemapUpdateVerticalDirection = TILEMAP_UPDATE_NONE;
-    gTilemapUpdateHorizontalDirection = TILEMAP_UPDATE_NONE;
+    gTilemapUpdateDirectionX = TILEMAP_UPDATE_NONE;
+    gTilemapUpdateDirectionY = TILEMAP_UPDATE_NONE;
 
     blockX = SUB_PIXEL_TO_BLOCK(gCamera.x);
 
@@ -26,13 +26,13 @@ static void CheckForTilemapUpdate(void)
     {
         gCamera.left--;
         gCamera.right--;
-        SetupTilemapUpdate(TILEMAP_UPDATE_LEFT);
+        SetupTilemapUpdateX(TILEMAP_UPDATE_LEFT);
     }
-    else if ((gCamera.xVelocity > 0 && gCamera.right == blockX + SCREEN_SIZE_X_BLOCK - 1))
+    else if (gCamera.xVelocity > 0 && gCamera.right == blockX + SCREEN_SIZE_X_BLOCK - 1)
     {
         gCamera.left++;
         gCamera.right++;
-        SetupTilemapUpdate(TILEMAP_UPDATE_RIGHT);
+        SetupTilemapUpdateX(TILEMAP_UPDATE_RIGHT);
     }
 
     blockY = SUB_PIXEL_TO_BLOCK(gCamera.y);
@@ -41,13 +41,13 @@ static void CheckForTilemapUpdate(void)
     {
         gCamera.bottom--;
         gCamera.top--;
-        SetupTilemapUpdate(TILEMAP_UPDATE_TOP);
+        SetupTilemapUpdateY(TILEMAP_UPDATE_TOP);
     }
     else if (gCamera.yVelocity > 0 && gCamera.bottom == blockY + SCREEN_SIZE_Y_BLOCK - 1)
     {
         gCamera.bottom++;
         gCamera.top++;
-        SetupTilemapUpdate(TILEMAP_UPDATE_BOTTOM);
+        SetupTilemapUpdateY(TILEMAP_UPDATE_BOTTOM);
     }
 }
 
@@ -64,8 +64,8 @@ static void UpdateCamera(void)
     gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
     gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
 
-    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX;
-    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY;
+    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX - SUB_PIXEL_TO_BLOCK(gRoomOriginX);
+    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY - SUB_PIXEL_TO_BLOCK(gRoomOriginY);
 
     CheckForTilemapUpdate();
 }
