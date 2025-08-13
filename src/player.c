@@ -234,6 +234,28 @@ static void PlayerLoadGraphics(void)
     }
 }
 
+static void UpdateAnimation(void)
+{
+    const struct AnimData* anim;
+
+#ifdef HACKY_OPTIMIZATIONS
+    anim = HACKY_ARRAY_INDEXING(gPlayerData.animPointer, gPlayerData.currentAnimFrame, struct AnimData);
+#else
+    anim = &gPlayerData.animPointer[gPlayerData.currentAnimFrame];
+#endif
+    gPlayerData.animTimer++;
+
+    if (gPlayerData.animTimer >= anim->duration)
+    {
+        gPlayerData.animTimer = 0;
+        gPlayerData.currentAnimFrame++;
+        anim++;
+
+        if (anim->duration == 0)
+            gPlayerData.currentAnimFrame = 0;
+    }
+}
+
 void PlayerInit(void)
 {
     PlayerInitPhysics();
@@ -255,6 +277,7 @@ void PlayerUpdate(void)
     HandleVerticalMovement();
     HandleTerrainCollision();
     ApplyMovement();
+    UpdateAnimation();
 
     if (gChangedInput & KEY_A)
     {

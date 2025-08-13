@@ -129,6 +129,8 @@ It's not required to select graphics, however since each entry in the collision 
 
 The association is shown using the `x` on the right of the entries, the red one is the tile you have selected in the graphics, it also works the other way around so you can click on an `x` to select the tile and vice versa.
 
+If you change the graphics, you can automatically resize the collision table by pressing the `Resize table to fit graphics`. The default collision will be CLIPDATA_AIR.
+
 ## Physics editor
 
 The physics editor simply has inputs for the the different player physics values, if you hover over them they provide a tooltip to further explain what the value signifies.
