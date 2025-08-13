@@ -32,10 +32,11 @@ _VblankHandler::
 
     ; We also need to update oam during v-blank
     call .refresh_OAM
+    ; This is time critical, so it takes absolute priority
+    call _UpdateTransitionVblank
     call _ApplyBgChanges
     call _CallbackCallVblank
     call _TilemapUpdateVblank
-    call _UpdateTransitionVblank
 
     POP_ALL
     reti

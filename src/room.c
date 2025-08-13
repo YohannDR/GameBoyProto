@@ -27,6 +27,8 @@ static void LoadSprites(const struct RoomSprite* sprites)
     u8 id;
     u8 part;
 
+    PrepareSpriteGraphicsLoading();
+
     for (;;)
     {
         if (sprites->x == UCHAR_MAX)
@@ -36,9 +38,11 @@ static void LoadSprites(const struct RoomSprite* sprites)
         y = (u8)(sprites->y + 2) * BLOCK_SIZE;
         id = sprites->id;
         part = sprites->part;
-        SpawnSprite(x, y, id, part, LoadSpriteGraphics(id));
+        SpawnSprite(x, y, id, part, QueueSpriteGraphics(id));
         sprites++;
     }
+
+    StartSpriteGraphicsLoading();
 }
 
 static void LoadDoors(const u8* doorData)
@@ -80,7 +84,8 @@ void LoadRoom(u8 room)
     gPreviousRoomOriginY = gRoomOriginY;
     gRoomOriginX = roomInfo->originX;
     gRoomOriginY = roomInfo->originY;
-    // LoadSprites(roomInfo->spriteData);
+
+    LoadSprites(roomInfo->spriteData);
 
     LoadTilemap(roomInfo->tilemap);
 

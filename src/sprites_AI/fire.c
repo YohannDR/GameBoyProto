@@ -4,12 +4,18 @@
 
 #include "sprite.h"
 
+extern const struct AnimData sFireAnim[];
+
 void Fire(void)
 {
-
+    if (gCurrentSprite.pose == 0)
+    {
+        gCurrentSprite.animPointer = sFireAnim;
+        gCurrentSprite.pose = 1;
+    }
 }
 
-const u8 sFlames_Graphics[] = {
+const u8 sFireGraphics[] = {
     5,
 
     0x40, 0x10, 0x10, 0xA0, 0xA0, 0x50, 0x60, 0x18, 0x18, 0x80, 0x50, 0x80, 0x80, 0x88, 0x70, 0x70,
