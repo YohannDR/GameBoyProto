@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+extern const u8 sLadderWoodWaterGraphics[];
+extern const u8 sOutsideGraphics[];
+
 extern const u8* const sTilesets[];
 
 #endif /* TILESETS_H */
