@@ -1,22 +1,45 @@
-    .module tilemap
+    .module transition
 
     .globl _UpdateTransitionVblank
 
+; This function is time critical, and has to be perfectly optimized to run as fast as possible
+; this allows us to barely have enough time to load 4 tiles
 _UpdateTransitionVblank:
-    ld a, (#_gDoorTransition)
+    ; Check whether the loader is busy
+    ld a, (#_gSpriteLoaderInfo + 0)
     or a, a
     ret Z
 
-    ld a, (#_gDoorTransition)
-    dec a
-    jr Z, UpdateNormalTransition
+    ; Get the vram addr in de
+    ld hl, #(_gSpriteLoaderInfo + 1)
+    ld a, (hl+)
+    ld c, a
+    ld a, (hl)
+    ld b, a
 
-    ld a, (#_gDoorTransition)
-    sub a, #0x02
-    jr Z, UpdateLoadingTransition
+    ; Get buffer address
+    ld hl, #(_gSpriteGraphicsBuffer)
 
-UpdateNormalTransition:
-    ret
+    ; Get amount of bytes to transfer
+    ld a, (#_gSpriteLoaderInfo + 7)
+    ld e, a
 
-UpdateLoadingTransition:
+LoadSpriteGfxLoop:
+    ; Perform the copy
+    ld a, (hl+)
+    ld (bc), a
+
+    ; Decrement counter
+    dec e
+
+    ; Check if we're done
+    ld a, e
+    or a, a
+    ret Z
+
+    ; Increment vram address
+    inc bc
+
+    jr LoadSpriteGfxLoop
+
     ret

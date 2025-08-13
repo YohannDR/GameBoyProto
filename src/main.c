@@ -64,23 +64,32 @@ void main(void)
 
         ClearAndResetOam();
 
-        if (gGameMode.main == GM_IN_GAME)
+        // If the sprite graphics loader is active, it takes absolute priority and fully hangs the game until its done
+        if (gSpriteLoaderInfo.state != SPRITE_LOADER_OFF)
         {
-            // Do stuff...
-            ScrollUpdate();
-            PlayerUpdate();
-            DoorUpdate();
-            PlayerDraw();
-            FadingUpdate();
-            UpdateSprites();
+            UpdateSpriteGraphicsLoading();
         }
-        else if (gGameMode.main == GM_TRANSITION)
+        else
         {
-            PlayerDraw();
-            TransitionUpdate();
-            FadingUpdate();
-            ScrollUpdate();
+            if (gGameMode.main == GM_IN_GAME)
+            {
+                // Do stuff...
+                ScrollUpdate();
+                PlayerUpdate();
+                DoorUpdate();
+                PlayerDraw();
+                FadingUpdate();
+                UpdateSprites();
+            }
+            else if (gGameMode.main == GM_TRANSITION)
+            {
+                PlayerDraw();
+                TransitionUpdate();
+                FadingUpdate();
+                ScrollUpdate();
+            }
         }
+
 
         // Done doing stuff, wait for v-blank
         WaitForVblank();
