@@ -16,6 +16,41 @@ struct Door gDoors[4];
 struct DoorTransition gDoorTransition;
 static u8 gCurrentNumberOfDoors;
 
+static void SetupSimpleDoorTransition(const struct Door* door)
+{
+    gDoorTransition.type = TRANSITION_TYPE_NORMAL;
+    gDoorTransition.stage = TRANSITION_STAGE_NORMAL_SCROLLING;
+    gDoorTransition.timer = 0;
+
+    if (door->x - gRoomOriginX - gCamera.x < SCREEN_SIZE_X_SUB_PIXEL / 2)
+        gDoorTransition.direction = TILEMAP_UPDATE_LEFT;
+    else
+        gDoorTransition.direction = TILEMAP_UPDATE_RIGHT;
+}
+
+static void PrepareSimpleTransition(const struct Door* door)
+{
+    const struct Door* dstDoor;
+
+    gBackgroundInfo.tilemapAnchorX -= SUB_PIXEL_TO_BLOCK(gRoomOriginX);
+    gBackgroundInfo.tilemapAnchorY -= SUB_PIXEL_TO_BLOCK(gRoomOriginY);
+
+    if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+    {
+        gCamera.left = UCHAR_MAX;
+        gCamera.right = 0;
+    }
+    else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+    {
+        gCamera.left = gTilemap.width - 1;
+        gCamera.right = gTilemap.width;
+    }
+
+    dstDoor = &sDoors[door->targetDoor];
+
+    SetupTilemapUpdateX(gDoorTransition.direction);
+}
+
 void DoorReset(void)
 {
     gCurrentNumberOfDoors = 0;
@@ -41,7 +76,7 @@ void DoorUpdate(void)
     door = gDoors;
     for (i = 0; i < gCurrentNumberOfDoors; i++, door++)
     {
-        if (gPlayerData.x + BLOCK_SIZE * 2 < door->x)
+        if (gPlayerData.x + PLAYER_WIDTH < door->x)
             continue;
 
         if (gPlayerData.y < door->y)
@@ -50,7 +85,7 @@ void DoorUpdate(void)
         if (gPlayerData.x > door->x + door->width * BLOCK_SIZE)
             continue;
 
-        if (gPlayerData.y - BLOCK_SIZE * 3 > door->y + door->height * BLOCK_SIZE)
+        if (gPlayerData.y - PLAYER_HEIGHT > door->y + door->height * BLOCK_SIZE)
             continue;
 
         gGameMode.main = GM_TRANSITION;
@@ -62,24 +97,9 @@ void DoorUpdate(void)
         }
         else
         {
-            gDoorTransition.type = TRANSITION_TYPE_NORMAL;
-            gDoorTransition.stage = TRANSITION_STAGE_NORMAL_SCROLLING;
-            gDoorTransition.direction = door->targetDoor == 1 ? TILEMAP_UPDATE_RIGHT : TILEMAP_UPDATE_LEFT;
-            gDoorTransition.timer = 0;
-
+            SetupSimpleDoorTransition(door);
             TransitionToRoom(sDoors[door->targetDoor].ownerRoom);
-
-            if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
-            {
-                gCamera.left = UCHAR_MAX;
-                gCamera.right = 0;
-            }
-            else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
-            {
-                gCamera.left = gTilemap.width - 1;
-                gCamera.right = gTilemap.width;
-            }
-            SetupTilemapUpdate(gDoorTransition.direction);
+            PrepareSimpleTransition(door);
         }
     }
 }
@@ -120,7 +140,7 @@ void TransitionUpdate(void)
         }
     
         if (!newBlock)
-            SetupTilemapUpdate(gDoorTransition.direction);
+            SetupTilemapUpdateX(gDoorTransition.direction);
 
         if (gDoorTransition.timer == SCREEN_SIZE_X_SUB_PIXEL / ROOM_TRANSITION_SPEED)
             gDoorTransition.stage = TRANSITION_STAGE_NORMAL_LAST_UPDATE;
@@ -130,12 +150,12 @@ void TransitionUpdate(void)
         if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
         {
             gBackgroundInfo.blockX++;
-            SetupTilemapUpdate(TILEMAP_UPDATE_RIGHT);
+            SetupTilemapUpdateX(TILEMAP_UPDATE_RIGHT);
         }
         else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
         {
             gBackgroundInfo.blockX--;
-            SetupTilemapUpdate(TILEMAP_UPDATE_LEFT);
+            SetupTilemapUpdateX(TILEMAP_UPDATE_LEFT);
         }
 
         gDoorTransition.stage = TRANSITION_STAGE_NORMAL_ENDING;
@@ -155,5 +175,8 @@ void TransitionUpdate(void)
             gCamera.x = gTilemap.width * BLOCK_SIZE - SCREEN_SIZE_X_SUB_PIXEL;
             gCamera.y = 0;
         }
+
+        gCamera.top = 0;
+        gCamera.bottom = SCREEN_SIZE_Y_BLOCK + 1;
     }
 }

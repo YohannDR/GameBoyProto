@@ -3,15 +3,15 @@
     .globl _TilemapUpdateVblank
 
 _TilemapUpdateVblank:
-    ld a, (#_gTilemapUpdateVerticalDirection)
+    ld a, (#_gTilemapUpdateDirectionX)
     or a, a
     jr Z, CheckUpdateVertical
 
-    ld a, (#_gTilemapUpdateVerticalDirection)
+    ld a, (#_gTilemapUpdateDirectionX)
     dec a
     jr Z, UpdateHorizontal
 
-    ld a, (#_gTilemapUpdateVerticalDirection)
+    ld a, (#_gTilemapUpdateDirectionX)
     sub a, #0x02
     jr Z, UpdateHorizontal
 
@@ -26,11 +26,11 @@ UpdateHorizontal:
     ld b, a
 
     ; Get tilemap pointer (in de)
-    ld de, #(_gTilemapUpdateBufferVertical)
+    ld de, #(_gTilemapUpdateBufferX)
 
     ; Use reserved tilemap byte as loop counter
     ld hl, #_gTilemap + 4
-    ld (hl), #0x12 + 2
+    ld (hl), #0x12 + 6
 
 UpdateHorizontalLoop:
     ld a, (de)
@@ -58,11 +58,11 @@ UpdateHorizontalLoop:
     jr UpdateHorizontalLoop
 
 CheckUpdateVertical:
-    ld a, (#_gTilemapUpdateHorizontalDirection)
+    ld a, (#_gTilemapUpdateDirectionY)
     sub a, #0x03
     jr Z, UpdateVertical
 
-    ld a, (#_gTilemapUpdateHorizontalDirection)
+    ld a, (#_gTilemapUpdateDirectionY)
     sub a, #0x04
     jr Z, UpdateVertical
 
@@ -77,11 +77,11 @@ UpdateVertical:
     ld b, a
 
     ; Get tilemap pointer (in de)
-    ld de, #(_gTilemapUpdateBufferHorizontal)
+    ld de, #(_gTilemapUpdateBufferY)
 
     ; Use reserved tilemap byte as loop counter
     ld hl, #_gTilemap + 4
-    ld (hl), #0x14 + 3
+    ld (hl), #0x14 + 6
 
 UpdateVerticalLoop:
     ld a, (de)

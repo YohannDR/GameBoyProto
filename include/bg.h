@@ -59,22 +59,8 @@ extern u8 gWindowY;
 
 extern struct TilemapInfo gTilemap;
 
-extern u8 gTilemapUpdateVerticalDirection;
-extern u8 gTilemapUpdateHorizontalDirection;
-
-/**
- * @brief These buffers holds the tiles that will be used to udpate the tilemap.
- * There's one buffer of a line update (horizontal) and one for a column update (vertical).
- * 
- * The buffer is updated during normal frame processing and used during v-blank, this allows to alleviate the v-blank code
- * since it already receives the processed buffer and just has to perform the copy.
- * 
- * Moreover, this also allows applying modifications to the tilemap without having to fully copy it into a RAM buffer,
- * since now we can easily decide what to send to the tilemap instead of just copying it from ROM.
- * 
- */
-extern u8 gTilemapUpdateBufferHorizontal[SCREEN_SIZE_X_BLOCK + 3];
-extern u8 gTilemapUpdateBufferVertical[SCREEN_SIZE_Y_BLOCK + 2];
+extern u8 gTilemapUpdateDirectionX;
+extern u8 gTilemapUpdateDirectionY;
 
 /**
  * @brief Loads a specified tilemap
@@ -91,11 +77,18 @@ void LoadTilemap(const u8* tilemap);
 void BindTilemap(const u8* tilemap);
 
 /**
- * @brief Sets up a tilemap update in the desired direction
+ * @brief Sets up a tilemap update in the desired direction (only for X, so left or right)
  * 
  * @param direction Direction
  */
-void SetupTilemapUpdate(u8 direction);
+void SetupTilemapUpdateX(u8 direction);
+
+/**
+ * @brief Sets up a tilemap update in the desired direction (only for Y, so top or bottom)
+ * 
+ * @param direction Direction
+ */
+void SetupTilemapUpdateY(u8 direction);
 
 /**
  * @brief Updates the tilemap during v-blank

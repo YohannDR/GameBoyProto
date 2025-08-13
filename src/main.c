@@ -51,11 +51,6 @@ static void InitGame(void)
     CallbackSetVblank(VblankCallback);
 }
 
-static u16 Test(u16 a)
-{
-    return (a & ~32) | (a % 32 + 1);
-}
-
 void main(void)
 {
     InitGame();
@@ -72,12 +67,12 @@ void main(void)
         if (gGameMode.main == GM_IN_GAME)
         {
             // Do stuff...
-            UpdateSprites();
+            ScrollUpdate();
             PlayerUpdate();
             DoorUpdate();
             PlayerDraw();
             FadingUpdate();
-            ScrollUpdate();
+            UpdateSprites();
         }
         else if (gGameMode.main == GM_TRANSITION)
         {
