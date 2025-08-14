@@ -19,9 +19,18 @@ struct PlayerMovement gPlayerMovement;
 extern const struct AnimData sPlayerAnim[];
 extern const u8 sPlayerGraphics[];
 
+#define LADDER_SPEED (PIXEL_SIZE)
+
 struct HitboxData {
     s8 axisOffset;
     s8 pointsOffset[3];
+};
+
+enum PlayerPose {
+    POSE_IDLE,
+    POSE_RUNNING,
+    POSE_JUMPING,
+    POSE_ON_LADDER,
 };
 
 static const struct HitboxData sHitboxLeft = {
@@ -68,6 +77,11 @@ static void PlayerInitPhysics(void)
     gPlayerPhysics.gravityUpwards = 1;
     gPlayerPhysics.gravityDownwards = 2;
     gPlayerPhysics.jumpingVelocity = -16;
+}
+
+static void PlayerSetPose(u8 pose)
+{
+    gPlayerData.pose = pose;
 }
 
 static void HandleHorizontalMovement(void)
@@ -123,9 +137,9 @@ static void HandleLeftCollision(void)
 
     mainAxis = gPlayerData.x + sHitboxLeft.axisOffset;
 
-    if (GetClipdataValue(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[0]) == CLIPDATA_SOLID || 
-        GetClipdataValue(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[1]) == CLIPDATA_SOLID || 
-        GetClipdataValue(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[2]) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[0]) == CLIPDATA_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[1]) == CLIPDATA_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[2]) == CLIPDATA_SOLID)
     {
         gPlayerMovement.xVelocity = 0;
         gPlayerData.x = gCollisionInfo.right;
@@ -138,9 +152,9 @@ static void HandleRightCollision(void)
 
     mainAxis = gPlayerData.x + sHitboxRight.axisOffset;
 
-    if (GetClipdataValue(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[0]) == CLIPDATA_SOLID || 
-        GetClipdataValue(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[1]) == CLIPDATA_SOLID || 
-        GetClipdataValue(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[2]) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[0]) == CLIPDATA_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[1]) == CLIPDATA_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[2]) == CLIPDATA_SOLID)
     {
         gPlayerMovement.xVelocity = 0;
         gPlayerData.x = gCollisionInfo.left - PLAYER_WIDTH;
@@ -153,9 +167,9 @@ static void HandleBottomCollision(void)
 
     mainAxis = gPlayerData.y + sHitboxBottom.axisOffset;
 
-    if (GetClipdataValue(gPlayerData.x + sHitboxBottom.pointsOffset[0], mainAxis) == CLIPDATA_SOLID || 
-        GetClipdataValue(gPlayerData.x + sHitboxBottom.pointsOffset[1], mainAxis) == CLIPDATA_SOLID || 
-        GetClipdataValue(gPlayerData.x + sHitboxBottom.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[0], mainAxis) == CLIPDATA_SOLID || 
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[1], mainAxis) == CLIPDATA_SOLID || 
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
     {
         gPlayerMovement.yVelocity = 0;
         gPlayerMovement.grounded = TRUE;
@@ -173,9 +187,9 @@ static void HandleTopCollision(void)
 
     mainAxis = gPlayerData.y + sHitboxTop.axisOffset;
 
-    if (GetClipdataValue(gPlayerData.x + sHitboxTop.pointsOffset[0], mainAxis) == CLIPDATA_SOLID ||
-        GetClipdataValue(gPlayerData.x + sHitboxTop.pointsOffset[1], mainAxis) == CLIPDATA_SOLID ||
-        GetClipdataValue(gPlayerData.x + sHitboxTop.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[0], mainAxis) == CLIPDATA_SOLID ||
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[1], mainAxis) == CLIPDATA_SOLID ||
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
     {
         gPlayerMovement.yVelocity = 0;
         gPlayerData.y = gCollisionInfo.bottom + PLAYER_HEIGHT;
@@ -256,6 +270,48 @@ static void UpdateAnimation(void)
     }
 }
 
+static void CheckForLadder(void)
+{
+    u8 left;
+    u8 right;
+
+    if (!(gChangedInput & KEY_UP))
+        return;
+
+    left = GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y - PLAYER_HEIGHT - PIXEL_SIZE);
+    right = GET_CLIPDATA_BEHAVIOR(gPlayerData.x, gPlayerData.y - PLAYER_HEIGHT - PIXEL_SIZE);
+
+    if (left == CLIP_BEHAVIOR_LADDER || right == CLIP_BEHAVIOR_LADDER)
+    {
+        PlayerSetPose(POSE_ON_LADDER);
+
+        gPlayerData.x &= BLOCK_POSITION_FLAG;
+
+        if (left != CLIP_BEHAVIOR_LADDER)
+            gPlayerData.x -= BLOCK_SIZE;
+        else if (right != CLIP_BEHAVIOR_LADDER)
+            gPlayerData.x += BLOCK_SIZE;
+    }
+}
+
+static void PlayerOnLadder(void)
+{
+    if (gButtonInput & KEY_DOWN)
+    {
+        gPlayerData.y += LADDER_SPEED;
+
+        if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y) != CLIP_BEHAVIOR_LADDER)
+            PlayerSetPose(POSE_IDLE);
+    }
+    else if (gButtonInput & KEY_UP)
+    {
+        gPlayerData.y -= LADDER_SPEED;
+
+        if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y - PIXEL_SIZE) != CLIP_BEHAVIOR_LADDER)
+            PlayerSetPose(POSE_IDLE);
+    }
+}
+
 void PlayerInit(void)
 {
     PlayerInitPhysics();
@@ -263,20 +319,25 @@ void PlayerInit(void)
 
     gPlayerData.x = BLOCK_SIZE * 3;
     gPlayerData.y = BLOCK_SIZE * 9;
+    gPlayerData.animPointer = sPlayerAnim;
 }
 
 void PlayerUpdate(void)
 {
-    if (gPlayerData.pose == 0)
+    switch (gPlayerData.pose)
     {
-        gPlayerData.animPointer = sPlayerAnim;
-        gPlayerData.pose = 1;
+        case POSE_ON_LADDER:
+            PlayerOnLadder();
+            break;
+
+        default:
+            HandleHorizontalMovement();
+            HandleVerticalMovement();
+            HandleTerrainCollision();
+            ApplyMovement();
+            CheckForLadder();
     }
 
-    HandleHorizontalMovement();
-    HandleVerticalMovement();
-    HandleTerrainCollision();
-    ApplyMovement();
     UpdateAnimation();
 
     if (gChangedInput & KEY_A)

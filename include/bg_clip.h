@@ -7,8 +7,20 @@
 enum ClipdataValue {
     CLIPDATA_AIR,
     CLIPDATA_SOLID,
+    CLIPDATA_LADDER,
+    CLIPDATA_LADDER_TOP,
 
     CLIPDATA_END
+};
+
+enum ClipdataCollision {
+    COLLISION_AIR,
+    COLLISION_SOLID,
+};
+
+enum ClipdataBehavior {
+    CLIP_BEHAVIOR_AIR,
+    CLIP_BEHAVIOR_LADDER,
 };
 
 /**
@@ -24,19 +36,22 @@ struct CollisionInfo {
     u16 left;
     // The X coordinate of the right of the block
     u16 right;
+    // The solidity of the block
+    u8 solidity;
+    // The behavior of the block
+    u8 behavior;
 };
 
 extern struct CollisionInfo gCollisionInfo;
 extern const u8* gCurrentCollisionTable;
 
 /**
- * @brief Gets a clipdata value at a given position
+ * @brief Gets information about a clipdata value at a given position, result is in @c gCollisionInfo
  * 
  * @param x X
  * @param y Y
- * @return u8 Clipdata value
  */
-u8 GetClipdataValue(u16 x, u16 y);
+void GetClipdataValue(u16 x, u16 y);
 
 /**
  * @brief Sets a background tilemap value at a given position
@@ -61,5 +76,8 @@ void DrawNumber(u16 x, u16 y, u8 number);
  * 
  */
 void ApplyBgChanges(void);
+
+#define GET_CLIPDATA_SOLIDITY(x, y) ((GetClipdataValue((x), (y)), gCollisionInfo.solidity))
+#define GET_CLIPDATA_BEHAVIOR(x, y) ((GetClipdataValue((x), (y)), gCollisionInfo.behavior))
 
 #endif /* BG_CLIP_H */
