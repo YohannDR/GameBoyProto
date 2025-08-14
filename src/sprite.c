@@ -170,7 +170,7 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
         gSpriteBuffer.part = part;
         gSpriteBuffer.ramSlot = i;
         gSpriteBuffer.gfxSlot = gfxSlot;
-        
+
         // And zero-out the rest
         gSpriteBuffer.pose = 0;
         gSpriteBuffer.currentAnimFrame = 0;
@@ -184,6 +184,22 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
         *sprite = gSpriteBuffer;
 
         return i;
+    }
+
+    return UCHAR_MAX;
+}
+
+u8 FindSprite(u8 type, u8 part)
+{
+    u8 i;
+
+    for (i = 0; i < ARRAY_SIZE(gSpriteData); i++)
+    {
+        if (!gSpriteData[i].status & SPRITE_STATUS_EXISTS)
+            continue;
+
+        if (gSpriteData[i].type == type && gSpriteData[i].part == part)
+            return i;
     }
 
     return UCHAR_MAX;

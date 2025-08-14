@@ -106,8 +106,8 @@ enum SpriteType {
     STYPE_NONE,
     STYPE_PORTAL,
     STYPE_FIRE,
-    STYPE_DOOR,
     STYPE_SHIP,
+    STYPE_WATER_DROP,
 
     STYPE_END
 };
@@ -169,6 +169,15 @@ extern struct SpriteLoaderInfo gSpriteLoaderInfo;
 u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot);
 
 /**
+ * @brief Finds the specified sprite with a certain part
+ * 
+ * @param type Sprite ItypeD
+ * @param part Sprite part
+ * @return u8 Sprite slot if it was found, UCHAR_MAX otherwise
+ */
+u8 FindSprite(u8 type, u8 part);
+
+/**
  * @brief Prepares the process of loading sprites graphics
  * 
  */
@@ -180,6 +189,10 @@ void PrepareSpriteGraphicsLoading(void);
  */
 void StartSpriteGraphicsLoading(void);
 
+/**
+ * @brief Updates the loading of the sprites graphics
+ * 
+ */
 void UpdateSpriteGraphicsLoading(void);
 
 /**

@@ -2,6 +2,7 @@
 
 #include "sprites_AI/fire.h"
 #include "sprites_AI/portal.h"
+#include "sprites_AI/water_drop.h"
 
 static void Dummy(void) {}
 
@@ -13,14 +14,14 @@ const Func_T sSpriteAiPointers[STYPE_END] = {
     [STYPE_NONE] = Dummy,
     [STYPE_PORTAL] = Portal,
     [STYPE_FIRE] = Fire,
-    [STYPE_DOOR] = Dummy,
-    [STYPE_SHIP] = Dummy
+    [STYPE_SHIP] = Dummy,
+    [STYPE_WATER_DROP] = WaterDrop
 };
 
 const u8* const sSpriteGraphicsPointers[STYPE_END] = {
     [STYPE_NONE] = sDummyGraphics,
     [STYPE_PORTAL] = sPortalGraphics,
     [STYPE_FIRE] = sFireGraphics,
-    [STYPE_DOOR] = sDummyGraphics,
-    [STYPE_SHIP] = sDummyGraphics
+    [STYPE_SHIP] = sDummyGraphics,
+    [STYPE_WATER_DROP] = sWaterDropGraphics
 };

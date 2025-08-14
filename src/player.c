@@ -141,9 +141,9 @@ static void HandleLeftCollision(void)
 
     mainAxis = gPlayerData.x + sHitboxLeft.axisOffset;
 
-    if (GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[0]) == CLIPDATA_SOLID || 
-        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[1]) == CLIPDATA_SOLID || 
-        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[2]) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[0]) == COLLISION_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[1]) == COLLISION_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxLeft.pointsOffset[2]) == COLLISION_SOLID)
     {
         gPlayerMovement.xVelocity = 0;
         gPlayerData.x = gCollisionInfo.right;
@@ -156,9 +156,9 @@ static void HandleRightCollision(void)
 
     mainAxis = gPlayerData.x + sHitboxRight.axisOffset;
 
-    if (GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[0]) == CLIPDATA_SOLID || 
-        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[1]) == CLIPDATA_SOLID || 
-        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[2]) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[0]) == COLLISION_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[1]) == COLLISION_SOLID || 
+        GET_CLIPDATA_SOLIDITY(mainAxis, gPlayerData.y + sHitboxRight.pointsOffset[2]) == COLLISION_SOLID)
     {
         gPlayerMovement.xVelocity = 0;
         gPlayerData.x = gCollisionInfo.left - PLAYER_WIDTH;
@@ -171,9 +171,9 @@ static void HandleBottomCollision(void)
 
     mainAxis = gPlayerData.y + sHitboxBottom.axisOffset;
 
-    if (GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[0], mainAxis) == CLIPDATA_SOLID || 
-        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[1], mainAxis) == CLIPDATA_SOLID || 
-        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[0], mainAxis) == COLLISION_SOLID || 
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[1], mainAxis) == COLLISION_SOLID || 
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxBottom.pointsOffset[2], mainAxis) == COLLISION_SOLID)
     {
         gPlayerMovement.yVelocity = 0;
         gPlayerMovement.grounded = TRUE;
@@ -191,9 +191,9 @@ static void HandleTopCollision(void)
 
     mainAxis = gPlayerData.y + sHitboxTop.axisOffset;
 
-    if (GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[0], mainAxis) == CLIPDATA_SOLID ||
-        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[1], mainAxis) == CLIPDATA_SOLID ||
-        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[2], mainAxis) == CLIPDATA_SOLID)
+    if (GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[0], mainAxis) == COLLISION_SOLID ||
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[1], mainAxis) == COLLISION_SOLID ||
+        GET_CLIPDATA_SOLIDITY(gPlayerData.x + sHitboxTop.pointsOffset[2], mainAxis) == COLLISION_SOLID)
     {
         gPlayerMovement.yVelocity = 0;
         gPlayerData.y = gCollisionInfo.bottom + PLAYER_HEIGHT;
@@ -322,7 +322,7 @@ void PlayerInit(void)
     PlayerLoadGraphics();
 
     gPlayerData.x = BLOCK_SIZE * 3;
-    gPlayerData.y = BLOCK_SIZE * 9;
+    gPlayerData.y = BLOCK_SIZE * 20;
     gPlayerData.animPointer = sPlayerAnim;
 }
 

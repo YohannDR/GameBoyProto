@@ -63,7 +63,25 @@ const u8 sRoom0_Tilemap[] = {
 };
 
 const struct RoomSprite sRoom0_SpriteData[] = {
-    [0] = ROOM_SPRITE_TERMINATOR
+    [0] = {
+        .x = 9,
+        .y = 17,
+        .id = STYPE_WATER_DROP,
+        .part = 0
+    },
+    [1] = {
+        .x = 11,
+        .y = 17,
+        .id = STYPE_WATER_DROP,
+        .part = 1
+    },
+    [2] = {
+        .x = 13,
+        .y = 17,
+        .id = STYPE_WATER_DROP,
+        .part = 2
+    },
+    [3] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom0_DoorData[] = {
