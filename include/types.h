@@ -94,7 +94,7 @@ typedef void(*Func_T)(void);
 #define BLOCK_POSITION_FLAG ((u16)~BLOCK_SIZE + ONE_SUB_PIXEL)
 
 /**
- * @brief Mask to filter out the sub pixel coordinates, effectively clamping to a block
+ * @brief Mask to filter out the block coordinates, effectively extracting the sub-pixel part
  * 
  */
 #define SUB_PIXEL_POSITION_FLAG (BLOCK_SIZE - ONE_SUB_PIXEL)

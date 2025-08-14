@@ -89,6 +89,8 @@ static void HandleHorizontalMovement(void)
     if (gButtonInput & KEY_LEFT)
     {
         gPlayerMovement.xVelocity -= gPlayerPhysics.xAcceleration;
+        gPlayerMovement.direction = KEY_LEFT;
+
         if (gPlayerMovement.xVelocity < -gPlayerPhysics.xVelocityCap)
             gPlayerMovement.xVelocity = -gPlayerPhysics.xVelocityCap;
     }
@@ -101,6 +103,8 @@ static void HandleHorizontalMovement(void)
     if (gButtonInput & KEY_RIGHT)
     {
         gPlayerMovement.xVelocity += gPlayerPhysics.xAcceleration;
+        gPlayerMovement.direction = KEY_RIGHT;
+
         if (gPlayerMovement.xVelocity > gPlayerPhysics.xVelocityCap)
             gPlayerMovement.xVelocity = gPlayerPhysics.xVelocityCap;
     }
@@ -336,6 +340,11 @@ void PlayerUpdate(void)
             HandleTerrainCollision();
             ApplyMovement();
             CheckForLadder();
+
+            if (gPlayerMovement.direction & KEY_LEFT)
+                gPlayerData.properties &= ~SPRITE_PROPERTY_X_FLIP;
+            else
+                gPlayerData.properties |= SPRITE_PROPERTY_X_FLIP;
     }
 
     UpdateAnimation();
@@ -365,6 +374,7 @@ void PlayerDraw(void)
     u8 i;
     u8 x;
     u8 y;
+    u8 properties;
 
     // Get the target slot in the oam buffer
     oam = OAM_BUFFER_SLOT(gNextOamSlot);
@@ -382,6 +392,7 @@ void PlayerDraw(void)
     // Get the sprite's attributes
     x = SUB_PIXEL_TO_PIXEL(gPlayerData.x) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
     y = SUB_PIXEL_TO_PIXEL(gPlayerData.y) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
+    properties = (gPlayerData.properties & SPRITE_PROPERTY_GFX) << 4;
 
     for (i = 0; i < partCount; i++)
     {
@@ -389,12 +400,26 @@ void PlayerDraw(void)
 
         // Y position
         *oam++ = (*oamData++) + y;
+        
         // X position
-        *oam++ = (*oamData++) + x;
+        if (gPlayerData.properties & SPRITE_PROPERTY_X_FLIP)
+        {
+            // If the sprite is X flipped, we need to apply the oam X offset in the opposite direction
+            // as well as account for a full tile, hence the - 8
+            *oam = x - (*oamData - 8);
+        }
+        else
+        {
+            *oam = (*oamData) + x;
+        }
+
+        oam++;
+        oamData++;
+
         // Tile index
         *oam++ = (*oamData++);
         // Attribute flags
-        *oam++ = (*oamData++);
+        *oam++ = (*oamData++) ^ properties;
     }
 
     // Update the next free oam slot

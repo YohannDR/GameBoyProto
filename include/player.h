@@ -19,6 +19,8 @@ struct PlayerData {
     // Pointer to the current animation
     const struct AnimData* animPointer;
 
+    u8 properties;
+
     // Work variable, essentially free space
     u8 work1;
     // Work variable, essentially free space
@@ -58,6 +60,7 @@ struct PlayerMovement {
     s8 xVelocity;
     s8 yVelocity;
     u8 grounded;
+    u8 direction;
 };
 
 extern struct PlayerData gPlayerData;
