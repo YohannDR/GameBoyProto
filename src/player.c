@@ -356,22 +356,22 @@ const u8 sPlayerGraphics[] = {
 
 static const u8 sPlayerAnim_Frame0[OAM_DATA_SIZE(6)] = {
     6,
-    OAM_POS(-8), OAM_POS(0), 3, 0,
-    OAM_POS(-8), OAM_POS(8), 6, 0,
-    OAM_POS(-16), OAM_POS(0), 2, 0,
-    OAM_POS(-16), OAM_POS(8), 5, 0,
-    OAM_POS(-24), OAM_POS(0), 1, 0,
     OAM_POS(-24), OAM_POS(8), 4, 0,
+    OAM_POS(-24), OAM_POS(0), 1, 0,
+    OAM_POS(-16), OAM_POS(8), 5, 0,
+    OAM_POS(-16), OAM_POS(0), 2, 0,
+    OAM_POS(-8), OAM_POS(8), 6, 0,
+    OAM_POS(-8), OAM_POS(0), 3, 0,
 };
 
 static const u8 sPlayerAnim_Frame1[OAM_DATA_SIZE(6)] = {
     6,
-    OAM_POS(-8), OAM_POS(0), 7, 0,
-    OAM_POS(-8), OAM_POS(8), 8, 0,
-    OAM_POS(-14), OAM_POS(0), 2, 0,
-    OAM_POS(-14), OAM_POS(8), 5, 0,
-    OAM_POS(-22), OAM_POS(0), 1, 0,
     OAM_POS(-22), OAM_POS(8), 4, 0,
+    OAM_POS(-22), OAM_POS(0), 1, 0,
+    OAM_POS(-14), OAM_POS(8), 5, 0,
+    OAM_POS(-14), OAM_POS(0), 2, 0,
+    OAM_POS(-8), OAM_POS(8), 8, 0,
+    OAM_POS(-8), OAM_POS(0), 7, 0,
 };
 
 const struct AnimData sPlayerAnim[] = {
