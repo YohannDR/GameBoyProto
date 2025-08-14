@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+extern const u8 sFireGraphics[];
+
 void Fire(void);
 
 #endif /* FIRE_H */

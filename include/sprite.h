@@ -74,12 +74,40 @@ struct Sprite {
 };
 
 /**
+ * @brief Information about the multi frame sprite graphics loading process
+ * 
+ */
+struct SpriteLoaderInfo {
+    // The state of the loader
+    u8 state;
+    // The current VRAM address we're writting to
+    u8* vramAddr;
+    // The current ROM gfx address we're reading from
+    const u8* gfxAddr;
+    // The amount of tiles we have loaded so far
+    u8 nbrTilesLoaded;
+    // The number of tiles to load for the current graphics
+    u8 nbrTilesToLoad;
+    // The amount of bytes we actually buffered
+    u8 nbrBytesBuffered;
+};
+
+enum SpriteLoaderInfoState {
+    SPRITE_LOADER_OFF,
+    SPRITE_LOADER_ON,
+    SPRITE_LOADER_LAST_UPDATE,
+};
+
+/**
  * @brief The different types of sprites
  * 
  */
 enum SpriteType {
     STYPE_NONE,
-    STYPE_DUMMY,
+    STYPE_PORTAL,
+    STYPE_FIRE,
+    STYPE_DOOR,
+    STYPE_SHIP,
 
     STYPE_END
 };
@@ -126,6 +154,7 @@ enum SpriteType {
 extern struct Sprite gSpriteData[20];
 // Holds the current sprite being processed
 extern struct Sprite gCurrentSprite;
+extern struct SpriteLoaderInfo gSpriteLoaderInfo;
 
 /**
  * @brief Spawns a new sprite
@@ -140,14 +169,26 @@ extern struct Sprite gCurrentSprite;
 u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot);
 
 /**
- * @brief Loads graphics (if necessary) for a sprite
+ * @brief Prepares the process of loading sprites graphics
  * 
- * IMPORTANT : This function assumes it has access to VRAM, so only use it in a blanking context (v-blank, h-blank, or forced blank)
+ */
+void PrepareSpriteGraphicsLoading(void);
+
+/**
+ * @brief Starts the processus of loading sprites graphics during v-blank
+ * 
+ */
+void StartSpriteGraphicsLoading(void);
+
+void UpdateSpriteGraphicsLoading(void);
+
+/**
+ * @brief Queues a sprite's graphics (if necessary)
  * 
  * @param spriteId Sprite id
  * @return u8 Graphics tile index
  */
-u8 LoadSpriteGraphics(u8 spriteId);
+u8 QueueSpriteGraphics(u8 spriteId);
 
 /**
  * @brief Updates the sprites
