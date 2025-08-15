@@ -4,13 +4,13 @@
 
 #include "sprite.h"
 
-extern const struct AnimData sFireAnim[];
+extern const struct AnimData sFireAnim_Idle[];
 
 void Fire(void)
 {
     if (gCurrentSprite.pose == 0)
     {
-        gCurrentSprite.animPointer = sFireAnim;
+        gCurrentSprite.animPointer = sFireAnim_Idle;
         gCurrentSprite.pose = 1;
     }
 }
@@ -25,77 +25,77 @@ const u8 sFireGraphics[] = {
     0x00, 0x00, 0x40, 0x00, 0x40, 0xA0, 0x20, 0x90, 0x90, 0x08, 0x00, 0x88, 0x80, 0x90, 0xE0, 0xE0,
 };
 
-static const u8 sFireAnim_Frame0[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame0[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 0, 0,
 };
 
-static const u8 sFireAnim_Frame1[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame1[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 1, 0,
 };
 
-static const u8 sFireAnim_Frame2[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame2[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 2, 0,
 };
 
-static const u8 sFireAnim_Frame3[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame3[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 1, 0,
 };
 
-static const u8 sFireAnim_Frame4[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame4[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 4, 0,
 };
 
-static const u8 sFireAnim_Frame5[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame5[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 3, 0,
 };
 
-static const u8 sFireAnim_Frame6[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame6[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 2, 0,
 };
 
-static const u8 sFireAnim_Frame7[OAM_DATA_SIZE(1)] = {
+static const u8 sFireAnim_Idle_Frame7[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 1, 0,
 };
 
-const struct AnimData sFireAnim[] = {
+const struct AnimData sFireAnim_Idle[] = {
     [0] = {
-        .oamPointer = sFireAnim_Frame0,
+        .oamPointer = sFireAnim_Idle_Frame0,
         .duration = 20,
     },
     [1] = {
-        .oamPointer = sFireAnim_Frame1,
+        .oamPointer = sFireAnim_Idle_Frame1,
         .duration = 20,
     },
     [2] = {
-        .oamPointer = sFireAnim_Frame2,
+        .oamPointer = sFireAnim_Idle_Frame2,
         .duration = 20,
     },
     [3] = {
-        .oamPointer = sFireAnim_Frame3,
+        .oamPointer = sFireAnim_Idle_Frame3,
         .duration = 20,
     },
     [4] = {
-        .oamPointer = sFireAnim_Frame4,
+        .oamPointer = sFireAnim_Idle_Frame4,
         .duration = 20,
     },
     [5] = {
-        .oamPointer = sFireAnim_Frame5,
+        .oamPointer = sFireAnim_Idle_Frame5,
         .duration = 20,
     },
     [6] = {
-        .oamPointer = sFireAnim_Frame6,
+        .oamPointer = sFireAnim_Idle_Frame6,
         .duration = 20,
     },
     [7] = {
-        .oamPointer = sFireAnim_Frame7,
+        .oamPointer = sFireAnim_Idle_Frame7,
         .duration = 20,
     },
     [8] = SPRITE_ANIM_TERMINATOR

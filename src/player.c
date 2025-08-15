@@ -16,7 +16,7 @@ struct PlayerData gPlayerData;
 struct PlayerPhysics gPlayerPhysics;
 struct PlayerMovement gPlayerMovement;
 
-extern const struct AnimData sPlayerAnim[];
+extern const struct AnimData sPlayerAnim_Idle[];
 extern const u8 sPlayerGraphics[];
 
 #define LADDER_SPEED (PIXEL_SIZE)
@@ -323,7 +323,7 @@ void PlayerInit(void)
 
     gPlayerData.x = BLOCK_SIZE * 3;
     gPlayerData.y = BLOCK_SIZE * 20;
-    gPlayerData.animPointer = sPlayerAnim;
+    gPlayerData.animPointer = sPlayerAnim_Idle;
 }
 
 void PlayerUpdate(void)
@@ -440,7 +440,7 @@ const u8 sPlayerGraphics[] = {
     0x00, 0xE0, 0x00, 0xE0, 0x00, 0xE0, 0x80, 0xE0, 0x80, 0xE0, 0xE0, 0x80, 0x00, 0xC0, 0x00, 0xC0,
 };
 
-static const u8 sPlayerAnim_Frame0[OAM_DATA_SIZE(6)] = {
+static const u8 sPlayerAnim_Idle_Frame0[OAM_DATA_SIZE(6)] = {
     6,
     OAM_POS(-24), OAM_POS(8), 4, 0,
     OAM_POS(-24), OAM_POS(0), 1, 0,
@@ -450,7 +450,7 @@ static const u8 sPlayerAnim_Frame0[OAM_DATA_SIZE(6)] = {
     OAM_POS(-8), OAM_POS(0), 3, 0,
 };
 
-static const u8 sPlayerAnim_Frame1[OAM_DATA_SIZE(6)] = {
+static const u8 sPlayerAnim_Idle_Frame1[OAM_DATA_SIZE(6)] = {
     6,
     OAM_POS(-22), OAM_POS(8), 4, 0,
     OAM_POS(-22), OAM_POS(0), 1, 0,
@@ -460,13 +460,13 @@ static const u8 sPlayerAnim_Frame1[OAM_DATA_SIZE(6)] = {
     OAM_POS(-8), OAM_POS(0), 7, 0,
 };
 
-const struct AnimData sPlayerAnim[] = {
+const struct AnimData sPlayerAnim_Idle[] = {
     [0] = {
-        .oamPointer = sPlayerAnim_Frame0,
+        .oamPointer = sPlayerAnim_Idle_Frame0,
         .duration = 50,
     },
     [1] = {
-        .oamPointer = sPlayerAnim_Frame1,
+        .oamPointer = sPlayerAnim_Idle_Frame1,
         .duration = 50,
     },
     [2] = SPRITE_ANIM_TERMINATOR
