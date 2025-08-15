@@ -63,6 +63,15 @@ struct Sprite {
     // Where the graphics for that sprite are allocated in VRAM (id of the first tile)
     u8 gfxSlot;
 
+    // How far the sprite extends visually on the left
+    s8 drawDistanceLeft;
+    // How far the sprite extends visually on the right
+    s8 drawDistanceRight;
+    // How far the sprite extends visually on the top
+    s8 drawDistanceTop;
+    // How far the sprite extends visually on the bottom
+    s8 drawDistanceBottom;
+
     // Work variable, essentially free space
     u8 work1;
     // Work variable, essentially free space

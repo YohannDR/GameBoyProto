@@ -70,7 +70,7 @@ u8 gSpriteGraphicsBuffer[16 * 4];
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
 
-void SpriteDraw(void)
+static void SpriteDraw(void)
 {
     u8* oam;
     const u8* oamData;
@@ -119,7 +119,45 @@ void SpriteDraw(void)
 
 static void SpriteUpdateOnScreenFlag(void)
 {
-    // TODO implement
+    u16 left;
+    u16 right;
+    u16 top;
+    u16 bottom;
+    u16 bgX;
+    u16 bgY;
+
+    bgX = gBackgroundInfo.x + BLOCK_SIZE;
+
+    right = gCurrentSprite.x + PIXEL_TO_SUB_PIXEL(gCurrentSprite.drawDistanceRight);
+    if (bgX >= right)
+    {
+        gCurrentSprite.status &= ~SPRITE_STATUS_ON_SCREEN;
+        return;
+    }
+
+    left = gCurrentSprite.x + PIXEL_TO_SUB_PIXEL(gCurrentSprite.drawDistanceLeft);
+    if (bgX + SCREEN_SIZE_X_SUB_PIXEL <= left)
+    {
+        gCurrentSprite.status &= ~SPRITE_STATUS_ON_SCREEN;
+        return;
+    }
+
+    bgY = gBackgroundInfo.y + BLOCK_SIZE * 2;
+
+    bottom = gCurrentSprite.y + PIXEL_TO_SUB_PIXEL(gCurrentSprite.drawDistanceBottom);
+    if (bgY >= bottom)
+    {
+        gCurrentSprite.status &= ~SPRITE_STATUS_ON_SCREEN;
+        return;
+    }
+
+    top = gCurrentSprite.y + PIXEL_TO_SUB_PIXEL(gCurrentSprite.drawDistanceTop);
+    if (bgY + SCREEN_SIZE_Y_SUB_PIXEL <= top)
+    {
+        gCurrentSprite.status &= ~SPRITE_STATUS_ON_SCREEN;
+        return;
+    }
+
     gCurrentSprite.status |= SPRITE_STATUS_ON_SCREEN;
 }
 
@@ -176,6 +214,10 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
         gSpriteBuffer.currentAnimFrame = 0;
         gSpriteBuffer.animTimer = 0;
         gSpriteBuffer.animPointer = sSpriteDefaultAnim;
+        gSpriteBuffer.drawDistanceLeft = 0;
+        gSpriteBuffer.drawDistanceRight = 0;
+        gSpriteBuffer.drawDistanceTop = 0;
+        gSpriteBuffer.drawDistanceBottom = 0;
         gSpriteBuffer.work1 = 0;
         gSpriteBuffer.work2 = 0;
         gSpriteBuffer.work3 = 0;

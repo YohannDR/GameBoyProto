@@ -12,6 +12,11 @@ void Fire(void)
     {
         gCurrentSprite.animPointer = sFireAnim_Idle;
         gCurrentSprite.pose = 1;
+
+        gCurrentSprite.drawDistanceLeft = SUB_PIXEL_TO_PIXEL(0);
+        gCurrentSprite.drawDistanceRight = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(0);
     }
 }
 
@@ -27,42 +32,42 @@ const u8 sFireGraphics[] = {
 
 static const u8 sFireAnim_Idle_Frame0[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 0, 0,
+    OAM_POS(-8), OAM_POS(0), 0, 0,
 };
 
 static const u8 sFireAnim_Idle_Frame1[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 1, 0,
+    OAM_POS(-8), OAM_POS(0), 1, 0,
 };
 
 static const u8 sFireAnim_Idle_Frame2[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 2, 0,
+    OAM_POS(-8), OAM_POS(0), 2, 0,
 };
 
 static const u8 sFireAnim_Idle_Frame3[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 1, 0,
+    OAM_POS(-8), OAM_POS(0), 1, 0,
 };
 
 static const u8 sFireAnim_Idle_Frame4[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 4, 0,
+    OAM_POS(-8), OAM_POS(0), 4, 0,
 };
 
 static const u8 sFireAnim_Idle_Frame5[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 3, 0,
+    OAM_POS(-8), OAM_POS(0), 3, 0,
 };
 
 static const u8 sFireAnim_Idle_Frame6[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 2, 0,
+    OAM_POS(-8), OAM_POS(0), 2, 0,
 };
 
 static const u8 sFireAnim_Idle_Frame7[OAM_DATA_SIZE(1)] = {
     1,
-    OAM_POS(0), OAM_POS(0), 1, 0,
+    OAM_POS(-8), OAM_POS(0), 1, 0,
 };
 
 const struct AnimData sFireAnim_Idle[] = {

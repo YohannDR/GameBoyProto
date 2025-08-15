@@ -22,6 +22,11 @@ void MovingPlatform(void)
         gCurrentSprite.animPointer = sMovingPlatformAnim_Idle;
 
         gCurrentSprite.work1 = 60;
+
+        gCurrentSprite.drawDistanceLeft = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE + HALF_BLOCK_SIZE);
+        gCurrentSprite.drawDistanceRight = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE + HALF_BLOCK_SIZE);
+        gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(0);
         return;
     }
 

@@ -37,6 +37,11 @@ void WaterDrop(void)
             gCurrentSprite.pose = POSE_FLYING;
 
         gCurrentSprite.animPointer = sWaterDropAnim_Idle;
+
+        gCurrentSprite.drawDistanceLeft = SUB_PIXEL_TO_PIXEL(0);
+        gCurrentSprite.drawDistanceRight = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(0);
     }
     else if (gCurrentSprite.pose == POSE_FALLING)
     {
