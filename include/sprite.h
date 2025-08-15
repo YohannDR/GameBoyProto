@@ -108,6 +108,7 @@ enum SpriteType {
     STYPE_FIRE,
     STYPE_SHIP,
     STYPE_WATER_DROP,
+    STYPE_MOVING_PLATFORM,
 
     STYPE_END
 };

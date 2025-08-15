@@ -64,24 +64,30 @@ const u8 sRoom0_Tilemap[] = {
 
 const struct RoomSprite sRoom0_SpriteData[] = {
     [0] = {
-        .x = 9,
-        .y = 17,
-        .id = STYPE_WATER_DROP,
+        .x = 10,
+        .y = 16,
+        .id = STYPE_MOVING_PLATFORM,
         .part = 0
     },
     [1] = {
-        .x = 11,
-        .y = 17,
-        .id = STYPE_WATER_DROP,
+        .x = 14,
+        .y = 16,
+        .id = STYPE_MOVING_PLATFORM,
         .part = 1
     },
     [2] = {
-        .x = 13,
-        .y = 17,
-        .id = STYPE_WATER_DROP,
+        .x = 18,
+        .y = 16,
+        .id = STYPE_MOVING_PLATFORM,
         .part = 2
     },
-    [3] = ROOM_SPRITE_TERMINATOR
+    [3] = {
+        .x = 22,
+        .y = 16,
+        .id = STYPE_MOVING_PLATFORM,
+        .part = 3
+    },
+    [4] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom0_DoorData[] = {
