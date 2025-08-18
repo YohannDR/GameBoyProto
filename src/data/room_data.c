@@ -22,7 +22,7 @@ const struct RoomInfo sRooms[] = {
         .spriteData = sRoom1_SpriteData,
         .doorData = sRoom1_DoorData,
         .collisionTable = 0,
-        .originX = SCREEN_SIZE_X_SUB_PIXEL * 2,
+        .originX = SCREEN_SIZE_X_SUB_PIXEL * 0,
         .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
     },
 };

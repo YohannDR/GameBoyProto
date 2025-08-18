@@ -2,7 +2,7 @@
 
 const struct Door sDoors[] = {
     [0] = {
-        .x = 38,
+        .x = 0,
         .y = 11,
         .ownerRoom = 0,
         .height = 4,
