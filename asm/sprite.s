@@ -1,6 +1,76 @@
     .module sprite
 
     .globl _UpdateSpritesAsm
+    .globl _SpriteUpdateAnimationAsm
+
+_SpriteUpdateAnimationAsm:
+    ; Get current animation frame
+    ld a, (_gCurrentSprite + 9)
+    ld c, a
+    ; Multiply by 3
+    add a, a
+    add a, c
+    ld c, a
+    ld b, #0x00
+
+    ; Get anim pointer in hl
+    ld hl, #_gCurrentSprite + 11
+    ld a, (hl+)
+    ld h, (hl)
+    ld l, a
+
+    ; Index anim pointer using bc
+    add hl, bc
+
+    ; Offset into timer field
+    inc hl
+    inc hl
+
+    ; Increment animation timer
+    ld bc, #_gCurrentSprite + 10
+    ld a, (bc)
+    inc a
+    ; Save this in e, we'll use it later and it's less expensive than reloading it
+    ld e, a
+    ld (bc), a
+
+    ; Load frame duration, we can increment hl here once, if doesn't cost an additinal cycle and we may need to increase the pointer later
+    ld a, (hl+)
+    ; Compare frame duration and current timer
+    sub a, e
+    ret NC
+
+    ; Reset animation timer
+    xor a, a
+    ld (bc), a
+
+    ; Decrement to reach the current frame field
+    dec bc
+
+    ; Increment current frame
+    ld a, (bc)
+    inc a
+    ld (bc), a
+
+    ; Goto next frame in the anim pointe
+    inc hl
+    inc hl
+
+    ; Get duration of the next frame
+    ld a, (hl)
+
+    ; Check is 0
+    or a, a
+    ret NZ
+
+    ; Reset animation frame to loop the animation
+    ld (bc), a
+
+    ; Set the anim ended flag
+    ld hl, #_gCurrentSprite
+    set 3, (hl)
+
+    ret
 
 _UpdateSpritesAsm:
     ld hl, #(_gSpriteData)
@@ -33,7 +103,7 @@ _UpdateSpritesAsm:
     push hl
 
     call _SpriteUpdateOnScreenFlag
-    call _SpriteUpdateAnimation
+    call _SpriteUpdateAnimationAsm
 
     ; Call AI
     ld a, (#_gCurrentSprite + 5)

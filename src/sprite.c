@@ -71,6 +71,8 @@ u8 gSpriteGraphicsBuffer[16 * 4];
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
 
+ASM_IMPL void SpriteUpdateAnimationAsm(void);
+
 void SpriteDraw(void)
 {
     u8* oam;
