@@ -14,7 +14,7 @@ const struct RoomInfo sRooms[] = {
         .doorData = sRoom0_DoorData,
         .collisionTable = 0,
         .originX = SCREEN_SIZE_X_SUB_PIXEL * 0,
-        .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
+        .originY = SCREEN_SIZE_X_SUB_PIXEL * 5984,
     },
     [1] = {
         .tilemap = sRoom1_Tilemap,
@@ -23,6 +23,6 @@ const struct RoomInfo sRooms[] = {
         .doorData = sRoom1_DoorData,
         .collisionTable = 0,
         .originX = SCREEN_SIZE_X_SUB_PIXEL * 2,
-        .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
+        .originY = SCREEN_SIZE_X_SUB_PIXEL * 5984,
     },
 };
