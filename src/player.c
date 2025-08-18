@@ -322,7 +322,7 @@ void PlayerInit(void)
     PlayerLoadGraphics();
 
     gPlayerData.x = BLOCK_SIZE * 3;
-    gPlayerData.y = BLOCK_SIZE * 20;
+    gPlayerData.y = BLOCK_SIZE * 19;
     gPlayerData.animPointer = sPlayerAnim_Idle;
 }
 
