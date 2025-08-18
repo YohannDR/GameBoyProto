@@ -16,6 +16,8 @@ u8 gWindowY;
 
 struct TilemapInfo gTilemap;
 
+static u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 8];
+
 u8 gTilemapUpdateDirectionX;
 
 /**
@@ -37,6 +39,27 @@ u8 gTilemapUpdateBufferY[SCREEN_SIZE_X_BLOCK + TILEMAP_UPDATE_Y_OVERDRAW];
 #define DEFAULT_LOAD_Y 32
 #define DEFAULT_LOAD_X 22
 
+static void DecompressTilemap(const u8* tilemap)
+{
+    u8 amount;
+    u8 value;
+    u8* dst;
+
+    dst = gDecompressedTilemap;
+    for (;;)
+    {
+        amount = *tilemap++;
+
+        if (amount == 0)
+            break;
+
+        value = *tilemap++;
+
+        while (amount--)
+            *dst++ = value;
+    }
+}
+
 void LoadTilemap(const u8* tilemap)
 {
     u8 i;
@@ -46,9 +69,10 @@ void LoadTilemap(const u8* tilemap)
     // A tilemap should always start with its width and height, then the data
     gTilemap.width = *tilemap++;
     gTilemap.height = *tilemap++;
-    gTilemap.tilemap = tilemap;
+    DecompressTilemap(tilemap);
+    gTilemap.tilemap = gDecompressedTilemap;
 
-    tilemap = &tilemap[gBackgroundInfo.blockY * gTilemap.width + gBackgroundInfo.blockX];
+    tilemap = &gTilemap.tilemap[gBackgroundInfo.blockY * gTilemap.width + gBackgroundInfo.blockX];
 
     addr = (u8*)(VRAM_BASE + 0x1800);
 
