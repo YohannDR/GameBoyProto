@@ -2,6 +2,7 @@
 #define SPRITE_H
 
 #include "types.h"
+#include "macros.h"
 
 /**
  * @brief Animation data about a sprite
@@ -218,5 +219,7 @@ u8 QueueSpriteGraphics(u8 spriteId);
  * 
  */
 void UpdateSprites(void);
+
+ASM_IMPL void UpdateSpritesAsm(void);
 
 #endif /* SPRITE_H */

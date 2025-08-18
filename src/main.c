@@ -75,11 +75,11 @@ void main(void)
             {
                 // Do stuff...
                 ScrollUpdate();
-                PlayerUpdate();
+                // PlayerUpdate();
                 DoorUpdate();
-                PlayerDraw();
+                // PlayerDraw();
                 FadingUpdate();
-                UpdateSprites();
+                UpdateSpritesAsm();
             }
             else if (gGameMode.main == GM_TRANSITION)
             {
@@ -89,7 +89,6 @@ void main(void)
                 ScrollUpdate();
             }
         }
-
 
         // Done doing stuff, wait for v-blank
         WaitForVblank();

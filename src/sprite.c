@@ -14,6 +14,7 @@
 extern const struct AnimData sSpriteDefaultAnim[];
 
 struct Sprite gSpriteData[20];
+u8 gEnemiesLeftToProcess;
 
 // This might seem sub-optimal, as this requires a lot of memcpy per frame (2 * sprite amount)
 // But this is a relatively low overhead compared to passing the current sprite as a pointer as a parameter
@@ -70,7 +71,7 @@ u8 gSpriteGraphicsBuffer[16 * 4];
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
 
-static void SpriteDraw(void)
+void SpriteDraw(void)
 {
     u8* oam;
     const u8* oamData;
@@ -117,7 +118,7 @@ static void SpriteDraw(void)
     gNextOamSlot += partCount;
 }
 
-static void SpriteUpdateOnScreenFlag(void)
+void SpriteUpdateOnScreenFlag(void)
 {
     u16 left;
     u16 right;
@@ -161,7 +162,7 @@ static void SpriteUpdateOnScreenFlag(void)
     gCurrentSprite.status |= SPRITE_STATUS_ON_SCREEN;
 }
 
-static void SpriteUpdateAnimation(void)
+void SpriteUpdateAnimation(void)
 {
     const struct AnimData* anim;
 
@@ -201,7 +202,7 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
         gSpriteBuffer = *sprite;
 
         // Set parameters and default values
-        gSpriteBuffer.status = SPRITE_STATUS_EXISTS;
+        gSpriteBuffer.status = SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN;
         gSpriteBuffer.x = x;
         gSpriteBuffer.y = y;
         gSpriteBuffer.type = type;
@@ -401,10 +402,9 @@ void UpdateSprites(void)
     u8 i;
     struct Sprite* sprite;
 
-    for (i = 0; i < ARRAY_SIZE(gSpriteData); i++)
+    sprite = gSpriteData;
+    for (i = 0; i < ARRAY_SIZE(gSpriteData); i++, sprite++)
     {
-        sprite = &gSpriteData[i];
-
         if (!(sprite->status & SPRITE_STATUS_EXISTS))
             continue;
 
