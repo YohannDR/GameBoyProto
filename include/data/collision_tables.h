@@ -4,6 +4,7 @@
 #include "types.h"
 
 extern const u8 sCollisionTable_Test[];
+extern const u8 sCollisionTable_Apartment[];
 extern const u8* const sCollisionTables[];
 
 #endif /* COLLISION_TABLES_H */

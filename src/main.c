@@ -41,7 +41,7 @@ static void InitGame(void)
 
     WaitForVblank();
     Write8(REG_LCDC, 0);
-    LoadGraphics(sTilesets[1]);
+    LoadGraphics(sTilesets[2]);
 
     SetCameraPosition(0, 0);
     PlayerInit();
