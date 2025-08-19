@@ -3,6 +3,7 @@
 
 const u8* const sCollisionTables[] = {
     sCollisionTable_Test,
+    sCollisionTable_Apartment,
 };
 
 const u8 sCollisionTable_Test[] = {
@@ -93,5 +94,19 @@ const u8 sCollisionTable_Test[] = {
     CLIPDATA_AIR,
     CLIPDATA_AIR,
     CLIPDATA_AIR,
+    CLIPDATA_AIR,
+};
+
+const u8 sCollisionTable_Apartment[] = {
+    CLIPDATA_LADDER,
+    CLIPDATA_LADDER,
+    CLIPDATA_SOLID,
+    CLIPDATA_SOLID,
+    CLIPDATA_SOLID,
+    CLIPDATA_SOLID,
+    CLIPDATA_SOLID,
+    CLIPDATA_SOLID,
+    CLIPDATA_SOLID,
+    CLIPDATA_SOLID,
     CLIPDATA_AIR,
 };
