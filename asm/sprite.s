@@ -3,6 +3,7 @@
     .globl _UpdateSpritesAsm
     .globl _SpriteUpdateAnimationAsm
     .globl _SpriteDrawAsm
+    .globl _SpriteUpdateOnScreenFlagAsm
 
 _SpriteComputeCameraPosition:
     ld hl, #_gCurrentSprite + 1
@@ -44,6 +45,130 @@ _SpriteComputeCameraPosition:
     ld a, c
     sub a, e
     ld (#_gSpriteScreenY), a
+    ret
+
+_SpriteUpdateOnScreenFlagAsm:
+    ; Clear the on screen flag
+    ld a, (_gCurrentSprite + 0)
+    res 1, a
+    ld (_gCurrentSprite + 0), a
+
+    ; Get background X in de
+    ld hl, #_gBackgroundX
+    ld a, (hl+)
+    ld c, a
+    ld a, (hl)
+    ld b, a
+    ld hl, #8
+    add hl, bc
+    ld e, l
+    ld d, h
+
+    ; Get sprite X in pixels
+    ld hl, #(_gCurrentSprite + 1)
+    ld a, (hl+)
+    ld c, a
+    ld a, (hl)
+    ld b, a
+    srl b
+    rr c
+    srl b
+    rr c
+
+    ; Get right bound
+    ld a, (_gCurrentSprite + 16)
+    ld l, a
+    ld h, #0
+
+    add hl, bc
+
+    ; Compare right and screen X
+    ld a, e
+    sub a, l
+    ld a, d
+    sbc a, h
+    ret NC
+
+    ; Get left bound, X screen position is still in l
+    ld a, (_gCurrentSprite + 15)
+    ld l, a
+    ld h, #0
+    add hl, bc
+    ld c, l
+    ld b, h
+
+    ; Add screen size X
+    ld hl, #160
+    add hl, de
+
+    ; Compare left and screen X
+    ld a, c
+    sub a, l
+    ld a, b
+    sbc a, h
+    ret NC
+
+    ; Now do the same but for Y
+
+    ; Get background Y in de
+    ld hl, #_gBackgroundY
+    ld a, (hl+)
+    ld c, a
+    ld a, (hl)
+    ld b, a
+    ld hl, #16
+    add hl, bc
+    ld e, l
+    ld d, h
+
+    ; Get sprite Y in pixels
+    ld hl, #(_gCurrentSprite + 3)
+    ld a, (hl+)
+    ld c, a
+    ld a, (hl)
+    ld b, a
+    srl b
+    rr c
+    srl b
+    rr c
+
+    ; Get bottom bound
+    ld a, (_gCurrentSprite + 18)
+    ld l, a
+    ld h, #0
+
+    add hl, bc
+
+    ; Compare bottom and screen Y
+    ld a, e
+    sub a, l
+    ld a, d
+    sbc a, h
+    ret NC
+
+    ; Get top bound
+    ld a, (_gCurrentSprite + 17)
+    ld l, a
+    ld h, #0
+    add hl, bc
+    ld c, l
+    ld b, h
+
+    ; Add screen size Y
+    ld hl, #144
+    add hl, de
+
+    ; Compare top and screen Y
+    ld a, c
+    sub a, l
+    ld a, b
+    sbc a, h
+    ret NC
+
+    ; Set on screen flag
+    ld a, (_gCurrentSprite + 0)
+    set 1, a
+    ld (_gCurrentSprite + 0), a
     ret
 
 _SpriteDrawAsm:
@@ -266,7 +391,7 @@ _UpdateSpritesAsm:
     ; Compute the screen coords of the sprite
     call _SpriteComputeCameraPosition
 
-    ; call _SpriteUpdateOnScreenFlag
+    call _SpriteUpdateOnScreenFlag
     call _SpriteUpdateAnimationAsm
 
     ; Check should draw

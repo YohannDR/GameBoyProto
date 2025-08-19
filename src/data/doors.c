@@ -7,23 +7,12 @@ const struct Door sDoors[] = {
         .ownerRoom = 1,
         .height = 4,
         .width = 2,
-        .targetDoor = 249,
+        .targetDoor = 248,
         .exitX = -32,
         .exitY = 0,
         .tileset = 255,
     },
     [1] = {
-        .x = 19,
-        .y = 1,
-        .ownerRoom = 0,
-        .height = 4,
-        .width = 1,
-        .targetDoor = 249,
-        .exitX = 0,
-        .exitY = 0,
-        .tileset = 255,
-    },
-    [2] = {
         .x = 39,
         .y = 18,
         .ownerRoom = 1,
@@ -34,7 +23,7 @@ const struct Door sDoors[] = {
         .exitY = 0,
         .tileset = 255,
     },
-    [3] = {
+    [2] = {
         .x = 15,
         .y = 2,
         .ownerRoom = 1,
@@ -45,7 +34,7 @@ const struct Door sDoors[] = {
         .exitY = 0,
         .tileset = 255,
     },
-    [4] = {
+    [3] = {
         .x = 2,
         .y = 2,
         .ownerRoom = 1,
@@ -56,7 +45,7 @@ const struct Door sDoors[] = {
         .exitY = 0,
         .tileset = 255,
     },
-    [5] = {
+    [4] = {
         .x = 2,
         .y = 16,
         .ownerRoom = 1,

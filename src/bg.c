@@ -13,6 +13,8 @@ struct BackgroundInfo gBackgroundInfo;
 
 u8 gWindowX;
 u8 gWindowY;
+u16 gBackgroundX;
+u16 gBackgroundY;
 
 struct TilemapInfo gTilemap;
 

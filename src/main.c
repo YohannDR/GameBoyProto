@@ -23,11 +23,12 @@
 
 u8 gFrameCounter;
 struct GameModeInfo gGameMode;
+static u8 gLag;
 
 static void VblankCallback(void)
 {
-    Write8(REG_SCX, SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x));
-    Write8(REG_SCY, SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y));
+    Write8(REG_SCX, gBackgroundX);
+    Write8(REG_SCY, gBackgroundY);
     Write8(REG_WX, gWindowX);
     Write8(REG_WY, gWindowY);
 }
@@ -41,7 +42,7 @@ static void InitGame(void)
 
     WaitForVblank();
     Write8(REG_LCDC, 0);
-    LoadGraphics(sTilesets[2]);
+    LoadGraphics(sTilesets[1]);
 
     SetCameraPosition(0, 0);
     PlayerInit();
@@ -75,11 +76,18 @@ void main(void)
             {
                 // Do stuff...
                 ScrollUpdate();
-                // PlayerUpdate();
+                PlayerUpdate();
                 DoorUpdate();
-                // PlayerDraw();
+                PlayerDraw();
                 FadingUpdate();
-                UpdateSpritesAsm();
+
+                if (gLag)
+                    UpdateSpritesAsm();
+                else
+                    UpdateSprites();
+
+                if (gChangedInput & KEY_SELECT)
+                    gLag ^= TRUE;
             }
             else if (gGameMode.main == GM_TRANSITION)
             {
