@@ -1,9 +1,9 @@
     .module sprite
 
-    .globl _UpdateSpritesAsm
-    .globl _SpriteUpdateAnimationAsm
-    .globl _SpriteDrawAsm
-    .globl _SpriteUpdateOnScreenFlagAsm
+    .globl _UpdateSprites
+    .globl _SpriteUpdateAnimation
+    .globl _SpriteDraw
+    .globl _SpriteUpdateOnScreenFlag
 
 _SpriteComputeCameraPosition:
     ld hl, #_gCurrentSprite + 1
@@ -47,7 +47,7 @@ _SpriteComputeCameraPosition:
     ld (#_gSpriteScreenY), a
     ret
 
-_SpriteUpdateOnScreenFlagAsm:
+_SpriteUpdateOnScreenFlag:
     ; Clear the on screen flag
     ld a, (_gCurrentSprite + 0)
     res 1, a
@@ -144,7 +144,7 @@ _SpriteUpdateOnScreenFlagAsm:
     sub a, l
     ld a, d
     sbc a, h
-    ret NC
+    ; ret NC
 
     ; Get top bound
     ld a, (_gCurrentSprite + 17)
@@ -163,7 +163,7 @@ _SpriteUpdateOnScreenFlagAsm:
     sub a, l
     ld a, b
     sbc a, h
-    ret NC
+    ; ret NC
 
     ; Set on screen flag
     ld a, (_gCurrentSprite + 0)
@@ -171,7 +171,7 @@ _SpriteUpdateOnScreenFlagAsm:
     ld (_gCurrentSprite + 0), a
     ret
 
-_SpriteDrawAsm:
+_SpriteDraw:
     ld a, (_gNextOamSlot)
     ; * 4
     add a, a
@@ -276,7 +276,7 @@ _SpriteDrawAsm:
         ld (_gOamPartsLeftToProcess), a
     jr .drawLoopStart
 
-_SpriteUpdateAnimationAsm:
+_SpriteUpdateAnimation:
     ; Get current animation frame
     ld a, (_gCurrentSprite + 9)
     ld c, a
@@ -345,7 +345,7 @@ _SpriteUpdateAnimationAsm:
 
     ret
 
-_UpdateSpritesAsm:
+_UpdateSprites:
     ld hl, #(_gSpriteData)
     ld a, #20
     ld (_gEnemiesLeftToProcess), a
@@ -392,7 +392,7 @@ _UpdateSpritesAsm:
     call _SpriteComputeCameraPosition
 
     call _SpriteUpdateOnScreenFlag
-    call _SpriteUpdateAnimationAsm
+    call _SpriteUpdateAnimation
 
     ; Check should draw
     ld a, (#_gCurrentSprite + 0)
@@ -400,7 +400,7 @@ _UpdateSpritesAsm:
     sub a, #0x03
     jr NZ, .loopContinueCopy
 
-    call _SpriteDrawAsm
+    call _SpriteDraw
 
 .loopContinueCopy:
     ; Restore hl

@@ -23,7 +23,6 @@
 
 u8 gFrameCounter;
 struct GameModeInfo gGameMode;
-static u8 gLag;
 
 static void VblankCallback(void)
 {
@@ -80,14 +79,7 @@ void main(void)
                 DoorUpdate();
                 PlayerDraw();
                 FadingUpdate();
-
-                if (gLag)
-                    UpdateSpritesAsm();
-                else
-                    UpdateSprites();
-
-                if (gChangedInput & KEY_SELECT)
-                    gLag ^= TRUE;
+                UpdateSprites();
             }
             else if (gGameMode.main == GM_TRANSITION)
             {

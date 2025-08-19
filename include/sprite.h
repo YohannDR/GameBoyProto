@@ -218,8 +218,6 @@ u8 QueueSpriteGraphics(u8 spriteId);
  * @brief Updates the sprites
  * 
  */
-void UpdateSprites(void);
-
-ASM_IMPL void UpdateSpritesAsm(void);
+ASM_IMPL void UpdateSprites(void);
 
 #endif /* SPRITE_H */

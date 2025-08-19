@@ -76,9 +76,8 @@ u8 gSpriteGraphicsBuffer[16 * 4];
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
 
-ASM_IMPL void SpriteUpdateAnimationAsm(void);
-ASM_IMPL void SpriteDrawAsm(void);
-
+// I'm only commenting these functions out for legacy reasons
+/*
 void SpriteDraw(void)
 {
     u8* oam;
@@ -194,6 +193,36 @@ void SpriteUpdateAnimation(void)
         }
     }
 }
+
+void UpdateSprites(void)
+{
+    u8 i;
+    struct Sprite* sprite;
+
+    sprite = gSpriteData;
+    for (i = 0; i < ARRAY_SIZE(gSpriteData); i++, sprite++)
+    {
+        if (!(sprite->status & SPRITE_STATUS_EXISTS))
+            continue;
+
+        gCurrentSprite = *sprite;
+
+        // Clear this flag, it's only active during the exact frame the animation ended
+        gCurrentSprite.status &= ~SPRITE_STATUS_ANIM_ENDED;
+
+        SpriteUpdateOnScreenFlag();
+        SpriteUpdateAnimation();
+
+        // Call AI
+        sSpriteAiPointers[gCurrentSprite.type]();
+
+        if ((gCurrentSprite.status & SPRITE_DRAW_FLAGS_CHECK) == SPRITE_DRAW_FLAGS_COND)
+            SpriteDraw();
+
+        *sprite = gCurrentSprite;
+    }
+}
+*/
 
 u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
 {
@@ -404,35 +433,6 @@ u8 QueueSpriteGraphics(u8 spriteId)
     }
 
     return 0;
-}
-
-void UpdateSprites(void)
-{
-    u8 i;
-    struct Sprite* sprite;
-
-    sprite = gSpriteData;
-    for (i = 0; i < ARRAY_SIZE(gSpriteData); i++, sprite++)
-    {
-        if (!(sprite->status & SPRITE_STATUS_EXISTS))
-            continue;
-
-        gCurrentSprite = *sprite;
-
-        // Clear this flag, it's only active during the exact frame the animation ended
-        gCurrentSprite.status &= ~SPRITE_STATUS_ANIM_ENDED;
-
-        SpriteUpdateOnScreenFlag();
-        SpriteUpdateAnimation();
-
-        // Call AI
-        sSpriteAiPointers[gCurrentSprite.type]();
-
-        if ((gCurrentSprite.status & SPRITE_DRAW_FLAGS_CHECK) == SPRITE_DRAW_FLAGS_COND)
-            SpriteDraw();
-
-        *sprite = gCurrentSprite;
-    }
 }
 
 static const u8 sSpriteDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
