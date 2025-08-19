@@ -2,6 +2,154 @@
 
     .globl _UpdateSpritesAsm
     .globl _SpriteUpdateAnimationAsm
+    .globl _SpriteDrawAsm
+
+_SpriteComputeCameraPosition:
+    ld hl, #_gCurrentSprite + 1
+    ld a, (hl+)
+    ld c, a
+    ld b, (hl)
+    srl b
+    rr c
+    srl b
+    rr c
+    ld hl, #_gBackgroundInfo
+    ld a, (hl+)
+    ld b, a
+    ld e, (hl)
+    srl e
+    rr b
+    srl e
+    rr b
+    ld a, c
+    sub a, b
+    ld (#_gSpriteScreenX), a
+
+    ld hl, #_gCurrentSprite + 3
+    ld a, (hl+)
+    ld c, a
+    ld b, (hl)
+    srl b
+    rr c
+    srl b
+    rr c
+    ld hl, #_gBackgroundInfo + 2
+    ld a, (hl+)
+    ld b, (hl)
+    ld e, a
+    srl b
+    rr e
+    srl b
+    rr e
+    ld a, c
+    sub a, e
+    ld (#_gSpriteScreenY), a
+    ret
+
+_SpriteDrawAsm:
+    ld a, (_gNextOamSlot)
+    ; * 4
+    add a, a
+    add a, a
+    ld c, a
+    ld b, #0
+
+    ; Index oam buffer
+    ld hl, #_gOamBuffer
+    add hl, bc
+
+    push hl
+
+    ; Get current animation frame
+    ld a, (_gCurrentSprite + 9)
+    ld c, a
+    ; Multiply by 3
+    add a, a
+    add a, c
+    ld c, a
+    ld b, #0x00
+
+    ; Get anim pointer in hl
+    ld hl, #_gCurrentSprite + 11
+    ld a, (hl+)
+    ld h, (hl)
+    ld l, a
+
+    ; Index anim pointer using bc
+    add hl, bc
+
+    ; Load oam pointer in bc
+    ld a, (hl+)
+    ld c, a
+    ld b, (hl)
+
+    ; Get part counter
+    ld a, (bc)
+    inc bc
+    ld (_gOamPartsLeftToProcess), a
+
+    ; Update next oam slot
+    ld h, a
+    ld a, (_gNextOamSlot)
+    add a, h
+    ld (_gNextOamSlot), a
+
+    ; Prepare the sprite properties
+    ld a, (_gCurrentSprite + 13)
+    swap a
+    and a, #0xF0
+    ld (_gSpriteDrawAttributes), a
+
+    pop hl
+
+    ; At this point :
+    ; 
+    ; bc = src oam pointer
+    ; hl = dst oam pointer
+    ; d  = Y offset
+    ; e  = X offset
+    ld a, (_gSpriteScreenY)
+    ld d, a
+    ld a, (_gSpriteScreenX)
+    ld e, a
+
+    .drawLoopStart:
+        ; Byte 0, Y position
+        ld a, (bc)
+        add a, d
+        ld (hl+), a
+        inc bc
+
+        ; Byte 1, X position
+        ld a, (bc)
+        add a, e
+        ld (hl+), a
+        inc bc
+
+        ; Byte 2, tile index
+        push hl
+        ld hl, #(_gCurrentSprite + 14)
+        ld l, (hl)
+        ld a, (bc)
+        add a, l
+        pop hl
+        ld (hl+), a
+
+        ; Byte 3, attributes
+        push hl
+        ld hl, #_gSpriteDrawAttributes
+        ld a, (bc)
+        ; Xor the object attribute with the sprite attributes
+        xor (hl)
+        pop hl
+        ld (hl+), a
+
+        ld a, (_gOamPartsLeftToProcess)
+        dec a
+        ret Z
+
+        ld (_gOamPartsLeftToProcess), a
+    jr .drawLoopStart
 
 _SpriteUpdateAnimationAsm:
     ; Get current animation frame
@@ -102,9 +250,6 @@ _UpdateSpritesAsm:
     ; Save hl
     push hl
 
-    call _SpriteUpdateOnScreenFlag
-    call _SpriteUpdateAnimationAsm
-
     ; Call AI
     ld a, (#_gCurrentSprite + 5)
     add a, a
@@ -118,13 +263,19 @@ _UpdateSpritesAsm:
     ld l, c
     call ___sdcc_call_hl
 
+    ; Compute the screen coords of the sprite
+    call _SpriteComputeCameraPosition
+
+    ; call _SpriteUpdateOnScreenFlag
+    call _SpriteUpdateAnimationAsm
+
     ; Check should draw
     ld a, (#_gCurrentSprite + 0)
     and a, #0x07
     sub a, #0x03
     jr NZ, .loopContinueCopy
 
-    call _SpriteDraw
+    call _SpriteDrawAsm
 
 .loopContinueCopy:
     ; Restore hl

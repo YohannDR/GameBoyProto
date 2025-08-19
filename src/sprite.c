@@ -15,6 +15,11 @@ extern const struct AnimData sSpriteDefaultAnim[];
 
 struct Sprite gSpriteData[20];
 u8 gEnemiesLeftToProcess;
+u8 gOamPartsLeftToProcess;
+u8 gSpriteDrawAttributes;
+
+u8 gSpriteScreenX;
+u8 gSpriteScreenY;
 
 // This might seem sub-optimal, as this requires a lot of memcpy per frame (2 * sprite amount)
 // But this is a relatively low overhead compared to passing the current sprite as a pointer as a parameter
@@ -72,6 +77,7 @@ u8 gSpriteGraphicsBuffer[16 * 4];
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
 
 ASM_IMPL void SpriteUpdateAnimationAsm(void);
+ASM_IMPL void SpriteDrawAsm(void);
 
 void SpriteDraw(void)
 {
@@ -217,6 +223,7 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
         gSpriteBuffer.currentAnimFrame = 0;
         gSpriteBuffer.animTimer = 0;
         gSpriteBuffer.animPointer = sSpriteDefaultAnim;
+        gSpriteBuffer.properties = 0;
         gSpriteBuffer.drawDistanceLeft = 0;
         gSpriteBuffer.drawDistanceRight = 0;
         gSpriteBuffer.drawDistanceTop = 0;
