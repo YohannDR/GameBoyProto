@@ -20,7 +20,8 @@ struct GameModeInfo {
 
 enum GameMode {
     GM_IN_GAME,
-    GM_TRANSITION
+    GM_INVENTORY,
+    GM_TRANSITION,
 };
 
 // 8-bit frame counter
