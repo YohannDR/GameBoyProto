@@ -367,13 +367,23 @@ _UpdateSprites:
         dec e
     jr NZ, .copy1Start
 
+    ; Save hl
+    push hl
+
+    ; Check current game mode
+    ld a, (_gGameMode + 0)
+    or a, a
+    jr Z, .callAi
+
+    ; Only draw the sprites if we aren't in game
+    call _SpriteComputeCameraPosition
+    jr .checkDrawSprite
+
+.callAi:
     ; Clear anim ended flag
     ld a, (#_gCurrentSprite + 0)
     res 3, a
     ld (#_gCurrentSprite + 0), a
-
-    ; Save hl
-    push hl
 
     ; Call AI
     ld a, (#_gCurrentSprite + 5)
@@ -394,6 +404,7 @@ _UpdateSprites:
     call _SpriteUpdateOnScreenFlag
     call _SpriteUpdateAnimation
 
+.checkDrawSprite:
     ; Check should draw
     ld a, (#_gCurrentSprite + 0)
     and a, #0x07

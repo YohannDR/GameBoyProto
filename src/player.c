@@ -7,6 +7,7 @@
 #include "callbacks.h"
 #include "bg.h"
 #include "bg_clip.h"
+#include "inventory.h"
 #include "io.h"
 #include "sprite.h"
 #include "fading.h"
@@ -363,6 +364,11 @@ void PlayerUpdate(void)
         }
 
         gPlayerData.work1 ^= 1;
+    }
+
+    if (gChangedInput & KEY_SELECT)
+    {
+        OpenInventory();
     }
 }
 
