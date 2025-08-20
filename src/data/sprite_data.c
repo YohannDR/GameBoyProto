@@ -4,6 +4,7 @@
 #include "sprites_AI/portal.h"
 #include "sprites_AI/water_drop.h"
 #include "sprites_AI/moving_platform.h"
+#include "sprites_AI/collectible.h"
 
 static void Dummy(void) {}
 
@@ -18,6 +19,7 @@ const Func_T sSpriteAiPointers[STYPE_END] = {
     [STYPE_SHIP] = Dummy,
     [STYPE_WATER_DROP] = WaterDrop,
     [STYPE_MOVING_PLATFORM] = MovingPlatform,
+    [STYPE_COLLECTIBLE] = Collectible,
 };
 
 const u8* const sSpriteGraphicsPointers[STYPE_END] = {
@@ -27,4 +29,5 @@ const u8* const sSpriteGraphicsPointers[STYPE_END] = {
     [STYPE_SHIP] = sDummyGraphics,
     [STYPE_WATER_DROP] = sWaterDropGraphics,
     [STYPE_MOVING_PLATFORM] = sMovingPlatformGraphics,
+    [STYPE_COLLECTIBLE] = sCollectibleGraphics,
 };

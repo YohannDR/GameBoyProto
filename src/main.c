@@ -41,11 +41,7 @@ static void InitGame(void)
     Write8(REG_WX, gWindowX);
     Write8(REG_WY, gWindowY);
 
-    RegisterItem(ITEM_TORCH),
-    RegisterItem(ITEM_WATER_BUCKET),
-    RegisterItem(ITEM_ACCESS_CARD),
-    RegisterItem(ITEM_WATER_GUN),
-    gCurrentItem = ITEM_ACCESS_CARD;
+    gCurrentItem = ITEM_NONE;
 
     SetCameraPosition(0, 0);
     PlayerInit();
