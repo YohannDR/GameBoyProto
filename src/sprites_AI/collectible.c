@@ -108,7 +108,7 @@ static const u8 sCollectibleAnim_Torch_Frame0[OAM_DATA_SIZE(1)] = {
 const struct AnimData sCollectibleAnim_Torch[] = {
     [0] = {
         .oamPointer = sCollectibleAnim_Torch_Frame0,
-        .duration = 60,
+        .duration = 255,
     },
     [1] = SPRITE_ANIM_TERMINATOR
 };

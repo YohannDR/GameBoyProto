@@ -5,6 +5,7 @@
 #include "sprites_AI/water_drop.h"
 #include "sprites_AI/moving_platform.h"
 #include "sprites_AI/collectible.h"
+#include "sprites_AI/movable_object.h"
 
 static void Dummy(void) {}
 
@@ -20,6 +21,7 @@ const Func_T sSpriteAiPointers[STYPE_END] = {
     [STYPE_WATER_DROP] = WaterDrop,
     [STYPE_MOVING_PLATFORM] = MovingPlatform,
     [STYPE_COLLECTIBLE] = Collectible,
+    [STYPE_MOVABLE_OBJECT] = MovableObject,
 };
 
 const u8* const sSpriteGraphicsPointers[STYPE_END] = {
@@ -30,4 +32,5 @@ const u8* const sSpriteGraphicsPointers[STYPE_END] = {
     [STYPE_WATER_DROP] = sWaterDropGraphics,
     [STYPE_MOVING_PLATFORM] = sMovingPlatformGraphics,
     [STYPE_COLLECTIBLE] = sCollectibleGraphics,
+    [STYPE_MOVABLE_OBJECT] = sMovableObjectGraphics,
 };
