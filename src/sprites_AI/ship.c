@@ -3,6 +3,7 @@
 #include "gb/oam.h"
 
 #include "bg.h"
+#include "macros.h"
 #include "sprite.h"
 
 #define MOVING_SPEED (PIXEL_SIZE)
@@ -30,13 +31,13 @@ void Ship(void)
     if (gCurrentSprite.part == SHIP_LEFT)
     {
         if (gCurrentSprite.x < MOVING_SPEED)
-            gCurrentSprite.x = gTilemap.width;
+            gCurrentSprite.x = BLOCK_TO_SUB_PIXEL(gTilemap.width);
         else
             gCurrentSprite.x -= MOVING_SPEED;
     }
     else if (gCurrentSprite.part == SHIP_RIGHT)
     {
-        if (gCurrentSprite.x > gTilemap.width)
+        if (gCurrentSprite.x > BLOCK_TO_SUB_PIXEL(gTilemap.width))
             gCurrentSprite.x = 0;
         else
             gCurrentSprite.x += MOVING_SPEED;
