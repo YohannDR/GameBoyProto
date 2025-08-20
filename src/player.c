@@ -10,6 +10,7 @@
 #include "inventory.h"
 #include "io.h"
 #include "sprite.h"
+#include "items.h"
 #include "fading.h"
 #include "macros.h"
 
@@ -25,13 +26,6 @@ extern const u8 sPlayerGraphics[];
 struct HitboxData {
     s8 axisOffset;
     s8 pointsOffset[3];
-};
-
-enum PlayerPose {
-    POSE_IDLE,
-    POSE_RUNNING,
-    POSE_JUMPING,
-    POSE_ON_LADDER,
 };
 
 static const struct HitboxData sHitboxLeft = {
@@ -118,7 +112,7 @@ static void HandleHorizontalMovement(void)
 
 static void HandleVerticalMovement(void)
 {
-    if (gPlayerMovement.grounded && gChangedInput & KEY_B)
+    if (gPlayerMovement.grounded && gChangedInput & KEY_A)
     {
         gPlayerMovement.yVelocity = gPlayerPhysics.jumpingVelocity;
         gPlayerMovement.grounded = FALSE;
@@ -288,7 +282,7 @@ static void CheckForLadder(void)
 
     if (left == CLIP_BEHAVIOR_LADDER || right == CLIP_BEHAVIOR_LADDER)
     {
-        PlayerSetPose(POSE_ON_LADDER);
+        PlayerSetPose(PLAYER_POSE_ON_LADDER);
 
         gPlayerData.x &= BLOCK_POSITION_FLAG;
 
@@ -306,14 +300,14 @@ static void PlayerOnLadder(void)
         gPlayerData.y += LADDER_SPEED;
 
         if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y) != CLIP_BEHAVIOR_LADDER)
-            PlayerSetPose(POSE_IDLE);
+            PlayerSetPose(PLAYER_POSE_IDLE);
     }
     else if (gButtonInput & KEY_UP)
     {
         gPlayerData.y -= LADDER_SPEED;
 
         if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y - PIXEL_SIZE) != CLIP_BEHAVIOR_LADDER)
-            PlayerSetPose(POSE_IDLE);
+            PlayerSetPose(PLAYER_POSE_IDLE);
     }
 }
 
@@ -331,7 +325,7 @@ void PlayerUpdate(void)
 {
     switch (gPlayerData.pose)
     {
-        case POSE_ON_LADDER:
+        case PLAYER_POSE_ON_LADDER:
             PlayerOnLadder();
             break;
 
@@ -349,27 +343,10 @@ void PlayerUpdate(void)
     }
 
     UpdateAnimation();
-
-    if (gChangedInput & KEY_A)
-    {
-        if (gPlayerData.work1)
-        {
-            FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, 3);
-            FadingStart(FADING_TARGET_OBJ0, gObj0Palette, 3);
-        }
-        else
-        {
-            FadingStart(FADING_TARGET_BACKGROUND, PALETTE_WHITE, 3);
-            FadingStart(FADING_TARGET_OBJ0, PALETTE_BLACK, 3);
-        }
-
-        gPlayerData.work1 ^= 1;
-    }
+    UpdateItem();
 
     if (gChangedInput & KEY_SELECT)
-    {
         OpenInventory();
-    }
 }
 
 void PlayerDraw(void)

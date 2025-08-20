@@ -15,7 +15,7 @@ void MovableObject(void)
     if (gCurrentSprite.pose == 0)
     {
         gCurrentSprite.animPointer = sMovableObjectAnim;
-        
+
         gCurrentSprite.drawDistanceLeft = SUB_PIXEL_TO_PIXEL(0);
         gCurrentSprite.drawDistanceRight = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
         gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
