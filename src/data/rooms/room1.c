@@ -3,18 +3,30 @@
 const u8 sRoom1_Tilemap[] = {
     40, 36,
 
-    0x2F, 0x09,
-    0x20, 0x0A,
-    0x08, 0x09,
-    0x20, 0x0A,
-    0x08, 0x09,
-    0x20, 0x0A,
-    0x08, 0x09,
-    0x20, 0x0A,
-    0x08, 0x09,
-    0x20, 0x0A,
-    0x08, 0x09,
-    0x20, 0x0A,
+    0x29, 0x09,
+    0x0C, 0x0A,
+    0x01, 0x09,
+    0x19, 0x0A,
+    0x02, 0x09,
+    0x0C, 0x0A,
+    0x01, 0x09,
+    0x19, 0x0A,
+    0x02, 0x09,
+    0x0C, 0x0A,
+    0x01, 0x09,
+    0x19, 0x0A,
+    0x02, 0x09,
+    0x0C, 0x0A,
+    0x01, 0x09,
+    0x19, 0x0A,
+    0x02, 0x09,
+    0x0C, 0x0A,
+    0x01, 0x09,
+    0x19, 0x0A,
+    0x02, 0x09,
+    0x0C, 0x0A,
+    0x01, 0x09,
+    0x19, 0x0A,
     0x09, 0x09,
     0x01, 0x00,
     0x01, 0x01,
@@ -205,44 +217,42 @@ const struct RoomSprite sRoom1_SpriteData[] = {
         .part = 0
     },
     [3] = {
-        .x = 19,
-        .y = 4,
-        .id = STYPE_FIRE,
-        .part = 0
-    },
-    [4] = {
         .x = 13,
         .y = 15,
         .id = STYPE_FIRE,
         .part = 0
     },
-    [5] = {
+    [4] = {
         .x = 13,
         .y = 11,
         .id = STYPE_FIRE,
         .part = 0
     },
+    [5] = {
+        .x = 13,
+        .y = 12,
+        .id = STYPE_FIRE,
+        .part = 0
+    },
     [6] = {
-        .x = 19,
-        .y = 7,
+        .x = 13,
+        .y = 13,
         .id = STYPE_FIRE,
         .part = 0
     },
     [7] = {
         .x = 13,
-        .y = 4,
-        .id = STYPE_PORTAL,
+        .y = 14,
+        .id = STYPE_FIRE,
         .part = 0
     },
-    [8] = {
-        .x = 2,
-        .y = 19,
-        .id = STYPE_PORTAL,
-        .part = 0
-    },
-    [9] = ROOM_SPRITE_TERMINATOR
+    [8] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom1_DoorData[] = {
+    2,
+    3,
+    4,
+    5,
     DOOR_NONE
 };
