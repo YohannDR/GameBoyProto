@@ -214,8 +214,7 @@ const u8 sRoom0_Tilemap[] = {
     0x01, 0x45,
     0x02, 0x1A,
     0x01, 0x0C,
-    0x01, 0x4F,
-    0x01, 0x05,
+    0x02, 0x05,
     0x01, 0x54,
     0x01, 0x55,
     0x02, 0x05,
@@ -245,7 +244,8 @@ const u8 sRoom0_Tilemap[] = {
     0x01, 0x45,
     0x02, 0x1A,
     0x01, 0x0C,
-    0x02, 0x05,
+    0x01, 0x4F,
+    0x01, 0x05,
     0x01, 0x56,
     0x01, 0x57,
     0x02, 0x05,
@@ -268,41 +268,11 @@ const u8 sRoom0_Tilemap[] = {
 const struct RoomSprite sRoom0_SpriteData[] = {
     [0] = {
         .x = 18,
-        .y = 20,
-        .id = STYPE_FIRE,
+        .y = 19,
+        .id = STYPE_COLLECTIBLE,
         .part = 0
     },
-    [1] = {
-        .x = 18,
-        .y = 18,
-        .id = STYPE_FIRE,
-        .part = 0
-    },
-    [2] = {
-        .x = 18,
-        .y = 7,
-        .id = STYPE_FIRE,
-        .part = 0
-    },
-    [3] = {
-        .x = 18,
-        .y = 9,
-        .id = STYPE_FIRE,
-        .part = 0
-    },
-    [4] = {
-        .x = 22,
-        .y = 18,
-        .id = STYPE_FIRE,
-        .part = 0
-    },
-    [5] = {
-        .x = 22,
-        .y = 20,
-        .id = STYPE_FIRE,
-        .part = 0
-    },
-    [6] = ROOM_SPRITE_TERMINATOR
+    [1] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom0_DoorData[] = {

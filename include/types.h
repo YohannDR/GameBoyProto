@@ -99,4 +99,22 @@ typedef void(*Func_T)(void);
  */
 #define SUB_PIXEL_POSITION_FLAG (BLOCK_SIZE - ONE_SUB_PIXEL)
 
+/**
+ * @brief Target FPS
+ * 
+ */
+#define FRAMES_PER_SECOND 60
+
+/**
+ * @brief The amount of time that passes in a single frame
+ * 
+ */
+#define DELTA_TIME 1
+
+/**
+ * @brief Convertes a floating point value to an amount of frames
+ * 
+ */
+#define CONVERT_SECONDS(v) ((u16)((v) * FRAMES_PER_SECOND))
+
 #endif /* TYPES_H */
