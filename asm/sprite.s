@@ -347,7 +347,7 @@ _SpriteUpdateAnimation:
 
 _UpdateSprites:
     ld hl, #(_gSpriteData)
-    ld a, #20
+    ld a, (_gMaxAmountOfExistingSprites)
     ld (_gEnemiesLeftToProcess), a
 
 .loopStart:

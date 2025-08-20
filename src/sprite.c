@@ -21,6 +21,8 @@ u8 gSpriteDrawAttributes;
 u8 gSpriteScreenX;
 u8 gSpriteScreenY;
 
+u8 gMaxAmountOfExistingSprites;
+
 // This might seem sub-optimal, as this requires a lot of memcpy per frame (2 * sprite amount)
 // But this is a relatively low overhead compared to passing the current sprite as a pointer as a parameter
 struct Sprite gCurrentSprite;
@@ -263,6 +265,9 @@ u8 SpawnSprite(u16 x, u16 y, u8 type, u8 part, u8 gfxSlot)
         gSpriteBuffer.work4 = 0;
 
         *sprite = gSpriteBuffer;
+
+        if (i >= gMaxAmountOfExistingSprites)
+            gMaxAmountOfExistingSprites = i + 1;
 
         return i;
     }
