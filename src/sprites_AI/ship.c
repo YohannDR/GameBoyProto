@@ -8,6 +8,9 @@
 
 void Ship(void)
 {
+    // TODO proper initialization (setting animation, draw distance, X flipping if going right and pose 1)
+
+    // TODO proper screen looping? This loops via underflow/overflow which is a bit weird
     if (gCurrentSprite.part == SHIP_LEFT)
         gCurrentSprite.x -= MOVING_SPEED;
     else if (gCurrentSprite.part == SHIP_RIGHT)

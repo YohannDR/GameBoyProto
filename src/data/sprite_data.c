@@ -6,6 +6,7 @@
 #include "sprites_AI/moving_platform.h"
 #include "sprites_AI/collectible.h"
 #include "sprites_AI/movable_object.h"
+#include "sprites_AI/ship.h"
 
 static void Dummy(void) {}
 
