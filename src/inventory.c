@@ -141,6 +141,7 @@ void OpenInventoryForNewItem(u8 item)
     gGameMode.sub = INV_STATE_SCROLLING_UP;
     gGameMode.timer = 0;
     gGameMode.work1 = TRUE;
+    gGameMode.work2 = 0;
 
     gPreviousItem = gCurrentItem;
 
