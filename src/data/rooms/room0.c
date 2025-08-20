@@ -270,7 +270,7 @@ const struct RoomSprite sRoom0_SpriteData[] = {
         .x = 18,
         .y = 19,
         .id = STYPE_COLLECTIBLE,
-        .part = 3
+        .part = 1
     },
     [1] = ROOM_SPRITE_TERMINATOR
 };
