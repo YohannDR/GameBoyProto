@@ -158,7 +158,13 @@ const u8 sRoom8_Tilemap[] = {
 };
 
 const struct RoomSprite sRoom8_SpriteData[] = {
-    [0] = ROOM_SPRITE_TERMINATOR
+    [0] = {
+        .x = 31,
+        .y = 6,
+        .id = STYPE_PORTAL,
+        .part = 0
+    },
+    [1] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom8_DoorData[] = {
