@@ -8,6 +8,8 @@ enum MovableObjectPose {
     POSE_IDLE = 1,
 };
 
+extern const struct AnimData sMovableObjectAnim[];
+
 void MovableObject(void)
 {
     if (gCurrentSprite.pose == 0)
