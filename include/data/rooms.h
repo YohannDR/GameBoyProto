@@ -9,5 +9,8 @@
 #include "data/rooms/room5.h"
 #include "data/rooms/room6.h"
 #include "data/rooms/room7.h"
+#include "data/rooms/room8.h"
+#include "data/rooms/room9.h"
+#include "data/rooms/room10.h"
 
 #endif /* ROOMS_H */
