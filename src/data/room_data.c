@@ -106,4 +106,13 @@ const struct RoomInfo sRooms[] = {
         .originX = SCREEN_SIZE_X_SUB_PIXEL * 0,
         .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
     },
+    [11] = {
+        .tilemap = sRoom11_Tilemap,
+        .bgPalette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK),
+        .spriteData = sRoom11_SpriteData,
+        .doorData = sRoom11_DoorData,
+        .collisionTable = 0,
+        .originX = SCREEN_SIZE_X_SUB_PIXEL * 0,
+        .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
+    },
 };

@@ -12,5 +12,6 @@
 #include "data/rooms/room8.h"
 #include "data/rooms/room9.h"
 #include "data/rooms/room10.h"
+#include "data/rooms/room11.h"
 
 #endif /* ROOMS_H */
