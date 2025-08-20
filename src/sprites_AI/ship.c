@@ -2,6 +2,7 @@
 
 #include "gb/oam.h"
 
+#include "bg.h"
 #include "sprite.h"
 
 #define MOVING_SPEED (PIXEL_SIZE)
@@ -25,14 +26,21 @@ void Ship(void)
             gCurrentSprite.properties |= SPRITE_PROPERTY_X_FLIP;
     }
 
-    // TODO proper screen looping? This loops via underflow/overflow which is a bit weird
-    // When moving left, check if x is below the speed (we can't check if x < 0 because it's unsigned, so it's UB), if yes loop to tilemap width (don't forget to convert from block to sub pixel)
-    // When moving right, check if x is above the tilemap width (don't forget to convert from block to sub pixel), if yes loop to 0
-    // If you want an example of this kind of logic, check inventory.c, lines 223 to 237
+    // Screen looping 
     if (gCurrentSprite.part == SHIP_LEFT)
-        gCurrentSprite.x -= MOVING_SPEED;
+    {
+        if (gCurrentSprite.x < MOVING_SPEED)
+            gCurrentSprite.x = gTilemap.width;
+        else
+            gCurrentSprite.x -= MOVING_SPEED;
+    }
     else if (gCurrentSprite.part == SHIP_RIGHT)
-        gCurrentSprite.x += MOVING_SPEED;
+    {
+        if (gCurrentSprite.x > gTilemap.width)
+            gCurrentSprite.x = 0;
+        else
+            gCurrentSprite.x += MOVING_SPEED;
+    }
 }
 
 const u8 sShipGraphics[] = {
