@@ -28,6 +28,7 @@ static void LoadSprites(const struct RoomSprite* sprites)
     u8 part;
 
     PrepareSpriteGraphicsLoading();
+    gMaxAmountOfExistingSprites = 0;
 
     for (;;)
     {
@@ -88,9 +89,6 @@ void LoadRoom(u8 room)
     LoadSprites(roomInfo->spriteData);
 
     LoadTilemap(roomInfo->tilemap);
-
-    // Enable display, background and objects
-    Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE);
 }
 
 void TransitionToRoom(u8 room)

@@ -194,5 +194,6 @@ Commiting involves selecting which files you want to commit and writing a summar
 You have to write your commit message in the box in the bottom left corner, the thin one above the description.
 
 Commit messages should be a clear as possible, I should be able to know **exactly** what you've done just by reading the message. They should be concise, so feel free to omit words to get to the point, for example do `Room 0 LD` instead of `Made level design for the room 0`.
+They should begin with an uppercase letter (`Add thing` instead of `add thing`) and be written in English exclusively.
 
 If you get a message when commiting, **DON'T DO ANYTHING** and immediately contact me.

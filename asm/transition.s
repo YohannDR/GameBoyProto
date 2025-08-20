@@ -33,8 +33,6 @@ LoadSpriteGfxLoop:
     dec e
 
     ; Check if we're done
-    ld a, e
-    or a, a
     ret Z
 
     ; Increment vram address

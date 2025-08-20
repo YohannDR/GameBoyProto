@@ -2,6 +2,7 @@
 #define SPRITE_H
 
 #include "types.h"
+#include "macros.h"
 
 /**
  * @brief Animation data about a sprite
@@ -118,6 +119,7 @@ enum SpriteType {
     STYPE_SHIP,
     STYPE_WATER_DROP,
     STYPE_MOVING_PLATFORM,
+    STYPE_COLLECTIBLE,
 
     STYPE_END
 };
@@ -165,6 +167,7 @@ extern struct Sprite gSpriteData[20];
 // Holds the current sprite being processed
 extern struct Sprite gCurrentSprite;
 extern struct SpriteLoaderInfo gSpriteLoaderInfo;
+extern u8 gMaxAmountOfExistingSprites;
 
 /**
  * @brief Spawns a new sprite
@@ -217,6 +220,6 @@ u8 QueueSpriteGraphics(u8 spriteId);
  * @brief Updates the sprites
  * 
  */
-void UpdateSprites(void);
+ASM_IMPL void UpdateSprites(void);
 
 #endif /* SPRITE_H */

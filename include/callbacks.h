@@ -15,27 +15,11 @@ ASM_IMPL void DisableInterrupts(void);
 void CallbackSetVblank(Func_T callback);
 
 /**
- * @brief DO NOT CALL
- * 
- * Calls the v-blank callback
- * 
- */
-void CallbackCallVblank(void);
-
-/**
  * @brief Sets the lcd callback
  * 
  * @param callback Callback
  */
 void CallbackSetLcd(Func_T callback);
-
-/**
- * @brief DO NOT CALL
- * 
- * Calls the lcd callback
- * 
- */
-void CallbackCallLcd(void);
 
 /**
  * @brief Sets the timer callback
@@ -45,17 +29,15 @@ void CallbackCallLcd(void);
 void CallbackSetTimer(Func_T callback);
 
 /**
- * @brief DO NOT CALL
- * 
- * Calls the timer callback
- * 
- */
-void CallbackCallTimer(void);
-
-/**
  * @brief Halts the CPU and waits for the next v-blank interrupt
  * 
  */
 void WaitForVblank(void);
+
+/**
+ * @brief Generic v-blank callback
+ * 
+ */
+void VblankCallback(void);
 
 #endif /* CALLBACKS_H */

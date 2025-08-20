@@ -7,6 +7,7 @@
 #include "callbacks.h"
 #include "bg.h"
 #include "bg_clip.h"
+#include "inventory.h"
 #include "io.h"
 #include "sprite.h"
 #include "fading.h"
@@ -72,11 +73,11 @@ static const struct HitboxData sHitboxBottom = {
 static void PlayerInitPhysics(void)
 {
     gPlayerPhysics.xAcceleration = 1;
-    gPlayerPhysics.xVelocityCap = 8;
+    gPlayerPhysics.xVelocityCap = 4;
     gPlayerPhysics.yVelocityCap = 8;
     gPlayerPhysics.gravityUpwards = 1;
-    gPlayerPhysics.gravityDownwards = 2;
-    gPlayerPhysics.jumpingVelocity = -16;
+    gPlayerPhysics.gravityDownwards = 1;
+    gPlayerPhysics.jumpingVelocity = -12;
 }
 
 static void PlayerSetPose(u8 pose)
@@ -363,6 +364,11 @@ void PlayerUpdate(void)
         }
 
         gPlayerData.work1 ^= 1;
+    }
+
+    if (gChangedInput & KEY_SELECT)
+    {
+        OpenInventory();
     }
 }
 

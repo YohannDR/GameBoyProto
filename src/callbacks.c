@@ -1,5 +1,10 @@
 #include "callbacks.h"
 
+#include "gb/io.h"
+
+#include "bg.h"
+#include "io.h"
+
 // Whether or not the v-blank intterupt has been fired
 static u8 gVblankFired;
 
@@ -67,4 +72,10 @@ void WaitForVblank(void)
 
     // Reset the flag for the next v-blank
     gVblankFired = FALSE;
+}
+
+void VblankCallback(void)
+{
+    Write8(REG_SCX, gBackgroundX);
+    Write8(REG_SCY, gBackgroundY);
 }

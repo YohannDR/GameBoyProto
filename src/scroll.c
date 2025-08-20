@@ -67,6 +67,9 @@ static void UpdateCamera(void)
     gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX - SUB_PIXEL_TO_BLOCK(gRoomOriginX);
     gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY - SUB_PIXEL_TO_BLOCK(gRoomOriginY);
 
+    gBackgroundX = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
+    gBackgroundY = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
+
     CheckForTilemapUpdate();
 }
 
