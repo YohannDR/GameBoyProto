@@ -28,6 +28,7 @@ static void LoadSprites(const struct RoomSprite* sprites)
     u8 part;
 
     PrepareSpriteGraphicsLoading();
+    gMaxAmountOfExistingSprites = 0;
 
     for (;;)
     {

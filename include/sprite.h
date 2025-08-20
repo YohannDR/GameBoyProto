@@ -167,6 +167,7 @@ extern struct Sprite gSpriteData[20];
 // Holds the current sprite being processed
 extern struct Sprite gCurrentSprite;
 extern struct SpriteLoaderInfo gSpriteLoaderInfo;
+extern u8 gMaxAmountOfExistingSprites;
 
 /**
  * @brief Spawns a new sprite

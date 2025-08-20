@@ -152,6 +152,11 @@ void RegisterItem(u8 item)
     gAcquiredItems |= 1 << item;
 }
 
+u8 HasItem(u8 item)
+{
+    return gAcquiredItems & (1 << item);
+}
+
 void InventoryUpdate(void)
 {
     if (gGameMode.sub == INV_STATE_SCROLLING_UP)

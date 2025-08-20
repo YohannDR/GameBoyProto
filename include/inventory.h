@@ -37,6 +37,7 @@ extern u8 gAcquiredItems;
 void InitializeWindow(void);
 void OpenInventory(void);
 void RegisterItem(u8 item);
+u8 HasItem(u8 item);
 void InventoryUpdate(void);
 
 #endif /* INVENTORY_H */
