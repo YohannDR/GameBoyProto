@@ -201,49 +201,49 @@ const struct RoomSprite sRoom1_SpriteData[] = {
     [3] = {
         .x = 13,
         .y = 8,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [4] = {
         .x = 13,
         .y = 8,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [5] = {
         .x = 13,
         .y = 9,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [6] = {
         .x = 13,
         .y = 10,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [7] = {
         .x = 13,
         .y = 11,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [8] = {
         .x = 13,
         .y = 12,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [9] = {
         .x = 13,
         .y = 13,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [10] = {
         .x = 13,
         .y = 14,
-        .id = STYPE_FIRE,
+        .id = STYPE_FIRE_SPAWNER,
         .part = 0
     },
     [11] = ROOM_SPRITE_TERMINATOR

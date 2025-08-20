@@ -3,6 +3,7 @@
 #include "bg_clip.h"
 #include "player.h"
 #include "input.h"
+#include "fire.h"
 #include "sprites_AI/water_drop.h"
 
 #define ITEM_INPUT (KEY_B)
@@ -15,7 +16,12 @@
 static u16 gItemX;
 static u16 gItemY;
 static u8 gDrawItem;
-static u8 gWaterFilled;
+
+/**
+ * @brief Whether the current item is "on" : is the torch light up, is the bucket filled, is the gun filled
+ * 
+ */
+static u8 gIsItemOn;
 
 enum ItemState {
     STATE_IDLE,
@@ -25,29 +31,33 @@ enum ItemState {
 static void CheckFillWithWater(void)
 {
     if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x, gPlayerData.y) == CLIP_BEHAVIOR_WATER)
-        gWaterFilled = TRUE;
+        gIsItemOn = TRUE;
     else if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y) == CLIP_BEHAVIOR_WATER)
-        gWaterFilled = TRUE;
+        gIsItemOn = TRUE;
     else if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH, gPlayerData.y) == CLIP_BEHAVIOR_WATER)
-        gWaterFilled = TRUE;
+        gIsItemOn = TRUE;
 }
 
 static void Torch(void)
 {
-
+    if (!gIsItemOn && GET_CLIPDATA_BEHAVIOR(gItemX + BLOCK_SIZE, gItemY) == CLIP_BEHAVIOR_INFLAMMABLE)
+    {
+        StartFire(gItemX + BLOCK_SIZE, gItemY);
+        gIsItemOn = TRUE;
+    }
 }
 
 static void WaterBucket(void)
 {
-    if (!gWaterFilled)
+    if (!gIsItemOn)
         CheckFillWithWater();
 
-    if (gWaterFilled && gChangedInput & ITEM_INPUT)
+    if (gIsItemOn && gChangedInput & ITEM_INPUT)
     {
         // TODO, find a way to load graphics for dynamic sprites
         SpawnSprite(gItemX, gItemY, STYPE_WATER_DROP, WATER_DROP_FALLING, QueueSpriteGraphics(STYPE_WATER_DROP));
 
-        gWaterFilled = FALSE;
+        gIsItemOn = FALSE;
     }
 }
 
@@ -60,10 +70,10 @@ static void WaterGun(void)
 {
     u8 direction;
 
-    if (!gWaterFilled)
+    if (!gIsItemOn)
         CheckFillWithWater();
 
-    if (gWaterFilled && gChangedInput & ITEM_INPUT)
+    if (gIsItemOn && gChangedInput & ITEM_INPUT)
     {
         if (gPlayerMovement.direction & KEY_LEFT)
             direction = WATER_DROP_FLYING_LEFT;
@@ -73,7 +83,7 @@ static void WaterGun(void)
         // TODO, find a way to load graphics for dynamic sprites
         SpawnSprite(gItemX, gItemY, STYPE_WATER_DROP, direction, QueueSpriteGraphics(STYPE_WATER_DROP));
 
-        gWaterFilled = FALSE;
+        gIsItemOn = FALSE;
     }
 }
 
@@ -100,4 +110,9 @@ void UpdateItem(void)
     if (gPlayerData.pose == PLAYER_POSE_IDLE)
 
     sItemshandlers[gCurrentItem]();
+}
+
+void OnItemSwitch(void)
+{
+    gIsItemOn = FALSE;
 }

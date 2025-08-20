@@ -31,7 +31,7 @@ const u8 sCollisionTable_Test[] = {
     CLIPDATA_AIR,
     CLIPDATA_AIR,
     CLIPDATA_AIR,
-    CLIPDATA_AIR,
+    CLIPDATA_INFLAMMABLE,
     CLIPDATA_AIR,
     CLIPDATA_AIR,
     CLIPDATA_AIR,
