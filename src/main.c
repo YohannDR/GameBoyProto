@@ -80,6 +80,7 @@ void main(void)
                 // Do stuff...
                 PlayerUpdate();
                 DoorUpdate();
+                ScrollUpdate();
             }
             else if (gGameMode.main == GM_INVENTORY)
             {
@@ -88,9 +89,9 @@ void main(void)
             else if (gGameMode.main == GM_TRANSITION)
             {
                 TransitionUpdate();
+                ScrollUpdate();
             }
 
-            ScrollUpdate();
             PlayerDraw();
             UpdateSprites();
             FadingUpdate();

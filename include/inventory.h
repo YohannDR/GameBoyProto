@@ -35,9 +35,12 @@ extern u8 gCurrentItem;
 extern u8 gAcquiredItems;
 
 void InitializeWindow(void);
+
+void OpenInventoryForNewItem(u8 item);
 void OpenInventory(void);
 void RegisterItem(u8 item);
 u8 HasItem(u8 item);
+
 void InventoryUpdate(void);
 
 #endif /* INVENTORY_H */

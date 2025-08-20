@@ -37,6 +37,8 @@ static u8 gInventoryItemTile;
  */
 static u8 gSelectIndex;
 
+static u8 gPreviousItem;
+
 extern const u8 sWindowGraphics[];
 
 static void InventoryVblank(void)
@@ -133,11 +135,27 @@ void InitializeWindow(void)
     SetupWindowTilemap();
 }
 
+void OpenInventoryForNewItem(u8 item)
+{
+    gGameMode.main = GM_INVENTORY;
+    gGameMode.sub = INV_STATE_SCROLLING_UP;
+    gGameMode.timer = 0;
+    gGameMode.work1 = TRUE;
+
+    gPreviousItem = gCurrentItem;
+
+    gCurrentItem = item;
+    ComputeInventoryTile();
+
+    CallbackSetVblank(InventoryVblank);
+}
+
 void OpenInventory(void)
 {
     // Setup game mode
     gGameMode.main = GM_INVENTORY;
     gGameMode.sub = INV_STATE_SCROLLING_UP;
+    gGameMode.work1 = FALSE;
 
     // Compute the tile once at startup to properly display it when the window is scrolling up
     ComputeInventoryTile();
@@ -170,34 +188,60 @@ void InventoryUpdate(void)
     }
     else if (gGameMode.sub == INV_STATE_SELECTING)
     {
-        // Check if we should exit the inventory, either B or Select work
-        if (gChangedInput & (KEY_B | KEY_SELECT))
+        if (gGameMode.work1)
         {
-            gGameMode.sub = INV_STATE_SCROLLING_DOWN;
-            return;
+            gGameMode.timer += DELTA_TIME;
+
+            if (gGameMode.timer == CONVERT_SECONDS(.4f))
+            {
+                gGameMode.timer = 0;
+                gGameMode.work2++;
+
+                // Alternate between correct tile and blank tile
+                if (gInventoryItemTile == 0x80 - 1)
+                    ComputeInventoryTile();
+                else
+                    gInventoryItemTile = 0x80 - 1;
+
+                if (gGameMode.work2 == 5)
+                {
+                    gGameMode.sub = INV_STATE_SCROLLING_DOWN;
+                    gCurrentItem = gPreviousItem;
+                }
+            }
+        }
+        else
+        {
+            // Check if we should exit the inventory, either B or Select work
+            if (gChangedInput & (KEY_B | KEY_SELECT))
+            {
+                gGameMode.sub = INV_STATE_SCROLLING_DOWN;
+                return;
+            }
+    
+            // Handle scrolling, check for wrap around
+            if (gChangedInput & KEY_LEFT)
+            {
+                if (gSelectIndex == 0)
+                    gSelectIndex = gNumberOfScrollableItems - 1;
+                else
+                    gSelectIndex--;
+            }
+            else if (gChangedInput & KEY_RIGHT)
+            {
+                if (gSelectIndex == gNumberOfScrollableItems - 1)
+                    gSelectIndex = 0;
+                else
+                    gSelectIndex++;
+            }
+    
+            // Update current item with our selection
+            gCurrentItem = gSelectableItems[gSelectIndex];
+
+            // And update the displayed tile
+            ComputeInventoryTile();
         }
 
-        // Handle scrolling, check for wrap around
-        if (gChangedInput & KEY_LEFT)
-        {
-            if (gSelectIndex == 0)
-                gSelectIndex = gNumberOfScrollableItems - 1;
-            else
-                gSelectIndex--;
-        }
-        else if (gChangedInput & KEY_RIGHT)
-        {
-            if (gSelectIndex == gNumberOfScrollableItems - 1)
-                gSelectIndex = 0;
-            else
-                gSelectIndex++;
-        }
-
-        // Update current item with our selection
-        gCurrentItem = gSelectableItems[gSelectIndex];
-
-        // And update the displayed tile
-        ComputeInventoryTile();
     }
     else if (gGameMode.sub == INV_STATE_SCROLLING_DOWN)
     {
