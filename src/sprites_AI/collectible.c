@@ -63,8 +63,9 @@ static void CheckPlayerCollision(void)
 
     // Give the item
     RegisterItem(gCurrentSprite.part);
-    // And kill this sprite
-    gCurrentSprite.status = 0;
+    OpenInventoryForNewItem(gCurrentSprite.part);
+    // Mark for death
+    gCurrentSprite.pose = 2;
 }
 
 void Collectible(void)
@@ -79,11 +80,24 @@ void Collectible(void)
         }
 
         gCurrentSprite.pose = 1;
+        gCurrentSprite.drawDistanceLeft = SUB_PIXEL_TO_PIXEL(0);
+        gCurrentSprite.drawDistanceRight = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(0);
+
         SetCollectibleAnim();
     }
-
-    HandleFloatingMovement();
-    CheckPlayerCollision();
+    else if (gCurrentSprite.pose == 1)
+    {
+        HandleFloatingMovement();
+        CheckPlayerCollision();
+    }
+    else if (gCurrentSprite.pose == 2)
+    {
+        // Since sprite AIs aren't called when in the inventory, this will be called on the first frame after the inventory closes
+        // so we can simply kill the sprite immediately
+        gCurrentSprite.status = 0;
+    }
 }
 
 static const u8 sCollectibleAnim_Torch_Frame0[OAM_DATA_SIZE(1)] = {
@@ -94,7 +108,7 @@ static const u8 sCollectibleAnim_Torch_Frame0[OAM_DATA_SIZE(1)] = {
 const struct AnimData sCollectibleAnim_Torch[] = {
     [0] = {
         .oamPointer = sCollectibleAnim_Torch_Frame0,
-        .duration = 60,
+        .duration = 255,
     },
     [1] = SPRITE_ANIM_TERMINATOR
 };
