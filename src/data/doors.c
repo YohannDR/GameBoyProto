@@ -13,8 +13,8 @@ const struct Door sDoors[] = {
         .tileset = 255,
     },
     [1] = {
-        .x = 19,
-        .y = 1,
+        .x = 0,
+        .y = 11,
         .ownerRoom = 0,
         .height = 4,
         .width = 1,
@@ -35,8 +35,8 @@ const struct Door sDoors[] = {
         .tileset = 255,
     },
     [3] = {
-        .x = 15,
-        .y = 3,
+        .x = 2,
+        .y = 18,
         .ownerRoom = 1,
         .height = 4,
         .width = 2,
@@ -46,7 +46,7 @@ const struct Door sDoors[] = {
         .tileset = 255,
     },
     [4] = {
-        .x = 2,
+        .x = 13,
         .y = 3,
         .ownerRoom = 1,
         .height = 4,
@@ -200,8 +200,8 @@ const struct Door sDoors[] = {
         .tileset = 255,
     },
     [18] = {
-        .x = 15,
-        .y = 10,
+        .x = 8,
+        .y = 1,
         .ownerRoom = 6,
         .height = 4,
         .width = 3,
@@ -211,8 +211,8 @@ const struct Door sDoors[] = {
         .tileset = 255,
     },
     [19] = {
-        .x = 30,
-        .y = 4,
+        .x = 32,
+        .y = 2,
         .ownerRoom = 6,
         .height = 4,
         .width = 3,
@@ -222,8 +222,8 @@ const struct Door sDoors[] = {
         .tileset = 255,
     },
     [20] = {
-        .x = 30,
-        .y = 13,
+        .x = 20,
+        .y = 10,
         .ownerRoom = 6,
         .height = 4,
         .width = 3,
