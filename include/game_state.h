@@ -14,8 +14,10 @@ struct GameModeInfo {
     u8 sub;
     // Handy timer
     u8 timer;
-    // Which game mode should be next
-    u8 next;
+    // Work variable
+    u8 work1;
+    // Work variable
+    u8 work2;
 };
 
 enum GameMode {
