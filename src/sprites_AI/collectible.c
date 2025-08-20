@@ -71,6 +71,13 @@ void Collectible(void)
 {
     if (gCurrentSprite.pose == 0)
     {
+        if (HasItem(gCurrentSprite.part))
+        {
+            // We already have the item, we can kill the sprite
+            gCurrentSprite.status = 0;
+            return;
+        }
+
         gCurrentSprite.pose = 1;
         SetCollectibleAnim();
     }
