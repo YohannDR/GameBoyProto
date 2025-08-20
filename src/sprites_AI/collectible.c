@@ -79,6 +79,11 @@ void Collectible(void)
         }
 
         gCurrentSprite.pose = 1;
+        gCurrentSprite.drawDistanceLeft = SUB_PIXEL_TO_PIXEL(0);
+        gCurrentSprite.drawDistanceRight = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(0);
+
         SetCollectibleAnim();
     }
 
