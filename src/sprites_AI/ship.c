@@ -21,13 +21,14 @@ void Ship(void)
         gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
         gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(0);
 
-        if (gCurrentSprite.properties == SPRITE_PROPERTY_X_FLIP)
-        {
-            gCurrentSprite.part = SHIP_RIGHT;
-        }
-        
+        if (gCurrentSprite.part == SHIP_RIGHT)
+            gCurrentSprite.properties |= SPRITE_PROPERTY_X_FLIP;
     }
+
     // TODO proper screen looping? This loops via underflow/overflow which is a bit weird
+    // When moving left, check if x is below the speed (we can't check if x < 0 because it's unsigned, so it's UB), if yes loop to tilemap width (don't forget to convert from block to sub pixel)
+    // When moving right, check if x is above the tilemap width (don't forget to convert from block to sub pixel), if yes loop to 0
+    // If you want an example of this kind of logic, check inventory.c, lines 223 to 237
     if (gCurrentSprite.part == SHIP_LEFT)
         gCurrentSprite.x -= MOVING_SPEED;
     else if (gCurrentSprite.part == SHIP_RIGHT)
