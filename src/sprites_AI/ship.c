@@ -40,3 +40,16 @@ const u8 sShipGraphics[] = {
 
     0x0B, 0x0B, 0x1D, 0x1F, 0x2F, 0x2F, 0x7F, 0x7D, 0xBD, 0xC7, 0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00,
 };
+
+static const u8 sShipAnim_Idle_Frame0[OAM_DATA_SIZE(1)] = {
+    1,
+    OAM_POS(-8), OAM_POS(0), 0, 0,
+};
+
+const struct AnimData sShipAnim_Idle[] = {
+    [0] = {
+        .oamPointer = sShipAnim_Idle_Frame0,
+        .duration = 60,
+    },
+    [1] = SPRITE_ANIM_TERMINATOR
+};
