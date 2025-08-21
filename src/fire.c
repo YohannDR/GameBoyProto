@@ -1,10 +1,13 @@
 #include "fire.h"
 
 #include "gb/oam.h"
+#include "gb/io.h"
 
+#include "bg.h"
+#include "bg_clip.h"
+#include "game_state.h"
 #include "macros.h"
 #include "sprite.h"
-#include "bg_clip.h"
 
 /**
  * @brief Whether the fire cluster exists
@@ -59,6 +62,8 @@
 #define FIRE_SPREADING_DURATION (CONVERT_SECONDS(4.f))
 #define FIRE_MAX_LENGTH (10)
 
+#define FIRE_GFX_SLOT (112)
+
 struct FireCluster {
     u8 status;
     u16 x;
@@ -70,6 +75,12 @@ struct FireCluster {
 struct FireCluster gFireClusters[4];
 static struct FireCluster gCurrentFire;
 static u8 gMaxAmountOfExistingFire;
+
+static u8 gAnimationTimer;
+static u8 gCurrentAnimationFrame;
+
+extern const u8 sFireGraphics[];
+extern const struct AnimData sFireAnim_Idle[];
 
 static void FindFireDirection(void)
 {
@@ -127,7 +138,29 @@ static void FindFireDirection(void)
     gCurrentFire.status |= FIRE_STATUS_LOCKED;
 }
 
-void PropagateFire(void)
+static void FireUpdateAnimation(void)
+{
+    const struct AnimData* anim;
+
+#ifdef HACKY_OPTIMIZATIONS
+    anim = HACKY_ARRAY_INDEXING(sFireAnim_Idle, gCurrentAnimationFrame, struct AnimData);
+#else
+    anim = &animPointer[gCurrentAnimationFrame];
+#endif
+    gAnimationTimer++;
+
+    if (gAnimationTimer >= anim->duration)
+    {
+        gAnimationTimer = 0;
+        gCurrentAnimationFrame++;
+        anim++;
+
+        if (anim->duration == 0)
+            gCurrentAnimationFrame = 0;
+    }
+}
+
+static void PropagateFire(void)
 {
     u16 x;
     u16 y;
@@ -212,6 +245,48 @@ void PropagateFire(void)
 
 static void FireDraw(void)
 {
+    const u8* oamData;
+    u8* dst;
+    u8 i;
+    u8 y;
+    u8 x;
+
+    // TODO Add check to not draw if off screen
+
+    dst = OAM_BUFFER_SLOT(gNextOamSlot);
+
+    // Get the sprite's current oam data
+#ifdef HACKY_OPTIMIZATIONS
+    oamData = HACKY_ARRAY_INDEXING(sFireAnim_Idle, gCurrentAnimationFrame, struct AnimData)->oamPointer;
+#else
+    oamData = sFireAnim_Idle[gCurrentAnimationFrame].oamPointer;
+#endif
+
+    // We ignore the part count, as fire is hard coded to only draw a single tile
+    oamData++;
+    
+    // Get the sprite's attributes
+    x = SUB_PIXEL_TO_PIXEL(gCurrentFire.x) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
+    y = SUB_PIXEL_TO_PIXEL(gCurrentFire.y) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
+
+    for (i = 0; i < gCurrentFire.length + 1; i++)
+    {
+        *dst++ = (*oamData++) + y;
+        *dst++ = (*oamData++) + x;
+        *dst++ = (*oamData++) + FIRE_GFX_SLOT;
+        *dst++ = (*oamData++);
+
+        oamData -= 4;
+
+        if (gCurrentFire.status & FIRE_STATUS_UP)
+            y -= SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        else if (gCurrentFire.status & FIRE_STATUS_DOWN)
+            y += SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        else if (gCurrentFire.status & FIRE_STATUS_LEFT)
+            x -= SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        else if (gCurrentFire.status & FIRE_STATUS_RIGHT)
+            x += SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+    }
 }
 
 void StartFire(u16 x, u16 y)
@@ -236,10 +311,46 @@ void StartFire(u16 x, u16 y)
     }
 }
 
+void LoadFireGraphics(void)
+{
+    u8* dst;
+    const u8* src;
+    u8 tileCount;
+    u8 i;
+
+    dst = (u8*)(VRAM_BASE + FIRE_GFX_SLOT * 16);
+
+    src = sFireGraphics;
+    tileCount = *src++;
+
+    for (i = 0; i < tileCount; i++)
+    {
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+    }
+}
+
 void UpdateFire(void)
 {
     u8 i;
     struct FireCluster* fire;
+
+    if (gGameMode.main == GM_IN_GAME)
+        FireUpdateAnimation();
 
     fire = gFireClusters;
     for (i = 0; i < gMaxAmountOfExistingFire; i++, fire++)
@@ -253,7 +364,7 @@ void UpdateFire(void)
         gCurrentFire.spreadTimer = fire->spreadTimer;
         gCurrentFire.length = fire->length;
 
-        if (!(fire->status & FIRE_STATUS_LOCKED))
+        if (!(fire->status & FIRE_STATUS_LOCKED) && gGameMode.main == GM_IN_GAME)
         {
             if (!(gCurrentFire.status & FIRE_DIRECTION_MASK))
                 FindFireDirection();

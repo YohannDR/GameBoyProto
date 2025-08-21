@@ -46,6 +46,7 @@ static void InitGame(void)
 
     SetCameraPosition(0, 0);
     PlayerInit();
+    LoadFireGraphics();
     LoadRoom(0);
     SetupRandomSeed();
     InitializeWindow();
