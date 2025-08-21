@@ -67,7 +67,13 @@ const struct RoomSprite sRoom16_SpriteData[] = {
         .id = STYPE_COLLECTIBLE,
         .part = 0
     },
-    [1] = ROOM_SPRITE_TERMINATOR
+    [1] = {
+        .x = 4,
+        .y = 14,
+        .id = STYPE_PORTAL,
+        .part = 0
+    },
+    [2] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom16_DoorData[] = {
