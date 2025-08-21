@@ -42,6 +42,18 @@
  */
 #define FIRE_STATUS_LOCKED      (1u << 5)
 
+/**
+ * @brief Whether the fire should also propagate backwards, e.g. it's going up, but it can go down too
+ * 
+ */
+#define FIRE_STATUS_BACKWARD    (1u << 6)
+
+/**
+ * @brief Dictates in which direction the fire is currently propagating in case it can both forward and backwards (thus FIRE_STATUS_BACKWARD has to be set)
+ * 
+ */
+#define FIRE_STATUS_DIRECTION   (1u << 7)
+
 #define FIRE_DIRECTION_MASK (FIRE_STATUS_UP | FIRE_STATUS_DOWN | FIRE_STATUS_LEFT | FIRE_STATUS_RIGHT)
 
 #define FIRE_SPREADING_DURATION (CONVERT_SECONDS(4.f))
@@ -67,31 +79,52 @@ static void FindFireDirection(void)
     x = gCurrentFire.x;
     y = gCurrentFire.y;
 
-    if (GET_CLIPDATA_BEHAVIOR(x, y - BLOCK_SIZE) == CLIP_BEHAVIOR_INFLAMMABLE)
-    {
-        gCurrentFire.status |= FIRE_STATUS_UP;
-        return;
-    }
+    // We need to check all 4 cardinal directions
 
+    // Check up
+    if (GET_CLIPDATA_BEHAVIOR(x, y - BLOCK_SIZE) == CLIP_BEHAVIOR_INFLAMMABLE)
+        gCurrentFire.status |= FIRE_STATUS_UP;
+
+    // Check down
     if (GET_CLIPDATA_BEHAVIOR(x, y + BLOCK_SIZE) == CLIP_BEHAVIOR_INFLAMMABLE)
     {
-        gCurrentFire.status |= FIRE_STATUS_DOWN;
+        // If the fire was already determined to be going up, we mark it as going backwards too, otherwise it's just going down
+        if (gCurrentFire.status & FIRE_STATUS_UP)
+            gCurrentFire.status |= FIRE_STATUS_BACKWARD;
+        else
+            gCurrentFire.status |= FIRE_STATUS_DOWN;
+
         return;
     }
 
+    // If we found a direction we can abort
+    if (gCurrentFire.status & FIRE_DIRECTION_MASK)
+        return;
+
+    // Same logic is applied to find a potential horizontal direction
+
+    // Check left
     if (GET_CLIPDATA_BEHAVIOR(x - BLOCK_SIZE, y) == CLIP_BEHAVIOR_INFLAMMABLE)
-    {
         gCurrentFire.status |= FIRE_STATUS_LEFT;
-        return;
-    }
 
+    // Check right
     if (GET_CLIPDATA_BEHAVIOR(x + BLOCK_SIZE, y) == CLIP_BEHAVIOR_INFLAMMABLE)
     {
-        gCurrentFire.status |= FIRE_STATUS_RIGHT;
+        // If the fire was already determined to be going left, we mark it as going backwards too, otherwise it's just going right
+        if (gCurrentFire.status & FIRE_STATUS_LEFT)
+            gCurrentFire.status |= FIRE_STATUS_BACKWARD;
+        else
+            gCurrentFire.status |= FIRE_STATUS_RIGHT;
+
         return;
     }
 
-    gCurrentFire.status = FIRE_STATUS_LOCKED;
+    // If we found a direction we can abort
+    if (gCurrentFire.status & FIRE_DIRECTION_MASK)
+        return;
+
+    // No direction was found, so the fire can't expand
+    gCurrentFire.status |= FIRE_STATUS_LOCKED;
 }
 
 void PropagateFire(void)
@@ -107,8 +140,53 @@ void PropagateFire(void)
 
     gCurrentFire.spreadTimer = 0;
 
+    if (gCurrentFire.status & FIRE_STATUS_BACKWARD)
+    {
+        if (gCurrentFire.status & FIRE_STATUS_DIRECTION)
+        {
+            // Going backwards, we check "behind" the starting position
+            x = gCurrentFire.x;
+            y = gCurrentFire.y;
+
+            // Check only one block behind
+            if (gCurrentFire.status & FIRE_STATUS_UP)
+                y += BLOCK_SIZE;
+            else if (gCurrentFire.status & FIRE_STATUS_DOWN)
+                y -= BLOCK_SIZE;
+            else if (gCurrentFire.status & FIRE_STATUS_LEFT)
+                x += BLOCK_SIZE;
+            else if (gCurrentFire.status & FIRE_STATUS_RIGHT)
+                x -= BLOCK_SIZE;
+
+            if (GET_CLIPDATA_BEHAVIOR(x, y) == CLIP_BEHAVIOR_INFLAMMABLE)
+            {
+                // Move the starting point backwards to the newly located block
+                if (gCurrentFire.status & (FIRE_STATUS_UP | FIRE_STATUS_DOWN))
+                    gCurrentFire.y = y;
+                else if (gCurrentFire.status & (FIRE_STATUS_LEFT | FIRE_STATUS_RIGHT))
+                    gCurrentFire.x = x;
+
+                // And increase the length
+                gCurrentFire.length++;
+                if (gCurrentFire.length == FIRE_MAX_LENGTH)
+                    gCurrentFire.status |= FIRE_STATUS_LOCKED;
+
+                // Toggle and return
+                gCurrentFire.status ^= FIRE_STATUS_DIRECTION;
+                return;
+            }
+
+            // If we didn't find a inflammable block, we can remove the backward flag, and fall-through the normal "forward" check
+            gCurrentFire.status &= ~FIRE_STATUS_DIRECTION;
+        }
+
+        // Swap the direction
+        gCurrentFire.status ^= FIRE_STATUS_DIRECTION;
+    }
+
     x = gCurrentFire.x;
     y = gCurrentFire.y;
+    // Check the next block in the chain
     offset = (gCurrentFire.length + 1) * BLOCK_SIZE;
 
     if (gCurrentFire.status & FIRE_STATUS_UP)
@@ -122,6 +200,7 @@ void PropagateFire(void)
     
     if (GET_CLIPDATA_BEHAVIOR(x, y) != CLIP_BEHAVIOR_INFLAMMABLE)
     {
+        // There's no more inflammable blocks, so we have reached the end of the propagation
         gCurrentFire.status |= FIRE_STATUS_LOCKED;
         return;
     }
@@ -145,10 +224,11 @@ void StartFire(u16 x, u16 y)
             continue;
 
         gFireClusters[i].status = FIRE_STATUS_EXISTS;
+        // Normalize fire position in the middle of the block
         gFireClusters[i].x = (x & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
-        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
+        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) - HALF_BLOCK_SIZE;
         gFireClusters[i].spreadTimer = 0;
-        
+
         if (i >= gMaxAmountOfExistingFire)
             gMaxAmountOfExistingFire = i + 1;
 
