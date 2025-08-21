@@ -343,7 +343,9 @@ void PlayerUpdate(void)
     }
 
     UpdateAnimation();
-    UpdateItem();
+
+    if (gPlayerData.pose != PLAYER_POSE_ON_LADDER)
+        UpdateItem();
 
     if (gChangedInput & KEY_SELECT)
         OpenInventory();

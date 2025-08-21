@@ -11,11 +11,12 @@
 #define OFFSET_X_LEFT (-(QUARTER_BLOCK_SIZE))
 #define OFFSET_X_RIGHT (PLAYER_WIDTH - QUARTER_BLOCK_SIZE)
 
-#define OFFSET_Y (-(BLOCK_SIZE))
+#define OFFSET_Y (-(BLOCK_SIZE + HALF_BLOCK_SIZE))
 
 static u16 gItemX;
 static u16 gItemY;
 static u8 gDrawItem;
+static u8 gTempTimer;
 
 /**
  * @brief Whether the current item is "on" : is the torch light up, is the bucket filled, is the gun filled
@@ -40,10 +41,15 @@ static void CheckFillWithWater(void)
 
 static void Torch(void)
 {
-    if (!gIsItemOn && GET_CLIPDATA_BEHAVIOR(gItemX + BLOCK_SIZE, gItemY) == CLIP_BEHAVIOR_INFLAMMABLE)
+    u16 x;
+
+    x = gItemX;
+    if (gPlayerMovement.direction & KEY_RIGHT)
+        x += BLOCK_SIZE;
+
+    if ((gTempTimer % 32) == 0 && GET_CLIPDATA_BEHAVIOR(x, gItemY) == CLIP_BEHAVIOR_INFLAMMABLE)
     {
-        StartFire(gItemX + BLOCK_SIZE, gItemY);
-        gIsItemOn = TRUE;
+        StartFire(x, gItemY);
     }
 }
 
@@ -98,6 +104,8 @@ void UpdateItem(void)
 {
     if (gCurrentItem == ITEM_NONE)
         return;
+
+    gTempTimer++;
 
     gItemX = gPlayerData.x;
     if (gPlayerMovement.direction & KEY_RIGHT)

@@ -265,7 +265,7 @@ static void FireDraw(void)
     // We ignore the part count, as fire is hard coded to only draw a single tile
     oamData++;
     
-    // Get the sprite's attributes
+    // Get the fire start attributes
     x = SUB_PIXEL_TO_PIXEL(gCurrentFire.x) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
     y = SUB_PIXEL_TO_PIXEL(gCurrentFire.y) - SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
 
@@ -287,6 +287,8 @@ static void FireDraw(void)
         else if (gCurrentFire.status & FIRE_STATUS_RIGHT)
             x += SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
     }
+
+    gNextOamSlot += gCurrentFire.length + 1;
 }
 
 void StartFire(u16 x, u16 y)
@@ -301,8 +303,9 @@ void StartFire(u16 x, u16 y)
         gFireClusters[i].status = FIRE_STATUS_EXISTS;
         // Normalize fire position in the middle of the block
         gFireClusters[i].x = (x & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
-        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) - HALF_BLOCK_SIZE;
+        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
         gFireClusters[i].spreadTimer = 0;
+        gFireClusters[i].length = 0;
 
         if (i >= gMaxAmountOfExistingFire)
             gMaxAmountOfExistingFire = i + 1;
