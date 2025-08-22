@@ -84,6 +84,20 @@
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
 
 /**
+ * @brief Gets the lower nibble of a byte
+ * 
+ * @param v Value
+ */
+#define GET_LOWER_NIBBLE(v) ((v) & 0x0F)
+
+/**
+ * @brief Gets the upper nibble of a byte
+ * 
+ * @param v Value
+ */
+#define GET_UPPER_NIBBLE(v) ((u8)((v) & 0xF0) >> 4)
+
+/**
  * @brief This macro does nothing, it's only used to indicate that a function is implemented in asm rather than C
  * 
  */

@@ -28,8 +28,8 @@ void FireSpawner(void)
     // left  = 1 << 6 (0x40, 64)
     // right = 1 << 7 (0x80, 128)
 
-    direction = (gCurrentSprite.part & 0xF0) >> 4;
-    length = (gCurrentSprite.part & 0x0F);
+    direction = GET_UPPER_NIBBLE(gCurrentSprite.part);
+    length = GET_LOWER_NIBBLE(gCurrentSprite.part);
 
     SpawnCluster(gCurrentSprite.x, gCurrentSprite.y, direction, length);
 
