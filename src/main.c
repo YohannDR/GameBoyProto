@@ -9,6 +9,7 @@
 #include "input.h"
 #include "scroll.h"
 #include "room.h"
+#include "fire.h"
 #include "random.h"
 #include "io.h"
 #include "fading.h"
@@ -45,6 +46,7 @@ static void InitGame(void)
 
     SetCameraPosition(0, 0);
     PlayerInit();
+    LoadFireGraphics();
     LoadRoom(0);
     SetupRandomSeed();
     InitializeWindow();
@@ -94,6 +96,7 @@ void main(void)
 
             PlayerDraw();
             UpdateSprites();
+            UpdateFire();
             FadingUpdate();
         }
 

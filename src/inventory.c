@@ -6,6 +6,7 @@
 #include "callbacks.h"
 #include "io.h"
 #include "input.h"
+#include "items.h"
 #include "macros.h"
 #include "game_state.h"
 
@@ -238,6 +239,7 @@ void InventoryUpdate(void)
     
             // Update current item with our selection
             gCurrentItem = gSelectableItems[gSelectIndex];
+            OnItemSwitch();
 
             // And update the displayed tile
             ComputeInventoryTile();

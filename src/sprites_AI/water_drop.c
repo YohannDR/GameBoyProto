@@ -65,8 +65,8 @@ void WaterDrop(void)
     }
     else if (gCurrentSprite.pose == POSE_EXPLODING)
     {
-        if (gCurrentSprite.status & SPRITE_STATUS_ANIM_ENDED)
-            gCurrentSprite.status &= ~SPRITE_STATUS_EXISTS;
+        // if (gCurrentSprite.status & SPRITE_STATUS_ANIM_ENDED)
+            gCurrentSprite.status = 0;
 
         // We can exit out early, no need to check for collision
         return;

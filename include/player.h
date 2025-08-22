@@ -63,6 +63,13 @@ struct PlayerMovement {
     u8 direction;
 };
 
+enum PlayerPose {
+    PLAYER_POSE_IDLE,
+    PLAYER_POSE_RUNNING,
+    PLAYER_POSE_JUMPING,
+    PLAYER_POSE_ON_LADDER,
+};
+
 extern struct PlayerData gPlayerData;
 extern struct PlayerPhysics gPlayerPhysics;
 extern struct PlayerMovement gPlayerMovement;
