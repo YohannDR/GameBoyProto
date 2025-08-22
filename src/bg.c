@@ -18,7 +18,7 @@ u16 gBackgroundY;
 
 struct TilemapInfo gTilemap;
 
-static u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 8];
+static u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 4];
 
 u8 gTilemapUpdateDirectionX;
 

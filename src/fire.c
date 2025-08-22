@@ -65,6 +65,8 @@
 
 #define FIRE_GFX_SLOT (112)
 
+#define FIRE_TILE_EXISTS (1u << 7)
+
 struct FireCluster {
     u8 status;
     u16 x;
@@ -73,14 +75,22 @@ struct FireCluster {
     u8 length;
 };
 
+struct FireTile {
+    u8 parentCluster;
+    u16 x;
+    u16 y;
+};
+
 static struct FireCluster gFireClusters[4];
 static struct FireCluster gCurrentFire;
+static u8 gCurrentClusterId;
 static u8 gMaxAmountOfExistingFire;
 
 static u8 gAnimationTimer;
 static u8 gCurrentAnimationFrame;
 
-static u8 gFireTiles[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 8 / 8];
+static struct FireTile gFireTiles[50];
+static u8 gMaxAmountOfExistingFireTiles;
 
 extern const u8 sFireGraphics[];
 extern const struct AnimData sFireAnim_Idle[];
@@ -165,16 +175,34 @@ static void FireUpdateAnimation(void)
 
 static void BurnTile(u16 x, u16 y)
 {
-    u16 index;
-    u8 byteIndex;
-    u8 bitIndex;
+    u8 i;
 
-    index = ComputeIndexFromSpriteCoords(y, gTilemap.width, x);
+    for (i = 0; i < ARRAY_SIZE(gFireTiles); i++)
+    {
+        if (gFireTiles[i].parentCluster & FIRE_TILE_EXISTS)
+            continue;
 
-    byteIndex = index / 8;
-    bitIndex = index % 8;
+        gFireTiles[i].parentCluster = gCurrentClusterId | FIRE_TILE_EXISTS;
+        gFireTiles[i].x = x;
+        gFireTiles[i].y = y;
 
-    gFireTiles[byteIndex] |= (1 << bitIndex);
+        if (i >= gMaxAmountOfExistingFireTiles)
+            gMaxAmountOfExistingFireTiles = i + 1;
+
+        return;
+    }
+}
+
+static void MergeClusters(u8 otherCluster)
+{
+    struct FireCluster* cluster;
+
+    cluster = &gFireClusters[otherCluster];
+
+    // Kill the other cluster
+    cluster->status = 0;
+    // Append the other cluster length
+    gCurrentFire.length += cluster->length + 1;
 }
 
 static void PropagateFire(void)
@@ -182,6 +210,7 @@ static void PropagateFire(void)
     u16 x;
     u16 y;
     u16 offset;
+    u8 otherCluster;
 
     gCurrentFire.spreadTimer += DELTA_TIME;
 
@@ -249,7 +278,18 @@ static void PropagateFire(void)
         x -= offset;
     else if (gCurrentFire.status & FIRE_STATUS_RIGHT)
         x += offset;
-    
+
+    // Check if we're colliding with another fire cluster
+    otherCluster = IsTileBurned(x, y);
+
+    if (otherCluster)
+    {
+        // Get the cluster id
+        otherCluster--;
+        MergeClusters(otherCluster);
+        return;
+    }
+
     if (GET_CLIPDATA_BEHAVIOR(x, y) != CLIP_BEHAVIOR_INFLAMMABLE)
     {
         // There's no more inflammable blocks, so we have reached the end of the propagation
@@ -350,6 +390,9 @@ void StartFire(u16 x, u16 y)
 {
     u8 i;
 
+    if (IsTileBurned(x, y))
+        return;
+
     for (i = 0; i < ARRAY_SIZE(gFireClusters); i++)
     {
         if (gFireClusters[i].status & FIRE_STATUS_EXISTS)
@@ -361,6 +404,8 @@ void StartFire(u16 x, u16 y)
         gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
         gFireClusters[i].spreadTimer = 0;
         gFireClusters[i].length = 0;
+
+        gCurrentClusterId = i;
 
         BurnTile(gFireClusters[i].x, gFireClusters[i].y);
 
@@ -387,6 +432,7 @@ void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
         gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) - HALF_BLOCK_SIZE;
         gFireClusters[i].spreadTimer = 0;
         gFireClusters[i].length = length;
+        gCurrentClusterId = i;
 
         if (i >= gMaxAmountOfExistingFire)
             gMaxAmountOfExistingFire = i + 1;
@@ -398,6 +444,7 @@ void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
         for (i = 0; i < length + 1; i++)
         {
             BurnTile(x, y);
+
             if (gFireClusters[i].status & FIRE_STATUS_UP)
                 y -= BLOCK_SIZE;
             else if (gFireClusters[i].status & FIRE_STATUS_DOWN)
@@ -414,16 +461,24 @@ void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
 
 u8 IsTileBurned(u16 x, u16 y)
 {
-    u16 index;
-    u8 byteIndex;
-    u8 bitIndex;
+    u8 i;
 
-    index = ComputeIndexFromSpriteCoords(y, gTilemap.width, x);
+    x = (x & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
+    y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
 
-    byteIndex = index / 8;
-    bitIndex = index % 8;
+    for (i = 0; i < gMaxAmountOfExistingFireTiles; i++)
+    {
+        if (!(gFireTiles[i].parentCluster & FIRE_TILE_EXISTS))
+            continue;
 
-    return gFireTiles[byteIndex] & (1 << bitIndex);
+        if (gFireTiles[i].x == x && gFireTiles[i].y == y)
+        {
+            // This is very cursed, but with this I can return both the information that the tile is on fire, and the cluster id
+            return TRUE + GET_LOWER_NIBBLE(gFireTiles[i].parentCluster);
+        }
+    }
+
+    return FALSE;
 }
 
 void UpdateFire(void)
@@ -445,6 +500,8 @@ void UpdateFire(void)
         gCurrentFire.y = fire->y;
         gCurrentFire.spreadTimer = fire->spreadTimer;
         gCurrentFire.length = fire->length;
+
+        gCurrentClusterId = i;
 
         if (!(fire->status & FIRE_STATUS_LOCKED) && gGameMode.main == GM_IN_GAME)
         {
