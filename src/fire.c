@@ -481,6 +481,15 @@ u8 IsTileBurned(u16 x, u16 y)
     return FALSE;
 }
 
+void PutOutFire(u8 cluster)
+{
+    struct FireCluster* fire;
+    cluster--;
+
+    fire = &gFireClusters[cluster];
+    fire->status = 0;
+}
+
 void UpdateFire(void)
 {
     u8 i;
