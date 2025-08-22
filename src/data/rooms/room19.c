@@ -88,13 +88,13 @@ const struct RoomSprite sRoom19_SpriteData[] = {
     [2] = {
         .x = 19,
         .y = 7,
-        .id = STYPE_FIRE,
+        .id = STYPE_NONE,
         .part = 0
     },
     [3] = {
         .x = 19,
         .y = 4,
-        .id = STYPE_FIRE,
+        .id = STYPE_NONE,
         .part = 0
     },
     [4] = {

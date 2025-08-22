@@ -78,7 +78,7 @@ const struct RoomSprite sRoom7_SpriteData[] = {
     [0] = {
         .x = 17,
         .y = 4,
-        .id = STYPE_FIRE,
+        .id = STYPE_NONE,
         .part = 0
     },
     [1] = {

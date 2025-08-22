@@ -96,25 +96,25 @@ const struct RoomSprite sRoom26_SpriteData[] = {
     [3] = {
         .x = 19,
         .y = 3,
-        .id = STYPE_FIRE,
+        .id = STYPE_NONE,
         .part = 0
     },
     [4] = {
         .x = 19,
         .y = 7,
-        .id = STYPE_FIRE,
+        .id = STYPE_NONE,
         .part = 0
     },
     [5] = {
         .x = 11,
         .y = 16,
-        .id = STYPE_FIRE,
+        .id = STYPE_NONE,
         .part = 0
     },
     [6] = {
         .x = 11,
         .y = 13,
-        .id = STYPE_FIRE,
+        .id = STYPE_NONE,
         .part = 0
     },
     [7] = ROOM_SPRITE_TERMINATOR
