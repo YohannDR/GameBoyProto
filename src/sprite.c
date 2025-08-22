@@ -426,6 +426,12 @@ u8 QueueSpriteGraphics(u8 spriteId)
 
         src = sSpriteGraphicsPointers[spriteId];
 
+        if (*src == 0)
+        {
+            // We can skip sprites with empty graphics
+            return gSpriteGraphicsFreeIndex;
+        }
+
         // Queue the graphics to be loaded
         gQueuedGraphics[gQueuedGraphicsIndex] = src;
         gQueuedGraphicsIndex++;

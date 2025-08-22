@@ -16,7 +16,6 @@
 static u16 gItemX;
 static u16 gItemY;
 static u8 gDrawItem;
-static u8 gTempTimer;
 
 /**
  * @brief Whether the current item is "on" : is the torch light up, is the bucket filled, is the gun filled
@@ -47,7 +46,13 @@ static void Torch(void)
     if (gPlayerMovement.direction & KEY_RIGHT)
         x += BLOCK_SIZE;
 
-    if ((gTempTimer % 32) == 0 && GET_CLIPDATA_BEHAVIOR(x, gItemY) == CLIP_BEHAVIOR_INFLAMMABLE)
+    if (!gIsItemOn && IsTileBurned(x, gItemY))
+    {
+        gIsItemOn = TRUE;
+        return;
+    }
+
+    if (gIsItemOn && GET_CLIPDATA_BEHAVIOR(x, gItemY) == CLIP_BEHAVIOR_INFLAMMABLE)
     {
         StartFire(x, gItemY);
     }
@@ -104,8 +109,6 @@ void UpdateItem(void)
 {
     if (gCurrentItem == ITEM_NONE)
         return;
-
-    gTempTimer++;
 
     gItemX = gPlayerData.x;
     if (gPlayerMovement.direction & KEY_RIGHT)

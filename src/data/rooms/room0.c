@@ -220,7 +220,31 @@ const struct RoomSprite sRoom0_SpriteData[] = {
         .id = STYPE_COLLECTIBLE,
         .part = 0
     },
-    [1] = ROOM_SPRITE_TERMINATOR
+    [1] = {
+        .x = 23,
+        .y = 19,
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 21
+    },
+    [2] = {
+        .x = 22,
+        .y = 14,
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 37
+    },
+    [3] = {
+        .x = 20,
+        .y = 14,
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 69
+    },
+    [4] = {
+        .x = 15,
+        .y = 15,
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 133
+    },
+    [5] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom0_DoorData[] = {

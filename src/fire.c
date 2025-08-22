@@ -7,6 +7,7 @@
 #include "bg_clip.h"
 #include "game_state.h"
 #include "macros.h"
+#include "math.h"
 #include "sprite.h"
 
 /**
@@ -72,12 +73,14 @@ struct FireCluster {
     u8 length;
 };
 
-struct FireCluster gFireClusters[4];
+static struct FireCluster gFireClusters[4];
 static struct FireCluster gCurrentFire;
 static u8 gMaxAmountOfExistingFire;
 
 static u8 gAnimationTimer;
 static u8 gCurrentAnimationFrame;
+
+static u8 gFireTiles[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 8 / 8];
 
 extern const u8 sFireGraphics[];
 extern const struct AnimData sFireAnim_Idle[];
@@ -160,6 +163,20 @@ static void FireUpdateAnimation(void)
     }
 }
 
+static void BurnTile(u16 x, u16 y)
+{
+    u16 index;
+    u8 byteIndex;
+    u8 bitIndex;
+
+    index = ComputeIndexFromSpriteCoords(y, gTilemap.width, x);
+
+    byteIndex = index / 8;
+    bitIndex = index % 8;
+
+    gFireTiles[byteIndex] |= (1 << bitIndex);
+}
+
 static void PropagateFire(void)
 {
     u16 x;
@@ -204,6 +221,8 @@ static void PropagateFire(void)
                 if (gCurrentFire.length == FIRE_MAX_LENGTH)
                     gCurrentFire.status |= FIRE_STATUS_LOCKED;
 
+                BurnTile(gCurrentFire.x, gCurrentFire.y);
+
                 // Toggle and return
                 gCurrentFire.status ^= FIRE_STATUS_DIRECTION;
                 return;
@@ -237,10 +256,13 @@ static void PropagateFire(void)
         gCurrentFire.status |= FIRE_STATUS_LOCKED;
         return;
     }
+    
+    BurnTile(x, y);
 
     gCurrentFire.length++;
     if (gCurrentFire.length == FIRE_MAX_LENGTH)
         gCurrentFire.status |= FIRE_STATUS_LOCKED;
+
 }
 
 static void FireDraw(void)
@@ -291,29 +313,6 @@ static void FireDraw(void)
     gNextOamSlot += gCurrentFire.length + 1;
 }
 
-void StartFire(u16 x, u16 y)
-{
-    u8 i;
-
-    for (i = 0; i < ARRAY_SIZE(gFireClusters); i++)
-    {
-        if (gFireClusters[i].status & FIRE_STATUS_EXISTS)
-            continue;
-
-        gFireClusters[i].status = FIRE_STATUS_EXISTS;
-        // Normalize fire position in the middle of the block
-        gFireClusters[i].x = (x & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
-        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
-        gFireClusters[i].spreadTimer = 0;
-        gFireClusters[i].length = 0;
-
-        if (i >= gMaxAmountOfExistingFire)
-            gMaxAmountOfExistingFire = i + 1;
-
-        return;
-    }
-}
-
 void LoadFireGraphics(void)
 {
     u8* dst;
@@ -345,6 +344,86 @@ void LoadFireGraphics(void)
         *dst++ = *src++;
         *dst++ = *src++;
     }
+}
+
+void StartFire(u16 x, u16 y)
+{
+    u8 i;
+
+    for (i = 0; i < ARRAY_SIZE(gFireClusters); i++)
+    {
+        if (gFireClusters[i].status & FIRE_STATUS_EXISTS)
+            continue;
+
+        gFireClusters[i].status = FIRE_STATUS_EXISTS;
+        // Normalize fire position in the middle of the block
+        gFireClusters[i].x = (x & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
+        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
+        gFireClusters[i].spreadTimer = 0;
+        gFireClusters[i].length = 0;
+
+        BurnTile(gFireClusters[i].x, gFireClusters[i].y);
+
+        if (i >= gMaxAmountOfExistingFire)
+            gMaxAmountOfExistingFire = i + 1;
+
+        return;
+    }
+}
+
+void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
+{
+    u8 i;
+
+    for (i = 0; i < ARRAY_SIZE(gFireClusters); i++)
+    {
+        if (gFireClusters[i].status & FIRE_STATUS_EXISTS)
+            continue;
+
+        // Hard spawned clusters are assumed to not spread
+        gFireClusters[i].status = FIRE_STATUS_EXISTS | FIRE_STATUS_LOCKED | (direction << 1);
+        // Normalize fire position in the middle of the block
+        gFireClusters[i].x = (x & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
+        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) - HALF_BLOCK_SIZE;
+        gFireClusters[i].spreadTimer = 0;
+        gFireClusters[i].length = length;
+
+        if (i >= gMaxAmountOfExistingFire)
+            gMaxAmountOfExistingFire = i + 1;
+
+        x = gFireClusters[i].x;
+        y = gFireClusters[i].y;
+
+        // i can safely be re-used here, we're exiting the loop afterwards
+        for (i = 0; i < length + 1; i++)
+        {
+            BurnTile(x, y);
+            if (gFireClusters[i].status & FIRE_STATUS_UP)
+                y -= BLOCK_SIZE;
+            else if (gFireClusters[i].status & FIRE_STATUS_DOWN)
+                y += BLOCK_SIZE;
+            else if (gFireClusters[i].status & FIRE_STATUS_LEFT)
+                x -= BLOCK_SIZE;
+            else if (gFireClusters[i].status & FIRE_STATUS_RIGHT)
+                x += BLOCK_SIZE;
+        }
+
+        return;
+    }
+}
+
+u8 IsTileBurned(u16 x, u16 y)
+{
+    u16 index;
+    u8 byteIndex;
+    u8 bitIndex;
+
+    index = ComputeIndexFromSpriteCoords(y, gTilemap.width, x);
+
+    byteIndex = index / 8;
+    bitIndex = index % 8;
+
+    return gFireTiles[byteIndex] & (1 << bitIndex);
 }
 
 void UpdateFire(void)
