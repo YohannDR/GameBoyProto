@@ -214,4 +214,22 @@ const struct RoomInfo sRooms[] = {
         .originX = SCREEN_SIZE_X_SUB_PIXEL * 0,
         .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
     },
+    [23] = {
+        .tilemap = sRoom23_Tilemap,
+        .bgPalette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK),
+        .spriteData = sRoom23_SpriteData,
+        .doorData = sRoom23_DoorData,
+        .collisionTable = 0,
+        .originX = SCREEN_SIZE_X_SUB_PIXEL * 0,
+        .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
+    },
+    [24] = {
+        .tilemap = sRoom24_Tilemap,
+        .bgPalette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK),
+        .spriteData = sRoom24_SpriteData,
+        .doorData = sRoom24_DoorData,
+        .collisionTable = 0,
+        .originX = SCREEN_SIZE_X_SUB_PIXEL * 0,
+        .originY = SCREEN_SIZE_Y_SUB_PIXEL * 0,
+    },
 };

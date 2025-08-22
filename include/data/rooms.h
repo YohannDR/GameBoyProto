@@ -24,5 +24,7 @@
 #include "data/rooms/room20.h"
 #include "data/rooms/room21.h"
 #include "data/rooms/room22.h"
+#include "data/rooms/room23.h"
+#include "data/rooms/room24.h"
 
 #endif /* ROOMS_H */
