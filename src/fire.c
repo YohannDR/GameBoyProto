@@ -60,7 +60,7 @@
 
 #define FIRE_DIRECTION_MASK (FIRE_STATUS_UP | FIRE_STATUS_DOWN | FIRE_STATUS_LEFT | FIRE_STATUS_RIGHT)
 
-#define FIRE_SPREADING_DURATION (CONVERT_SECONDS(4.f))
+#define FIRE_SPREADING_DURATION (CONVERT_SECONDS(.5f))
 #define FIRE_MAX_LENGTH (10)
 
 #define FIRE_GFX_SLOT (112)
@@ -173,6 +173,23 @@ static void FireUpdateAnimation(void)
     }
 }
 
+static void UnburnTile(u16 x, u16 y)
+{
+    u8 i;
+
+    for (i = 0; i < gMaxAmountOfExistingFireTiles; i++)
+    {
+        if (!(gFireTiles[i].parentCluster & FIRE_TILE_EXISTS))
+            continue;
+
+        if (gFireTiles[i].x == x && gFireTiles[i].y == y)
+        {
+            gFireTiles[i].parentCluster = 0;
+            return;
+        }
+    }
+}
+
 static void BurnTile(u16 x, u16 y)
 {
     u8 i;
@@ -196,6 +213,7 @@ static void BurnTile(u16 x, u16 y)
 static void MergeClusters(u8 otherCluster)
 {
     struct FireCluster* cluster;
+    u8 i;
 
     cluster = &gFireClusters[otherCluster];
 
@@ -203,6 +221,20 @@ static void MergeClusters(u8 otherCluster)
     cluster->status = 0;
     // Append the other cluster length
     gCurrentFire.length += cluster->length + 1;
+
+    // Make sure we don't exceed the length
+    if (gCurrentFire.length > FIRE_MAX_LENGTH)
+    {
+        gCurrentFire.length = FIRE_MAX_LENGTH;
+        gCurrentFire.status |= FIRE_STATUS_LOCKED;
+    }
+
+    for (i = 0; i < gMaxAmountOfExistingFireTiles; i++)
+    {
+        // Re-parent the fire tiles of the removed cluster to the new one
+        if (gFireTiles[i].parentCluster == (FIRE_TILE_EXISTS | otherCluster))
+            gFireTiles[i].parentCluster = FIRE_TILE_EXISTS | gCurrentClusterId;
+    }
 }
 
 static void PropagateFire(void)
@@ -227,6 +259,9 @@ static void PropagateFire(void)
             x = gCurrentFire.x;
             y = gCurrentFire.y;
 
+            // Swap the direction
+            gCurrentFire.status ^= FIRE_STATUS_DIRECTION;
+
             // Check only one block behind
             if (gCurrentFire.status & FIRE_STATUS_UP)
                 y += BLOCK_SIZE;
@@ -236,6 +271,21 @@ static void PropagateFire(void)
                 x += BLOCK_SIZE;
             else if (gCurrentFire.status & FIRE_STATUS_RIGHT)
                 x -= BLOCK_SIZE;
+
+            // Check if we're colliding with another fire cluster
+            otherCluster = IsTileBurned(x, y);
+
+            if (otherCluster)
+            {
+                // Get the cluster id
+                otherCluster--;
+                if (gCurrentClusterId != otherCluster)
+                {
+                    otherCluster += gCurrentClusterId;
+                    MergeClusters(otherCluster);
+                    return;
+                }
+            }
 
             if (GET_CLIPDATA_BEHAVIOR(x, y) == CLIP_BEHAVIOR_INFLAMMABLE)
             {
@@ -251,18 +301,16 @@ static void PropagateFire(void)
                     gCurrentFire.status |= FIRE_STATUS_LOCKED;
 
                 BurnTile(gCurrentFire.x, gCurrentFire.y);
-
-                // Toggle and return
-                gCurrentFire.status ^= FIRE_STATUS_DIRECTION;
                 return;
             }
 
             // If we didn't find a inflammable block, we can remove the backward flag, and fall-through the normal "forward" check
-            gCurrentFire.status &= ~FIRE_STATUS_DIRECTION;
+            gCurrentFire.status &= ~FIRE_STATUS_BACKWARD;
         }
-
-        // Swap the direction
-        gCurrentFire.status ^= FIRE_STATUS_DIRECTION;
+        else
+        {
+            gCurrentFire.status ^= FIRE_STATUS_DIRECTION;
+        }
     }
 
     x = gCurrentFire.x;
@@ -284,10 +332,24 @@ static void PropagateFire(void)
 
     if (otherCluster)
     {
-        // Get the cluster id
+        // Alright, this is the second time I've encountered a buggy code generation by the compiler
+        // Seriously, how is this even possible? how do you even fuck up something so simple as comparing a local variable
+        // and a global variable? how the fuck has no one noticed this issue????
+        // When doing the comparison, it clobbers register a (which is where the local variable is by the way) by doing
+        // otherCluster - gCurrentClusterId to check if the values are the same, this could have been fine
+        // if, you know, the local variable wasn't still used afterwards????????
+        // I spent 2 fucking hours debugging this shit, and it's not even my fault, give me my time back lcc,
+        // I'm already working overtime, it's 2:30am on a friday night, we're beyond the last deadline
+        // and I've still got a shit ton of work to do, fuck you lcc
+
         otherCluster--;
-        MergeClusters(otherCluster);
-        return;
+        if (gCurrentClusterId != otherCluster)
+        {
+            // We need to re-increment because lcc fucked up the variable, thanks a lot
+            otherCluster += gCurrentClusterId;
+            MergeClusters(otherCluster);
+            return;
+        }
     }
 
     if (GET_CLIPDATA_BEHAVIOR(x, y) != CLIP_BEHAVIOR_INFLAMMABLE)
@@ -429,9 +491,10 @@ void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
         gFireClusters[i].status = FIRE_STATUS_EXISTS | FIRE_STATUS_LOCKED | (direction << 1);
         // Normalize fire position in the middle of the block
         gFireClusters[i].x = (x & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
-        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) - HALF_BLOCK_SIZE;
+        gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
         gFireClusters[i].spreadTimer = 0;
         gFireClusters[i].length = length;
+
         gCurrentClusterId = i;
 
         if (i >= gMaxAmountOfExistingFire)
@@ -483,10 +546,32 @@ u8 IsTileBurned(u16 x, u16 y)
 
 void PutOutFire(u8 cluster)
 {
+    u8 i;
     struct FireCluster* fire;
-    cluster--;
+    u16 x;
+    u16 y;
 
+    cluster--;
     fire = &gFireClusters[cluster];
+
+    x = fire->x;
+    y = fire->y;
+
+    // Unburn all the tiles of this cluster
+    for (i = 0; i < fire->length + 1; i++)
+    {
+        UnburnTile(x, y);
+
+        if (gFireClusters[i].status & FIRE_STATUS_UP)
+            y -= BLOCK_SIZE;
+        else if (gFireClusters[i].status & FIRE_STATUS_DOWN)
+            y += BLOCK_SIZE;
+        else if (gFireClusters[i].status & FIRE_STATUS_LEFT)
+            x -= BLOCK_SIZE;
+        else if (gFireClusters[i].status & FIRE_STATUS_RIGHT)
+            x += BLOCK_SIZE;
+    }
+
     fire->status = 0;
 }
 

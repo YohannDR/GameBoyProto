@@ -31,7 +31,7 @@ void FireSpawner(void)
     direction = GET_UPPER_NIBBLE(gCurrentSprite.part);
     length = GET_LOWER_NIBBLE(gCurrentSprite.part);
 
-    SpawnCluster(gCurrentSprite.x, gCurrentSprite.y, direction, length);
+    SpawnCluster(gCurrentSprite.x, gCurrentSprite.y - BLOCK_SIZE, direction, length);
 
     // The sprite has done its job, we can kill it immediatly
     gCurrentSprite.status = 0;
