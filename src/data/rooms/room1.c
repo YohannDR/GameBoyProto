@@ -25,12 +25,12 @@ const u8 sRoom1_Tilemap[] = {
     0x01, 0x77,
     0x19, 0x47,
     0x01, 0x46,
-    0x01, 0x10,
+    0x01, 0x24,
     0x0C, 0x47,
     0x01, 0x77,
     0x19, 0x47,
     0x01, 0x0F,
-    0x01, 0x10,
+    0x01, 0x23,
     0x0C, 0x47,
     0x01, 0x77,
     0x19, 0x47,
@@ -163,10 +163,10 @@ const u8 sRoom1_Tilemap[] = {
     0x01, 0x01,
     0x16, 0x47,
     0x01, 0x0F,
-    0x01, 0x10,
+    0x01, 0x24,
     0x26, 0x47,
     0x01, 0x0F,
-    0x01, 0x10,
+    0x01, 0x23,
     0x26, 0x47,
     0x01, 0x46,
     0x01, 0x10,
@@ -460,31 +460,31 @@ const struct RoomSprite sRoom1_SpriteData[] = {
     [3] = {
         .x = 13,
         .y = 15,
-        .id = STYPE_NONE,
+        .id = STYPE_FIRE,
         .part = 0
     },
     [4] = {
         .x = 13,
         .y = 11,
-        .id = STYPE_NONE,
+        .id = STYPE_FIRE,
         .part = 0
     },
     [5] = {
         .x = 13,
         .y = 12,
-        .id = STYPE_NONE,
+        .id = STYPE_FIRE,
         .part = 0
     },
     [6] = {
         .x = 13,
         .y = 13,
-        .id = STYPE_NONE,
+        .id = STYPE_FIRE,
         .part = 0
     },
     [7] = {
         .x = 13,
         .y = 14,
-        .id = STYPE_NONE,
+        .id = STYPE_FIRE,
         .part = 0
     },
     [8] = ROOM_SPRITE_TERMINATOR
