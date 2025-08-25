@@ -10,7 +10,7 @@ const u8* const sTilesets[] = {
     sPoliceGraphics,
     sCorpGraphics,
     sShopGraphics,
-    sRestaurantGraphics,
+    sHangarGraphics,
 };
 
 const u8 sApartmentGraphics[] = {
