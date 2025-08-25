@@ -213,17 +213,11 @@ const u8 sRoom0_Tilemap[] = {
 const struct RoomSprite sRoom0_SpriteData[] = {
     [0] = {
         .x = 18,
-        .y = 19,
-        .id = STYPE_COLLECTIBLE,
+        .y = 17,
+        .id = STYPE_PORTAL,
         .part = 0
     },
-    [1] = {
-        .x = 20,
-        .y = 20,
-        .id = STYPE_FIRE_SPAWNER,
-        .part = 18
-    },
-    [2] = ROOM_SPRITE_TERMINATOR
+    [1] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom0_DoorData[] = {
