@@ -35,7 +35,7 @@ static void InitGame(void)
 
     WaitForVblank();
     Write8(REG_LCDC, 0);
-    LoadGraphics(sTilesets[2]);
+    LoadGraphics(sTilesets[0]);
 
     gWindowX = 0;
     gWindowY = SCREEN_SIZE_Y;
