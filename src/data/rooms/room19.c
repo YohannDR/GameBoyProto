@@ -88,22 +88,16 @@ const struct RoomSprite sRoom19_SpriteData[] = {
     [2] = {
         .x = 19,
         .y = 7,
-        .id = STYPE_NONE,
-        .part = 0
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 19
     },
     [3] = {
-        .x = 19,
-        .y = 4,
-        .id = STYPE_NONE,
-        .part = 0
-    },
-    [4] = {
         .x = 13,
         .y = 16,
         .id = STYPE_PORTAL,
         .part = 0
     },
-    [5] = ROOM_SPRITE_TERMINATOR
+    [4] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom19_DoorData[] = {

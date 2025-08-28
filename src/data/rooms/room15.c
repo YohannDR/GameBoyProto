@@ -18,9 +18,7 @@ const u8 sRoom15_Tilemap[] = {
     0x02, 0x09,
     0x0C, 0x0A,
     0x07, 0x09,
-    0x01, 0x00,
-    0x01, 0x01,
-    0x0A, 0x0A,
+    0x0C, 0x0A,
     0x01, 0x00,
     0x01, 0x01,
     0x07, 0x09,
@@ -138,8 +136,8 @@ const struct RoomSprite sRoom15_SpriteData[] = {
     [2] = {
         .x = 36,
         .y = 5,
-        .id = STYPE_NONE,
-        .part = 0
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 16
     },
     [3] = ROOM_SPRITE_TERMINATOR
 };

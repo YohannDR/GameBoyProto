@@ -124,17 +124,11 @@ const struct RoomSprite sRoom25_SpriteData[] = {
     },
     [1] = {
         .x = 12,
-        .y = 14,
-        .id = STYPE_NONE,
-        .part = 0
-    },
-    [2] = {
-        .x = 12,
         .y = 17,
-        .id = STYPE_NONE,
-        .part = 0
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 19
     },
-    [3] = ROOM_SPRITE_TERMINATOR
+    [2] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom25_DoorData[] = {

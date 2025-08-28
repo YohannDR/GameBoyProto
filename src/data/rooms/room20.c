@@ -145,13 +145,13 @@ const struct RoomSprite sRoom20_SpriteData[] = {
     [1] = {
         .x = 34,
         .y = 8,
-        .id = STYPE_MOVING_PLATFORM,
-        .part = 0
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 16
     },
     [2] = {
         .x = 18,
         .y = 10,
-        .id = STYPE_NONE,
+        .id = STYPE_MOVING_PLATFORM,
         .part = 0
     },
     [3] = ROOM_SPRITE_TERMINATOR
