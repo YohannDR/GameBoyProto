@@ -6,6 +6,7 @@
 
 #include "callbacks.h"
 #include "game_state.h"
+#include "fire.h"
 #include "io.h"
 #include "time_command.h"
 #include "room.h"
@@ -129,6 +130,7 @@ static void PortalTransitionHiding(void)
         gGameMode.sub = PORTAL_STATE_TRANSITION;
         gGameMode.work1 = CONVERT_SECONDS(.2f);
 
+        UpdateFireTimeTravel();
         ApplyTimeCommands(sRoomCommands[gCurrentRoom]);
     }
 }

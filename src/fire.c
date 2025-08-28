@@ -9,6 +9,7 @@
 #include "macros.h"
 #include "math.h"
 #include "sprite.h"
+#include "time.h"
 
 /**
  * @brief Whether the fire cluster exists
@@ -58,6 +59,12 @@
  */
 #define FIRE_STATUS_DIRECTION   (1u << 7)
 
+/**
+ * @brief Whether the fire is "ghosted" due to a temporality change, e.g. a fire created in the past will be ghosted in the future
+ * 
+ */
+#define FIRE_TEMPORALITY_GHOSTED (1u << 7)
+
 #define FIRE_DIRECTION_MASK (FIRE_STATUS_UP | FIRE_STATUS_DOWN | FIRE_STATUS_LEFT | FIRE_STATUS_RIGHT)
 
 #define FIRE_SPREADING_DURATION (CONVERT_SECONDS(.5f))
@@ -65,7 +72,8 @@
 
 #define FIRE_GFX_SLOT (112)
 
-#define FIRE_TILE_EXISTS (1u << 7)
+#define FIRE_TILE_GHOSTED   (1u << 6)
+#define FIRE_TILE_EXISTS    (1u << 7)
 
 struct FireCluster {
     u8 status;
@@ -73,6 +81,8 @@ struct FireCluster {
     u16 y;
     u8 spreadTimer;
     u8 length;
+    u8 temporality;
+    u8 burnedTile;
 };
 
 struct FireTile {
@@ -81,7 +91,7 @@ struct FireTile {
     u16 y;
 };
 
-static struct FireCluster gFireClusters[4];
+struct FireCluster gFireClusters[4];
 static struct FireCluster gCurrentFire;
 static u8 gCurrentClusterId;
 static u8 gMaxAmountOfExistingFire;
@@ -466,6 +476,7 @@ void StartFire(u16 x, u16 y)
         gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
         gFireClusters[i].spreadTimer = 0;
         gFireClusters[i].length = 0;
+        gFireClusters[i].temporality = gCurrentTemporality;
 
         gCurrentClusterId = i;
 
@@ -494,6 +505,7 @@ void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
         gFireClusters[i].y = (y & BLOCK_POSITION_FLAG) + HALF_BLOCK_SIZE;
         gFireClusters[i].spreadTimer = 0;
         gFireClusters[i].length = length;
+        gFireClusters[i].temporality = gCurrentTemporality;
 
         gCurrentClusterId = i;
 
@@ -589,11 +601,16 @@ void UpdateFire(void)
         if (!(fire->status & FIRE_STATUS_EXISTS))
             continue;
 
+        if (fire->temporality & FIRE_TEMPORALITY_GHOSTED)
+            continue;
+
         gCurrentFire.status = fire->status;
         gCurrentFire.x = fire->x;
         gCurrentFire.y = fire->y;
         gCurrentFire.spreadTimer = fire->spreadTimer;
         gCurrentFire.length = fire->length;
+        gCurrentFire.temporality = fire->temporality;
+        gCurrentFire.burnedTile = fire->burnedTile;
 
         gCurrentClusterId = i;
 
@@ -612,6 +629,101 @@ void UpdateFire(void)
         fire->y = gCurrentFire.y;
         fire->spreadTimer = gCurrentFire.spreadTimer;
         fire->length = gCurrentFire.length;
+        fire->temporality = gCurrentFire.temporality;
+        fire->burnedTile = gCurrentFire.burnedTile;
+    }
+}
+
+void FirePastToFuture(void)
+{
+    u8 i;
+
+    gCurrentFire.burnedTile = gTilemap.tilemap[ComputeIndexFromSpriteCoords(gCurrentFire.y, gTilemap.width, gCurrentFire.x)];
+
+    for (i = 0; i < gMaxAmountOfExistingFireTiles; i++)
+    {
+        if (gFireTiles[i].parentCluster & FIRE_TILE_GHOSTED)
+            continue;
+
+        if (gFireTiles[i].parentCluster != (FIRE_TILE_EXISTS | gCurrentClusterId))
+            continue;
+
+        SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, 0);
+        gFireTiles[i].parentCluster |= FIRE_TILE_GHOSTED;
+    }
+}
+
+void FireFutureToPast(void)
+{
+    u8 i;
+    u8 tile;
+
+    tile = gCurrentFire.burnedTile;
+
+    for (i = 0; i < gMaxAmountOfExistingFireTiles; i++)
+    {
+        if (gFireTiles[i].parentCluster != (FIRE_TILE_EXISTS | FIRE_TILE_GHOSTED | gCurrentClusterId))
+            continue;
+
+        SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, tile);
+        gFireTiles[i].parentCluster &= ~FIRE_TILE_GHOSTED;
+    }
+}
+
+void UpdateFireTimeTravel(void)
+{
+    u8 i;
+    u8 fireTemporality;
+
+    for (i = 0; i < gMaxAmountOfExistingFire; i++)
+    {
+        if (!(gFireClusters[i].status & FIRE_STATUS_EXISTS))
+            continue;
+
+        gCurrentFire.status = gFireClusters[i].status;
+        gCurrentFire.x = gFireClusters[i].x;
+        gCurrentFire.y = gFireClusters[i].y;
+        gCurrentFire.spreadTimer = gFireClusters[i].spreadTimer;
+        gCurrentFire.length = gFireClusters[i].length;
+        gCurrentFire.temporality = gFireClusters[i].temporality;
+        gCurrentFire.burnedTile = gFireClusters[i].burnedTile;
+
+        gCurrentClusterId = i;
+
+        fireTemporality = gFireClusters[i].temporality & 0b1;
+
+        if (gCurrentTemporality == TEMPORALITY_PAST)
+        {
+            if (fireTemporality == TEMPORALITY_PAST)
+            {
+                gCurrentFire.temporality |= FIRE_TEMPORALITY_GHOSTED;
+                FirePastToFuture();
+            }
+            else
+            {
+                gCurrentFire.temporality &= ~FIRE_TEMPORALITY_GHOSTED;
+            }
+        }
+        else if (gCurrentTemporality == TEMPORALITY_FUTURE)
+        {
+            if (fireTemporality == TEMPORALITY_FUTURE)
+            {
+                gCurrentFire.temporality |= FIRE_TEMPORALITY_GHOSTED;
+            }
+            else
+            {
+                gCurrentFire.temporality &= ~FIRE_TEMPORALITY_GHOSTED;
+                FireFutureToPast();
+            }
+        }
+
+        gFireClusters[i].status = gCurrentFire.status;
+        gFireClusters[i].x = gCurrentFire.x;
+        gFireClusters[i].y = gCurrentFire.y;
+        gFireClusters[i].spreadTimer = gCurrentFire.spreadTimer;
+        gFireClusters[i].length = gCurrentFire.length;
+        gFireClusters[i].temporality = gCurrentFire.temporality;
+        gFireClusters[i].burnedTile = gCurrentFire.burnedTile;
     }
 }
 

@@ -16,8 +16,8 @@ enum PortalPose {
 
 void PortalCheckCollision(void)
 {
-    // if (!(gChangedInput & KEY_UP))
-    //    return;
+    if (!(gChangedInput & KEY_UP))
+        return;
 
     if (!(gCurrentSprite.status & SPRITE_STATUS_ON_SCREEN))
         return;
@@ -35,6 +35,7 @@ void PortalCheckCollision(void)
         return;
 
     gCurrentSprite.pose = POSE_WARPING;
+    gCurrentSprite.work1 = CONVERT_SECONDS(4.f);
     StartPortalTransition();
 }
 
@@ -50,9 +51,17 @@ void Portal(void)
         gCurrentSprite.drawDistanceTop = -SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
         gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE * 3);
     }
-
+    
     if (gCurrentSprite.pose == POSE_IDLE)
         PortalCheckCollision();
+
+    if (gCurrentSprite.pose == POSE_WARPING)
+    {
+        gCurrentSprite.work1 -= DELTA_TIME;
+
+        if (gCurrentSprite.work1 == 0)
+            gCurrentSprite.pose = POSE_IDLE;
+    }
 }
 
 static const u8 sPortalAnim_Idle_Frame0[OAM_DATA_SIZE(1)] = {
