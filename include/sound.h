@@ -21,6 +21,13 @@ enum Sound {
     SOUND_TUTUT,
 };
 
+enum SoundChannel {
+    SOUND_CHANNEL_SQUARE_1,
+    SOUND_CHANNEL_SQUARE_2,
+    SOUND_CHANNEL_WAVE,
+    SOUND_CHANNEL_NOISE,
+};
+
 /**
  * Think about to turn the sound ON during the game init with this 3 lines.
   NR52_REG = 0x80;
