@@ -3,19 +3,19 @@
 
 #include "gb/memory.h"
 
-#include "math.h"
-#include "room.h"
 #include "bg.h"
+#include "math.h"
+#include "scroll.h"
+#include "room.h"
 
 #define MAKE_CLIPDATA_PROP(solidity, behavior) ((solidity) | ((behavior) << 4))
 
 struct BgTileChange {
-    u8 x;
-    u8 y;
+    u16 offset;
     u8 newTile;
 };
 
-static struct BgTileChange gBgTileChanges[10];
+static struct BgTileChange gBgTileChanges[20];
 static u8 gBgTileChangeSlot;
 
 struct CollisionInfo gCollisionInfo;
@@ -64,31 +64,24 @@ void GetClipdataValue(u16 x, u16 y)
     }
 }
 
-void SetBgValue(u16 x, u16 y, u8 value)
+void SetBgValueSubPixel(u16 x, u16 y, u8 value)
 {
-    struct BgTileChange* ptr;
-
-    if (gBgTileChangeSlot >= ARRAY_SIZE(gBgTileChanges))
-        return;
-
-    #ifdef HACKY_OPTIMIZATIONS
-    ptr = HACKY_ARRAY_INDEXING(gBgTileChanges, gBgTileChangeSlot, struct BgTileChange);
-    #else
-    ptr = &gBgTileChanges[gBgTileChangeSlot];
-    #endif
-    ptr->x = x / 32 - 1;
-    ptr->y = y / 32 - 2;
-    ptr->newTile = value;
-    gBgTileChangeSlot++;
+    SetBgValueTile(SUB_PIXEL_TO_BLOCK(x) - 1, SUB_PIXEL_TO_BLOCK(y) - 2, value);
 }
 
-void DrawNumber(u16 x, u16 y, u8 number)
+void SetBgValueTile(u8 x, u8 y, u8 value)
 {
-    const u8 baseTile = 0x90;
+    // Write the value to the tilemap
+    gDecompressedTilemap[y * gTilemap.width + x] = value;
 
-    if (number <= 9)
+    // Handle specific case where the modified tile is currently on the screen
+    if (gCamera.left < x && x < gCamera.right && gCamera.top < y && y < gCamera.bottom)
     {
-        SetBgValue(x, y, baseTile + number);
+        // Also setup an update to VRAM is this case
+        gBgTileChanges[gBgTileChangeSlot].offset = y * 32 + x;
+        gBgTileChanges[gBgTileChangeSlot].newTile = value;
+
+        gBgTileChangeSlot++;
     }
 }
 
@@ -96,9 +89,6 @@ void ApplyBgChanges(void)
 {
     u8 i;
     u8* addr;
-    u8 x;
-    u8 y;
-    u16 pos;
     struct BgTileChange* change;
 
     addr = (u8*)(VRAM_BASE + 0x1800);
@@ -111,11 +101,7 @@ void ApplyBgChanges(void)
         change = &gBgTileChanges[i];
 #endif
 
-        y = change->y;
-        x = change->x;
-        pos = y * 32 + x;
-
-        addr[pos] = change->newTile;
+        addr[change->offset] = change->newTile;
     }
 
     gBgTileChangeSlot = 0;

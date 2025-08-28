@@ -375,6 +375,11 @@ _UpdateSprites:
     or a, a
     jr Z, .callAi
 
+    ; We ignore the game mode restriction and call AI at least once to initialize sprites
+    ld a, (_gCurrentSprite + 8)
+    or a, a
+    jr Z, .callAi
+
     ; Only draw the sprites if we aren't in game
     call _SpriteComputeCameraPosition
     jr .checkDrawSprite
