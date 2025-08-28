@@ -6,6 +6,13 @@
 
 #include "data/sounds.h"
 
+void InitSound(void)
+{
+    Write8(REG_NR52, 0x80);
+    Write8(REG_NR50, 0x77);
+    Write8(REG_NR51, 0xFF);
+}
+
 void PlaySound(u8 sound)
 {
     const struct SoundData* soundData;

@@ -20,6 +20,7 @@
 #include "math.h"
 #include "sprite.h"
 #include "door.h"
+#include "sound.h"
 
 #include "data/tilesets.h"
 
@@ -41,6 +42,8 @@ static void InitGame(void)
     gWindowY = SCREEN_SIZE_Y;
     Write8(REG_WX, gWindowX);
     Write8(REG_WY, gWindowY);
+
+    InitSound();
 
     gCurrentItem = ITEM_NONE;
 
@@ -69,6 +72,11 @@ void main(void)
         UpdateInput();
 
         ClearAndResetOam();
+
+        if (gChangedInput & KEY_B)
+            PlaySound(SOUND_BIPBIP);
+        else if (gChangedInput & KEY_START)
+            PlaySound(SOUND_TUTUT);
 
         // If the sprite graphics loader is active, it takes absolute priority and fully hangs the game until its done
         if (gSpriteLoaderInfo.state != SPRITE_LOADER_OFF)

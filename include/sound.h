@@ -28,13 +28,7 @@ enum SoundChannel {
     SOUND_CHANNEL_NOISE,
 };
 
-/**
- * Think about to turn the sound ON during the game init with this 3 lines.
-  NR52_REG = 0x80;
-  NR50_REG = 0x77;
-  NR51_REG = 0xFF;
- */
-
+void InitSound(void);
 void PlaySound(u8 sound);
 
 #endif /* SOUND_H */
