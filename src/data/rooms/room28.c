@@ -227,22 +227,16 @@ const struct RoomSprite sRoom28_SpriteData[] = {
     [5] = {
         .x = 35,
         .y = 6,
-        .id = STYPE_NONE,
-        .part = 0
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 19
     },
     [6] = {
-        .x = 35,
-        .y = 3,
-        .id = STYPE_NONE,
-        .part = 0
-    },
-    [7] = {
         .x = 5,
         .y = 6,
-        .id = STYPE_NONE,
-        .part = 0
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 16
     },
-    [8] = ROOM_SPRITE_TERMINATOR
+    [7] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom28_DoorData[] = {

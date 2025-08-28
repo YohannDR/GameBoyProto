@@ -459,35 +459,11 @@ const struct RoomSprite sRoom1_SpriteData[] = {
     },
     [3] = {
         .x = 13,
-        .y = 15,
-        .id = STYPE_NONE,
-        .part = 0
-    },
-    [4] = {
-        .x = 13,
         .y = 11,
-        .id = STYPE_NONE,
-        .part = 0
+        .id = STYPE_FIRE_SPAWNER,
+        .part = 36
     },
-    [5] = {
-        .x = 13,
-        .y = 12,
-        .id = STYPE_NONE,
-        .part = 0
-    },
-    [6] = {
-        .x = 13,
-        .y = 13,
-        .id = STYPE_NONE,
-        .part = 0
-    },
-    [7] = {
-        .x = 13,
-        .y = 14,
-        .id = STYPE_NONE,
-        .part = 0
-    },
-    [8] = ROOM_SPRITE_TERMINATOR
+    [4] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom1_DoorData[] = {
