@@ -139,6 +139,8 @@ static void PortalTransitionHiding(void)
 
         if (gCurrentTemporality == TEMPORALITY_FUTURE)
             ApplyTimeCommands(sRoomCommands[gCurrentRoom]);
+        else
+            RevertTimeCommands();
     }
 }
 

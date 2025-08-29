@@ -546,6 +546,9 @@ u8 IsTileBurned(u16 x, u16 y)
         if (!(gFireTiles[i].parentCluster & FIRE_TILE_EXISTS))
             continue;
 
+        if (gFireTiles[i].parentCluster & FIRE_TILE_GHOSTED)
+            continue;
+
         if (gFireTiles[i].x == x && gFireTiles[i].y == y)
         {
             // This is very cursed, but with this I can return both the information that the tile is on fire, and the cluster id

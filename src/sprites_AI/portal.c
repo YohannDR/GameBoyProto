@@ -11,7 +11,6 @@ extern const struct AnimData sPortalAnim_Idle[];
 
 enum PortalPose {
     POSE_IDLE = 1,
-    POSE_WARPING
 };
 
 void PortalCheckCollision(void)
@@ -34,8 +33,6 @@ void PortalCheckCollision(void)
     if (gPlayerData.y - PLAYER_HEIGHT > gCurrentSprite.y + BLOCK_SIZE * 4)
         return;
 
-    gCurrentSprite.pose = POSE_WARPING;
-    gCurrentSprite.work1 = CONVERT_SECONDS(4.f);
     StartPortalTransition();
 }
 
@@ -54,14 +51,6 @@ void Portal(void)
     
     if (gCurrentSprite.pose == POSE_IDLE)
         PortalCheckCollision();
-
-    if (gCurrentSprite.pose == POSE_WARPING)
-    {
-        gCurrentSprite.work1 -= DELTA_TIME;
-
-        if (gCurrentSprite.work1 == 0)
-            gCurrentSprite.pose = POSE_IDLE;
-    }
 }
 
 static const u8 sPortalAnim_Idle_Frame0[OAM_DATA_SIZE(1)] = {

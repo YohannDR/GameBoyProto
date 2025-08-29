@@ -9,7 +9,7 @@ static const u8 sRoomCommand_Empty[] = {
 
 static const u8 sRoomCommand_0[] = {
     MAKE_TILE_COMMAND(15, 15, 2, 5, 24),
-    MAKE_SPRITE_COMMAND(15, 15, STYPE_FIRE_SPAWNER, (1 << 4) | 4),
+    MAKE_SPRITE_COMMAND(15, 15, STYPE_COLLECTIBLE, 1),
     TIME_COMMAND_END
 };
 
