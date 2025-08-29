@@ -130,8 +130,15 @@ static void PortalTransitionHiding(void)
         gGameMode.sub = PORTAL_STATE_TRANSITION;
         gGameMode.work1 = CONVERT_SECONDS(.2f);
 
+        if (gCurrentTemporality == TEMPORALITY_PAST)
+            gCurrentTemporality = TEMPORALITY_FUTURE;
+        else
+            gCurrentTemporality = TEMPORALITY_PAST;
+
         UpdateFireTimeTravel();
-        ApplyTimeCommands(sRoomCommands[gCurrentRoom]);
+
+        if (gCurrentTemporality == TEMPORALITY_FUTURE)
+            ApplyTimeCommands(sRoomCommands[gCurrentRoom]);
     }
 }
 
@@ -147,7 +154,7 @@ void PortalTransition(void)
     WaitForVblank();
 
     gTransitionDirection = FALSE;
-    if (gCurrentTemporality == TEMPORALITY_PAST)
+    if (gCurrentTemporality == TEMPORALITY_FUTURE)
     {
         CallbackSetVblank(PortalHidingDownVblank);
         CallbackSetLcd(PortalHidingDownHblank);
@@ -169,8 +176,8 @@ void PortalTransition(void)
 
 static void PortalTransitionRevealing(void)
 {
-    if ((gCurrentTemporality == TEMPORALITY_PAST && gGameMode.work1 == 0) ||
-        (gCurrentTemporality == TEMPORALITY_FUTURE && gGameMode.work1 == SCREEN_SIZE_Y))
+    if ((gCurrentTemporality == TEMPORALITY_FUTURE && gGameMode.work1 == 0) ||
+        (gCurrentTemporality == TEMPORALITY_PAST && gGameMode.work1 == SCREEN_SIZE_Y))
     {
         // Disable h-blank interrupt
         Write8(REG_IE, Read8(REG_IE) & ~INTR_LCD);
@@ -183,11 +190,6 @@ static void PortalTransitionRevealing(void)
         gGameMode.main = GM_IN_GAME;
 
         CallbackSetVblank(VblankCallback);
-
-        if (gCurrentTemporality == TEMPORALITY_PAST)
-            gCurrentTemporality = TEMPORALITY_FUTURE;
-        else
-            gCurrentTemporality = TEMPORALITY_PAST;
     }
 }
 

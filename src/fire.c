@@ -692,7 +692,7 @@ void UpdateFireTimeTravel(void)
 
         fireTemporality = gFireClusters[i].temporality & 0b1;
 
-        if (gCurrentTemporality == TEMPORALITY_PAST)
+        if (gCurrentTemporality == TEMPORALITY_FUTURE)
         {
             if (fireTemporality == TEMPORALITY_PAST)
             {
@@ -704,7 +704,7 @@ void UpdateFireTimeTravel(void)
                 gCurrentFire.temporality &= ~FIRE_TEMPORALITY_GHOSTED;
             }
         }
-        else if (gCurrentTemporality == TEMPORALITY_FUTURE)
+        else if (gCurrentTemporality == TEMPORALITY_PAST)
         {
             if (fireTemporality == TEMPORALITY_FUTURE)
             {
