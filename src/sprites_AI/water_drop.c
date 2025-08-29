@@ -3,6 +3,7 @@
 #include "gb/oam.h"
 
 #include "bg_clip.h"
+#include "fire.h"
 #include "sprite.h"
 
 extern const struct AnimData sWaterDropAnim_Idle[];
@@ -29,6 +30,8 @@ static void WaterDropExplodingInit(void)
 
 void WaterDrop(void)
 {
+    u8 fire;
+
     if (gCurrentSprite.pose == 0)
     {
         if (gCurrentSprite.part == WATER_DROP_FALLING)
@@ -70,6 +73,13 @@ void WaterDrop(void)
 
         // We can exit out early, no need to check for collision
         return;
+    }
+
+    fire = IsTileBurned(gCurrentSprite.x, gCurrentSprite.y);
+    if (fire)
+    {
+        PutOutFire(fire);
+        WaterDropExplodingInit();
     }
 
     // Check to see if the water is colliding with anything

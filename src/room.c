@@ -35,8 +35,8 @@ static void LoadSprites(const struct RoomSprite* sprites)
         if (sprites->x == UCHAR_MAX)
             break;
 
-        x = (u8)(sprites->x + 1) * BLOCK_SIZE;
-        y = (u8)(sprites->y + 2) * BLOCK_SIZE;
+        x = BLOCK_TO_SUB_PIXEL((u8)(sprites->x + 1));
+        y = BLOCK_TO_SUB_PIXEL((u8)(sprites->y + 2));
         id = sprites->id;
         part = sprites->part;
         SpawnSprite(x, y, id, part, QueueSpriteGraphics(id));

@@ -21,6 +21,7 @@
 #include "sprite.h"
 #include "door.h"
 #include "sound.h"
+#include "time.h"
 
 #include "data/tilesets.h"
 
@@ -100,6 +101,10 @@ void main(void)
             {
                 TransitionUpdate();
                 ScrollUpdate();
+            }
+            else if (gGameMode.main == GM_PORTAL)
+            {
+                UpdatePortalTransition();
             }
 
             PlayerDraw();

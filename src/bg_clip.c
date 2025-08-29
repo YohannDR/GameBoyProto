@@ -3,48 +3,40 @@
 
 #include "gb/memory.h"
 
-#include "math.h"
-#include "room.h"
 #include "bg.h"
+#include "math.h"
+#include "scroll.h"
+#include "room.h"
+
+#define MAKE_CLIPDATA_PROP(solidity, behavior) ((solidity) | ((behavior) << 4))
 
 struct BgTileChange {
-    u8 x;
-    u8 y;
+    u16 offset;
     u8 newTile;
 };
 
-static struct BgTileChange gBgTileChanges[10];
+static struct BgTileChange gBgTileChanges[20];
 static u8 gBgTileChangeSlot;
 
 struct CollisionInfo gCollisionInfo;
 const u8* gCurrentCollisionTable;
 
-static const u8 sSolidityTable[] = {
-    [CLIPDATA_AIR] = COLLISION_AIR,
-    [CLIPDATA_SOLID] = COLLISION_SOLID,
-    [CLIPDATA_LADDER] = COLLISION_AIR,
-    [CLIPDATA_LADDER_TOP] = COLLISION_SOLID,
-    [CLIPDATA_WATER] = COLLISION_AIR,
-    [CLIPDATA_ACCESS_CARD_READER] = COLLISION_AIR,
-    [CLIPDATA_RECEPTACLE] = COLLISION_SOLID,
-    [CLIPDATA_INFLAMMABLE] = COLLISION_SOLID,
-};
-
-static const u8 sBehaviorTable[] = {
-    [CLIPDATA_AIR] = CLIP_BEHAVIOR_AIR,
-    [CLIPDATA_SOLID] = CLIP_BEHAVIOR_AIR,
-    [CLIPDATA_LADDER] = CLIP_BEHAVIOR_LADDER,
-    [CLIPDATA_LADDER_TOP] = CLIP_BEHAVIOR_LADDER,
-    [CLIPDATA_WATER] = CLIP_BEHAVIOR_WATER,
-    [CLIPDATA_ACCESS_CARD_READER] = CLIP_BEHAVIOR_ACCESS_CARD_READER,
-    [CLIPDATA_RECEPTACLE] = CLIP_BEHAVIOR_RECEPTACLE,
-    [CLIPDATA_INFLAMMABLE] = CLIP_BEHAVIOR_INFLAMMABLE,
+static const u8 sClipdataTable[] = {
+    [CLIPDATA_AIR]                  = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_AIR),
+    [CLIPDATA_SOLID]                = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_AIR),
+    [CLIPDATA_LADDER]               = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_LADDER),
+    [CLIPDATA_LADDER_TOP]           = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_LADDER),
+    [CLIPDATA_WATER]                = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_WATER),
+    [CLIPDATA_ACCESS_CARD_READER]   = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_ACCESS_CARD_READER),
+    [CLIPDATA_RECEPTACLE]           = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_RECEPTACLE),
+    [CLIPDATA_INFLAMMABLE]          = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_INFLAMMABLE),
 };
 
 void GetClipdataValue(u16 x, u16 y)
 {
     u8 clipdata;
     u8 subPixel;
+    u8 data;
 
     gCollisionInfo.top = y & BLOCK_POSITION_FLAG;
     gCollisionInfo.bottom = gCollisionInfo.top + BLOCK_SIZE;
@@ -57,45 +49,39 @@ void GetClipdataValue(u16 x, u16 y)
     clipdata = gTilemap.tilemap[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
     clipdata = gCurrentCollisionTable[clipdata];
 
-    gCollisionInfo.solidity = sSolidityTable[clipdata];
-    gCollisionInfo.behavior = sBehaviorTable[clipdata];
+    data = sClipdataTable[clipdata];
+    gCollisionInfo.solidity = GET_LOWER_NIBBLE(data);
+    gCollisionInfo.behavior = GET_UPPER_NIBBLE(data);
 
     if (clipdata == CLIPDATA_LADDER_TOP)
     {
-        subPixel = x & SUB_PIXEL_POSITION_FLAG;
+        subPixel = y & SUB_PIXEL_POSITION_FLAG;
 
         if (subPixel >= BLOCK_SIZE / 2)
-            gCollisionInfo.solidity = CLIPDATA_SOLID;
-        else
             gCollisionInfo.solidity = CLIPDATA_AIR;
+        else
+            gCollisionInfo.solidity = CLIPDATA_SOLID;
     }
 }
 
-void SetBgValue(u16 x, u16 y, u8 value)
+void SetBgValueSubPixel(u16 x, u16 y, u8 value)
 {
-    struct BgTileChange* ptr;
-
-    if (gBgTileChangeSlot >= ARRAY_SIZE(gBgTileChanges))
-        return;
-
-    #ifdef HACKY_OPTIMIZATIONS
-    ptr = HACKY_ARRAY_INDEXING(gBgTileChanges, gBgTileChangeSlot, struct BgTileChange);
-    #else
-    ptr = &gBgTileChanges[gBgTileChangeSlot];
-    #endif
-    ptr->x = x / 32 - 1;
-    ptr->y = y / 32 - 2;
-    ptr->newTile = value;
-    gBgTileChangeSlot++;
+    SetBgValueTile(SUB_PIXEL_TO_BLOCK(x) - 1, SUB_PIXEL_TO_BLOCK(y) - 2, value);
 }
 
-void DrawNumber(u16 x, u16 y, u8 number)
+void SetBgValueTile(u8 x, u8 y, u8 value)
 {
-    const u8 baseTile = 0x90;
+    // Write the value to the tilemap
+    gDecompressedTilemap[y * gTilemap.width + x] = value;
 
-    if (number <= 9)
+    // Handle specific case where the modified tile is currently on the screen
+    if (gCamera.left < x && x < gCamera.right && gCamera.top < y && y < gCamera.bottom)
     {
-        SetBgValue(x, y, baseTile + number);
+        // Also setup an update to VRAM is this case
+        gBgTileChanges[gBgTileChangeSlot].offset = y * 32 + x;
+        gBgTileChanges[gBgTileChangeSlot].newTile = value;
+
+        gBgTileChangeSlot++;
     }
 }
 
@@ -103,9 +89,6 @@ void ApplyBgChanges(void)
 {
     u8 i;
     u8* addr;
-    u8 x;
-    u8 y;
-    u16 pos;
     struct BgTileChange* change;
 
     addr = (u8*)(VRAM_BASE + 0x1800);
@@ -118,11 +101,7 @@ void ApplyBgChanges(void)
         change = &gBgTileChanges[i];
 #endif
 
-        y = change->y;
-        x = change->x;
-        pos = y * 32 + x;
-
-        addr[pos] = change->newTile;
+        addr[change->offset] = change->newTile;
     }
 
     gBgTileChangeSlot = 0;

@@ -7,6 +7,8 @@ void LoadFireGraphics(void);
 void StartFire(u16 x, u16 y);
 void SpawnCluster(u16 x, u16 y, u8 direction, u8 length);
 u8 IsTileBurned(u16 x, u16 y);
+void PutOutFire(u8 cluster);
 void UpdateFire(void);
+void UpdateFireTimeTravel(void);
 
 #endif /* FIRE_H */

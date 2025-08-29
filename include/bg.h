@@ -64,6 +64,8 @@ extern struct TilemapInfo gTilemap;
 extern u8 gTilemapUpdateDirectionX;
 extern u8 gTilemapUpdateDirectionY;
 
+extern u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 4];
+
 /**
  * @brief Loads a specified tilemap
  * 
