@@ -91,7 +91,7 @@ struct FireTile {
     u16 y;
 };
 
-struct FireCluster gFireClusters[4];
+static struct FireCluster gFireClusters[4];
 static struct FireCluster gCurrentFire;
 static u8 gCurrentClusterId;
 static u8 gMaxAmountOfExistingFire;

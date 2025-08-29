@@ -13,7 +13,7 @@ struct TileChange {
     u8 tiles[8][8];
 };
 
-struct TileChange gTileChanges[4];
+static struct TileChange gTileChanges[4];
 static u8 gTileChangesIndex;
 
 static u8 gSpawnedSprites[10];
