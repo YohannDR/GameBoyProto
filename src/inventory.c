@@ -10,6 +10,8 @@
 #include "macros.h"
 #include "game_state.h"
 
+#define INVENTORY_GFX_BASE_TILE (0xF0u)
+
 u8 gCurrentItem;
 u8 gAcquiredItems;
 
@@ -61,11 +63,11 @@ static void SetupWindowTilemap(void)
 
     // Fill with white
     for (i = 0; i < 32 * 2; i++)
-        *dst++ = 0x7F;
+        *dst++ = INVENTORY_GFX_BASE_TILE + 7u;
 
     // Add the 2 arrows
-    Write8(VRAM_BASE + 0x1C00 + SCREEN_SIZE_X_BLOCK / 2 - 1, 0x80 - 8);
-    Write8(VRAM_BASE + 0x1C00 + SCREEN_SIZE_X_BLOCK / 2 + 1, 0x80 - 7);
+    Write8(VRAM_BASE + 0x1C00 + SCREEN_SIZE_X_BLOCK / 2 - 1, INVENTORY_GFX_BASE_TILE + 0u);
+    Write8(VRAM_BASE + 0x1C00 + SCREEN_SIZE_X_BLOCK / 2 + 1, INVENTORY_GFX_BASE_TILE + 1u);
 }
 
 static void SetupWindowGraphics(void)
@@ -77,8 +79,8 @@ static void SetupWindowGraphics(void)
     src = sWindowGraphics;
     tileCount = *src++ * 16;
 
-    // Load the graphics at the end of the tiles in VRAM, so we go from the end and subtract
-    dst = (u8*)(VRAM_BASE + 0x1800 - tileCount);
+    // Load the graphics at the end of the the shared VRAM space
+    dst = (u8*)(VRAM_BASE + 0xF00);
 
     while (tileCount--)
         *dst++ = *src++;
@@ -87,9 +89,9 @@ static void SetupWindowGraphics(void)
 static void ComputeInventoryTile(void)
 {
     if (gCurrentItem == ITEM_NONE)
-        gInventoryItemTile = 0x80 - 1;
+        gInventoryItemTile = INVENTORY_GFX_BASE_TILE + 7u;
     else
-        gInventoryItemTile = 0x80 - 5 + gCurrentItem;
+        gInventoryItemTile = INVENTORY_GFX_BASE_TILE + 3u + gCurrentItem;
 }
 
 static void ComputeSelectableItems(void)
@@ -200,10 +202,10 @@ void InventoryUpdate(void)
                 gGameMode.work2++;
 
                 // Alternate between correct tile and blank tile
-                if (gInventoryItemTile == 0x80 - 1)
+                if (gInventoryItemTile == INVENTORY_GFX_BASE_TILE + 7u)
                     ComputeInventoryTile();
                 else
-                    gInventoryItemTile = 0x80 - 1;
+                    gInventoryItemTile = INVENTORY_GFX_BASE_TILE + 7u;
 
                 if (gGameMode.work2 == 5)
                 {
