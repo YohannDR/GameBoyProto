@@ -61,8 +61,8 @@ static void UpdateCamera(void)
     gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
     gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
 
-    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX - SUB_PIXEL_TO_BLOCK(gRoomOriginX);
-    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY - SUB_PIXEL_TO_BLOCK(gRoomOriginY);
+    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX;
+    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY;
 
     gBackgroundX = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
     gBackgroundY = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
@@ -75,7 +75,7 @@ u16 GetCameraTargetX(void)
     u16 playerX;
     u16 width;
 
-    playerX = gPlayerData.x + BLOCK_SIZE - gRoomOriginX;
+    playerX = gPlayerData.x + BLOCK_SIZE;
     width = gTilemap.width * BLOCK_SIZE;
 
     // Check is on the far left of the scroll, i.e. if the distance between the start and the coords X is smaller than the anchor
@@ -101,7 +101,7 @@ u16 GetCameraTargetY(void)
     u16 playerY;
     u16 height;
 
-    playerY = gPlayerData.y - gRoomOriginY;
+    playerY = gPlayerData.y;
     height = gTilemap.height * BLOCK_SIZE;
 
     // Check is on the far top of the scroll, i.e. if the distance between the start and the coords Y is smaller than the anchor

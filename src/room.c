@@ -20,10 +20,6 @@
 
 u8 gCurrentRoom;
 u8 gCurrentTileset;
-u16 gRoomOriginX;
-u16 gRoomOriginY;
-u16 gPreviousRoomOriginX;
-u16 gPreviousRoomOriginY;
 
 static void LoadSprites(const struct RoomSprite* sprites)
 {
@@ -86,10 +82,6 @@ void LoadRoom(u8 room, u8 loadTilemap)
 
     LoadDoors(roomInfo->doorData);
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
-    gPreviousRoomOriginX = gRoomOriginX;
-    gPreviousRoomOriginY = gRoomOriginY;
-    gRoomOriginX = roomInfo->originX;
-    gRoomOriginY = roomInfo->originY;
 
     ClearFire();
     LoadSprites(roomInfo->spriteData);

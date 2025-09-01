@@ -38,15 +38,15 @@ void DoorReset(void)
 void DoorLoad(const struct Door* door)
 {
     gDoors[gCurrentNumberOfDoors] = *door;
-    gDoors[gCurrentNumberOfDoors].x = gRoomOriginX + BLOCK_TO_SUB_PIXEL(gDoors[gCurrentNumberOfDoors].x + 1);
-    gDoors[gCurrentNumberOfDoors].y = gRoomOriginY + BLOCK_TO_SUB_PIXEL(gDoors[gCurrentNumberOfDoors].y + 2);
+    gDoors[gCurrentNumberOfDoors].x = BLOCK_TO_SUB_PIXEL(gDoors[gCurrentNumberOfDoors].x + 1);
+    gDoors[gCurrentNumberOfDoors].y = BLOCK_TO_SUB_PIXEL(gDoors[gCurrentNumberOfDoors].y + 2);
 
     gCurrentNumberOfDoors++;
 }
 
 static void DetermineTransitionDirection(const struct Door* door)
 {
-    if (door->x - gRoomOriginX - gCamera.x < SCREEN_SIZE_X_SUB_PIXEL / 2)
+    if (door->x - gCamera.x < SCREEN_SIZE_X_SUB_PIXEL / 2)
         gDoorTransition.direction = TILEMAP_UPDATE_LEFT;
     else
         gDoorTransition.direction = TILEMAP_UPDATE_RIGHT;
