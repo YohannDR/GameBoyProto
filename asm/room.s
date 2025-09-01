@@ -21,6 +21,14 @@ _LoadGraphics:
     inc de
     inc bc
 
+    ; Handle wrap around from 9800 to 8800
+    ld a, b
+    sub a, #0x98
+    jr NZ, 1$
+
+    ld b, #0x88
+
+1$:
     dec hl
     ld a, l
     or a, h

@@ -1,55 +1,34 @@
 #include "door.h"
 
+#include "gb/display.h"
+#include "gb/io.h"
+
 #include "bg.h"
+#include "io.h"
 #include "fading.h"
 #include "macros.h"
 #include "scroll.h"
+#include "callbacks.h"
 #include "room.h"
 #include "game_state.h"
 #include "player.h"
 
 #include "data/doors.h"
 
-#define TRANSITION_SPEED 1
+#define ROOM_TRANSITION_SPEED (HALF_BLOCK_SIZE)
+#define ROOM_TRANSITION_FADE_SPEED (CONVERT_SECONDS(.1f))
+
+struct DoorTransition {
+    u8 direction;
+    u8 timer;
+    u8 tilesetToLoad;
+    const struct Door* targetDoor;
+};
 
 struct Door gDoors[4];
-struct DoorTransition gDoorTransition;
 static u8 gCurrentNumberOfDoors;
 
-static void SetupSimpleDoorTransition(const struct Door* door)
-{
-    gDoorTransition.type = TRANSITION_TYPE_NORMAL;
-    gDoorTransition.stage = TRANSITION_STAGE_NORMAL_SCROLLING;
-    gDoorTransition.timer = 0;
-
-    if (door->x - gRoomOriginX - gCamera.x < SCREEN_SIZE_X_SUB_PIXEL / 2)
-        gDoorTransition.direction = TILEMAP_UPDATE_LEFT;
-    else
-        gDoorTransition.direction = TILEMAP_UPDATE_RIGHT;
-}
-
-static void PrepareSimpleTransition(const struct Door* door)
-{
-    const struct Door* dstDoor;
-
-    gBackgroundInfo.tilemapAnchorX -= SUB_PIXEL_TO_BLOCK(gRoomOriginX);
-    gBackgroundInfo.tilemapAnchorY -= SUB_PIXEL_TO_BLOCK(gRoomOriginY);
-
-    if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
-    {
-        gCamera.left = UCHAR_MAX;
-        gCamera.right = 0;
-    }
-    else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
-    {
-        gCamera.left = gTilemap.width - 1;
-        gCamera.right = gTilemap.width;
-    }
-
-    dstDoor = &sDoors[door->targetDoor];
-
-    SetupTilemapUpdateX(gDoorTransition.direction);
-}
+static struct DoorTransition gDoorTransition;
 
 void DoorReset(void)
 {
@@ -59,19 +38,24 @@ void DoorReset(void)
 void DoorLoad(const struct Door* door)
 {
     gDoors[gCurrentNumberOfDoors] = *door;
-    gDoors[gCurrentNumberOfDoors].x = gRoomOriginX + (gDoors[gCurrentNumberOfDoors].x + 1) * BLOCK_SIZE;
-    gDoors[gCurrentNumberOfDoors].y = gRoomOriginY + (gDoors[gCurrentNumberOfDoors].y + 2) * BLOCK_SIZE;
+    gDoors[gCurrentNumberOfDoors].x = BLOCK_TO_SUB_PIXEL(gDoors[gCurrentNumberOfDoors].x + 1);
+    gDoors[gCurrentNumberOfDoors].y = BLOCK_TO_SUB_PIXEL(gDoors[gCurrentNumberOfDoors].y + 2);
 
     gCurrentNumberOfDoors++;
+}
+
+static void DetermineTransitionDirection(const struct Door* door)
+{
+    if (door->x - gCamera.x < SCREEN_SIZE_X_SUB_PIXEL / 2)
+        gDoorTransition.direction = TILEMAP_UPDATE_LEFT;
+    else
+        gDoorTransition.direction = TILEMAP_UPDATE_RIGHT;
 }
 
 void DoorUpdate(void)
 {
     u8 i;
     const struct Door* door;
-
-    if (gDoorTransition.type != TRANSITION_TYPE_NONE)
-        return;
 
     door = gDoors;
     for (i = 0; i < gCurrentNumberOfDoors; i++, door++)
@@ -88,95 +72,120 @@ void DoorUpdate(void)
         if (gPlayerData.y - PLAYER_HEIGHT > door->y + door->height * BLOCK_SIZE)
             continue;
 
-        gGameMode.main = GM_TRANSITION;
+        gDoorTransition.tilesetToLoad = door->tileset;
+        gDoorTransition.targetDoor = &sDoors[door->targetDoor];
 
-        if (door->tileset != gCurrentTileset && door->tileset != UCHAR_MAX)
-        {
-            gDoorTransition.type = TRANSITION_TYPE_LOADING;
-            FadingStart(FADING_TARGET_BACKGROUND | FADING_TARGET_OBJ0 | FADING_TARGET_OBJ1, PALETTE_BLACK, 10);
-        }
-        else
-        {
-            SetupSimpleDoorTransition(door);
-            TransitionToRoom(sDoors[door->targetDoor].ownerRoom);
-            PrepareSimpleTransition(door);
-        }
+        gGameMode.main = GM_TRANSITION;
+        gGameMode.sub = TRANSITION_STAGE_FADING_OUT;
+
+        DetermineTransitionDirection(door);
+        FadingStart(FADING_TARGET_BACKGROUND | FADING_TARGET_OBJ0 | FADING_TARGET_OBJ1, PALETTE_BLACK, ROOM_TRANSITION_FADE_SPEED);
     }
 }
 
-#define ROOM_TRANSITION_SPEED HALF_BLOCK_SIZE
+static void SetupCameraForTransition(void)
+{
+    u16 targetX;
+    u16 targetY;
+
+    targetX = GetCameraTargetX();
+    targetY = GetCameraTargetY();
+
+    SetCameraPosition(targetX, targetY);
+
+    gBackgroundInfo.blockX -= SCREEN_SIZE_X_BLOCK;
+    gCamera.left--;
+    gCamera.right -= SCREEN_SIZE_X_BLOCK + 1;
+}
+
+static void PrepareTransition(void)
+{
+    gPlayerData.x = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->x + 1);
+    gPlayerData.y = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->y + 2 + gDoorTransition.targetDoor->height);
+
+    gPlayerMovement.xVelocity = 0;
+    gPlayerMovement.yVelocity = 0;
+    gPlayerMovement.grounded = TRUE;
+
+    if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+    {
+        gPlayerData.x += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) + PIXEL_SIZE;
+    }
+    else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+    {
+        gPlayerData.x -= PLAYER_WIDTH + PIXEL_SIZE;
+    }
+
+    SetupCameraForTransition();
+}
+
+static void TransitionFadeOut(void)
+{
+    if (gColorFading.target != FADING_TARGET_NONE)
+    {
+        // We wait for the fading to finish
+        return;
+    }
+
+    gGameMode.sub = TRANSITION_STAGE_TRANSITION;
+    gGameMode.timer = 0;
+
+    LoadRoom(gDoorTransition.targetDoor->ownerRoom, FALSE);
+
+    PrepareTransition();
+}
+
+void TransitionProcess(void)
+{
+    gGameMode.timer++;
+
+    SetupTilemapUpdateX(TILEMAP_UPDATE_RIGHT);
+
+    gCamera.right++;
+    gBackgroundInfo.blockX++;
+
+    // Overdraw a column
+    if (gGameMode.timer != SCREEN_SIZE_X_BLOCK + 2)
+        return;
+
+    // Offset back to proper position (screen size + 1)
+    gCamera.right--;
+
+    // Fade back to the original palette
+    FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, ROOM_TRANSITION_FADE_SPEED);
+    FadingStart(FADING_TARGET_OBJ0, gObj0Palette, ROOM_TRANSITION_FADE_SPEED);
+    FadingStart(FADING_TARGET_OBJ1, gObj1Palette, ROOM_TRANSITION_FADE_SPEED);
+
+    gGameMode.sub = TRANSITION_STAGE_FADING_IN;
+
+    gBackgroundX = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
+    gBackgroundY = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
+}
+
+static void TransitionFadeIn(void)
+{
+    if (gColorFading.target != FADING_TARGET_NONE)
+    {
+        // We wait for the fading to finish
+        return;
+    }
+
+    // Return in game
+    gGameMode.main = GM_IN_GAME;
+}
 
 void TransitionUpdate(void)
 {
-    u8 newBlock;
-
-    gDoorTransition.timer++;
-
-    if (gDoorTransition.stage == TRANSITION_STAGE_NORMAL_SCROLLING)
+    if (gGameMode.sub == TRANSITION_STAGE_FADING_OUT)
     {
-        newBlock = gDoorTransition.timer % (BLOCK_SIZE / ROOM_TRANSITION_SPEED);
-
-        if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
-        {
-            gBackgroundInfo.x += ROOM_TRANSITION_SPEED;
-            gPlayerData.x += ROOM_TRANSITION_SPEED / 2;
-    
-            if (!newBlock)
-            {
-                gCamera.right++;
-                gBackgroundInfo.blockX++;
-            }
-        }
-        else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
-        {
-            gBackgroundInfo.x -= ROOM_TRANSITION_SPEED;
-            gPlayerData.x -= ROOM_TRANSITION_SPEED / 2;
-    
-            if (!newBlock)
-            {
-                gCamera.left--;
-                gBackgroundInfo.blockX--;
-            }
-        }
-    
-        if (!newBlock)
-            SetupTilemapUpdateX(gDoorTransition.direction);
-
-        if (gDoorTransition.timer == SCREEN_SIZE_X_SUB_PIXEL / ROOM_TRANSITION_SPEED)
-            gDoorTransition.stage = TRANSITION_STAGE_NORMAL_LAST_UPDATE;
+        TransitionFadeOut();
     }
-    else if (gDoorTransition.stage == TRANSITION_STAGE_NORMAL_LAST_UPDATE)
+    else if (gGameMode.sub == TRANSITION_STAGE_TRANSITION)
     {
-        if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
-        {
-            gBackgroundInfo.blockX++;
-            SetupTilemapUpdateX(TILEMAP_UPDATE_RIGHT);
-        }
-        else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
-        {
-            gBackgroundInfo.blockX--;
-            SetupTilemapUpdateX(TILEMAP_UPDATE_LEFT);
-        }
-
-        gDoorTransition.stage = TRANSITION_STAGE_NORMAL_ENDING;
+        TransitionProcess();
     }
-    else
+    else if (gGameMode.sub == TRANSITION_STAGE_FADING_IN)
     {
-        gGameMode.main = GM_IN_GAME;
-        gDoorTransition.type = TRANSITION_STAGE_NORMAL_NONE;
-
-        if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
-        {
-            gCamera.x = 0;
-            gCamera.y = 0;
-        }
-        else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
-        {
-            gCamera.x = gTilemap.width * BLOCK_SIZE - SCREEN_SIZE_X_SUB_PIXEL;
-            gCamera.y = 0;
-        }
-
-        gCamera.top = 0;
-        gCamera.bottom = SCREEN_SIZE_Y_BLOCK + 1;
+        TransitionFadeIn();
     }
 }

@@ -51,11 +51,17 @@ static void InitGame(void)
     SetCameraPosition(0, 0);
     PlayerInit();
     LoadFireGraphics();
-    LoadRoom(0);
+    LoadRoom(0, TRUE);
     SetupRandomSeed();
     InitializeWindow();
 
     CallbackSetVblank(VblankCallback);
+
+    gObj0Palette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK);
+    gObj1Palette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK);
+
+    Write8(REG_OBP0, gObj0Palette);
+    Write8(REG_OBP1, gObj1Palette);
 
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE | LCDC_WINDOW_ENABLE | LCDC_WINDOW_TILEMAP_SELECT);
@@ -88,7 +94,6 @@ void main(void)
         {
             if (gGameMode.main == GM_IN_GAME)
             {
-                // Do stuff...
                 PlayerUpdate();
                 DoorUpdate();
                 ScrollUpdate();
@@ -100,7 +105,6 @@ void main(void)
             else if (gGameMode.main == GM_TRANSITION)
             {
                 TransitionUpdate();
-                ScrollUpdate();
             }
             else if (gGameMode.main == GM_PORTAL)
             {
