@@ -46,10 +46,22 @@ void DoorLoad(const struct Door* door)
 
 static void DetermineTransitionDirection(const struct Door* door)
 {
-    if (door->x - gCamera.x < SCREEN_SIZE_X_SUB_PIXEL / 2)
-        gDoorTransition.direction = TILEMAP_UPDATE_LEFT;
+    // We use the "shape" of the door to determine its orientation
+    // Then we compute the screen space position of the door to see on which side it is
+    if (door->height > door->width)
+    {
+        if (door->x - gCamera.x < SCREEN_SIZE_X_SUB_PIXEL / 2)
+            gDoorTransition.direction = TILEMAP_UPDATE_LEFT;
+        else
+            gDoorTransition.direction = TILEMAP_UPDATE_RIGHT;
+    }
     else
-        gDoorTransition.direction = TILEMAP_UPDATE_RIGHT;
+    {
+        if (door->y - gCamera.y < SCREEN_SIZE_Y_SUB_PIXEL / 2)
+            gDoorTransition.direction = TILEMAP_UPDATE_TOP;
+        else
+            gDoorTransition.direction = TILEMAP_UPDATE_BOTTOM;
+    }
 }
 
 void DoorUpdate(void)
@@ -100,20 +112,47 @@ static void SetupCameraForTransition(void)
 
 static void PrepareTransition(void)
 {
+    u16 width;
+
+    // Set at origin of door
     gPlayerData.x = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->x + 1);
-    gPlayerData.y = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->y + 2 + gDoorTransition.targetDoor->height);
+    gPlayerData.y = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->y + 2);
 
     gPlayerMovement.xVelocity = 0;
     gPlayerMovement.yVelocity = 0;
     gPlayerMovement.grounded = TRUE;
 
-    if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+    if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT || gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
     {
-        gPlayerData.x += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) + PIXEL_SIZE;
+        // Move the player at the bottom of the door
+        gPlayerData.y += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->height);
+
+        // Put the player on the side of the door
+        if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
+            gPlayerData.x += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) + PIXEL_SIZE;
+        else
+            gPlayerData.x -= PLAYER_WIDTH + PIXEL_SIZE;
     }
-    else if (gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
+    else
     {
-        gPlayerData.x -= PLAYER_WIDTH + PIXEL_SIZE;
+        // For some reason? sdcc emits a "control flow changed" warning with this code :
+        // BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) / 2
+        // And since the project is being compiled with warning as errors, I have to work around it so I use a local variable
+        width = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width);
+        gPlayerData.x += width / 2;
+
+        if (gDoorTransition.direction == TILEMAP_UPDATE_TOP)
+        {
+            // Force a jump, otherwise the player will immediatly fall into the transition
+            gPlayerMovement.yVelocity = gPlayerPhysics.jumpingVelocity;
+            gPlayerMovement.grounded = FALSE;
+
+            gPlayerData.y -= BLOCK_SIZE + PIXEL_SIZE;
+        }
+        else
+        {
+            gPlayerData.y += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) + PLAYER_HEIGHT + PIXEL_SIZE;
+        }
     }
 
     SetupCameraForTransition();
