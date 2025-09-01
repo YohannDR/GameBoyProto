@@ -23,6 +23,8 @@ extern const u8 sPlayerGraphics[];
 
 #define LADDER_SPEED (PIXEL_SIZE)
 
+#define JUMP_BUTTON (KEY_A)
+
 struct HitboxData {
     s8 axisOffset;
     s8 pointsOffset[3];
@@ -112,7 +114,7 @@ static void HandleHorizontalMovement(void)
 
 static void HandleVerticalMovement(void)
 {
-    if (gPlayerMovement.grounded && gChangedInput & KEY_A)
+    if (gPlayerMovement.grounded && gChangedInput & JUMP_BUTTON)
     {
         gPlayerMovement.yVelocity = gPlayerPhysics.jumpingVelocity;
         gPlayerMovement.grounded = FALSE;
@@ -323,6 +325,13 @@ static void PlayerOnLadder(void)
 
         if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y - PIXEL_SIZE) != CLIP_BEHAVIOR_LADDER)
             PlayerSetPose(PLAYER_POSE_IDLE);
+    }
+
+    if (gChangedInput & JUMP_BUTTON)
+    {
+        gPlayerMovement.yVelocity = gPlayerPhysics.jumpingVelocity;
+        gPlayerMovement.grounded = FALSE;
+        PlayerSetPose(PLAYER_POSE_IDLE);
     }
 }
 
