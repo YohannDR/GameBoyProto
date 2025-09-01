@@ -66,8 +66,8 @@ static const struct HitboxData sHitboxBottom = {
 
 static void PlayerInitPhysics(void)
 {
-    gPlayerPhysics.xAcceleration = 3;
-    gPlayerPhysics.xVelocityCap = 8;
+    gPlayerPhysics.xAcceleration = 1;
+    gPlayerPhysics.xVelocityCap = 4;
     gPlayerPhysics.yVelocityCap = 8;
     gPlayerPhysics.gravityUpwards = 1;
     gPlayerPhysics.gravityDownwards = 1;
