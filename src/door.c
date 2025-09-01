@@ -267,6 +267,9 @@ static void TransitionLoadTileset(void)
     // Advance VRAM pointer, the buffer starts offset'd as explained above, so this is "behind" when we enter the function
     gGraphicsLoaderInfo.vramAddr += ARRAY_SIZE(gGraphicsLoaderBuffer);
 
+    if (gGraphicsLoaderInfo.vramAddr == (u8*)(VRAM_BASE + 0x1800))
+        gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + 0x800);
+
     // Loop goes to buffer size + 1 because it's necessary to properly perform the tile buffering check
     // if we stopped at the size, we would "miss" the last tile
     // For example if the buffer could only contain a single tile, it would have size 16, and the loop would go from 0 to 15
