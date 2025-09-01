@@ -87,5 +87,6 @@ const struct RoomSprite sRoom2_SpriteData[] = {
 };
 
 const u8 sRoom2_DoorData[] = {
+    3,
     DOOR_NONE
 };

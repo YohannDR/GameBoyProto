@@ -92,8 +92,9 @@ static void SetupCameraForTransition(void)
     targetY = GetCameraTargetY();
 
     SetCameraPosition(targetX, targetY);
-    
+
     gBackgroundInfo.blockX -= SCREEN_SIZE_X_BLOCK;
+    gCamera.left--;
     gCamera.right -= SCREEN_SIZE_X_BLOCK + 1;
 }
 
