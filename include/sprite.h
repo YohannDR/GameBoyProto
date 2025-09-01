@@ -218,6 +218,12 @@ void UpdateSpriteGraphicsLoading(void);
 u8 QueueSpriteGraphics(u8 spriteId);
 
 /**
+ * @brief Kills every sprite
+ * 
+ */
+void ClearSprites(void);
+
+/**
  * @brief Updates the sprites
  * 
  */

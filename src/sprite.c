@@ -446,6 +446,16 @@ u8 QueueSpriteGraphics(u8 spriteId)
     return 0;
 }
 
+void ClearSprites(void)
+{
+    u8 i;
+    struct Sprite* sprite;
+
+    sprite = gSpriteData;
+    for (i = 0; i < gMaxAmountOfExistingSprites; i++, sprite++)
+        sprite->status = 0;
+}
+
 static const u8 sSpriteDefaultAnim_Frame0[OAM_DATA_SIZE(1)] = {
     1,
     OAM_POS(0), OAM_POS(0), 0, 0,

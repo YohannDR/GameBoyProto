@@ -9,9 +9,6 @@ struct Camera gCamera;
 
 #define SCROLL_VELOCITY_CAP (HALF_BLOCK_SIZE)
 
-#define SCROLL_X_ANCHOR (SCREEN_SIZE_X_SUB_PIXEL / 2)
-#define SCROLL_Y_ANCHOR (SCREEN_SIZE_Y_SUB_PIXEL / 2)
-
 static void CheckForTilemapUpdate(void)
 {
     u8 blockX;
@@ -73,7 +70,7 @@ static void UpdateCamera(void)
     CheckForTilemapUpdate();
 }
 
-static u16 GetCameraTargetX(void)
+u16 GetCameraTargetX(void)
 {
     u16 playerX;
     u16 width;
@@ -99,7 +96,7 @@ static u16 GetCameraTargetX(void)
     return width - SCREEN_SIZE_X_SUB_PIXEL;
 }
 
-static u16 GetCameraTargetY(void)
+u16 GetCameraTargetY(void)
 {
     u16 playerY;
     u16 height;
@@ -159,6 +156,18 @@ void SetCameraPosition(u16 x, u16 y)
     gCamera.x = x;
     gCamera.y = y;
 
+    gBackgroundInfo.x = x;
+    gBackgroundInfo.y = y;
+
+    gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
+    gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
+
+    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX;
+    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY;
+    
+    gBackgroundX = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
+    gBackgroundY = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
+
     gCamera.xVelocity = 0;
     gCamera.yVelocity = 0;
 
@@ -170,9 +179,6 @@ void SetCameraPosition(u16 x, u16 y)
 
 void ScrollUpdate(void)
 {
-    if (gGameMode.main == GM_IN_GAME)
-    {
-        ComputeScroll();
-        UpdateCamera();
-    }
+    ComputeScroll();
+    UpdateCamera();
 }

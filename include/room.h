@@ -32,8 +32,7 @@ extern u16 gRoomOriginY;
 extern u16 gPreviousRoomOriginX;
 extern u16 gPreviousRoomOriginY;
 
-void LoadRoom(u8 room);
-void TransitionToRoom(u8 room);
+void LoadRoom(u8 room, u8 loadTilemap);
 ASM_IMPL void LoadGraphics(const u8* graphics);
 
 #endif /* ROOM_H */
