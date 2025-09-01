@@ -350,6 +350,10 @@ _UpdateSprites:
     ld a, (_gMaxAmountOfExistingSprites)
     ld (_gEnemiesLeftToProcess), a
 
+    ; Abort if there's no sprites to process
+    or a, a
+    ret Z
+
 .loopStart:
     ; Get status
     ld a, (hl)
