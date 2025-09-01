@@ -29,13 +29,6 @@ struct Door {
     u8 tileset;
 };
 
-enum TransitionStage {
-    TRANSITION_STAGE_NONE,
-    TRANSITION_STAGE_FADING_OUT,
-    TRANSITION_STAGE_TRANSITION,
-    TRANSITION_STAGE_FADING_IN,
-};
-
 // Currently loaded doors
 extern struct Door gDoors[4];
 
