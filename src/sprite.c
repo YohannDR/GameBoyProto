@@ -4,8 +4,9 @@
 #include "gb/io.h"
 #include "gb/display.h"
 
-#include "macros.h"
 #include "bg.h"
+#include "gfx_loader.h"
+#include "macros.h"
 
 #include "data/sprite_data.h"
 
@@ -52,12 +53,6 @@ static struct SpriteGraphics gSpriteGraphics[10];
 static u8 gSpriteGraphicsFreeIndex;
 
 /**
- * @brief Sprite graphics loader info
- * 
- */
-struct SpriteLoaderInfo gSpriteLoaderInfo;
-
-/**
  * @brief The sprite graphics that are currently queued to be loaded
  * 
  */
@@ -68,12 +63,6 @@ const u8* gQueuedGraphics[10];
  * 
  */
 static u8 gQueuedGraphicsIndex;
-
-/**
- * @brief The buffer that holds the sprite graphics we'll send to VRAM
- * 
- */
-u8 gSpriteGraphicsBuffer[16 * 4];
 
 #define SPRITE_DRAW_FLAGS_CHECK (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN | SPRITE_STATUS_NOT_DRAWN)
 #define SPRITE_DRAW_FLAGS_COND (SPRITE_STATUS_EXISTS | SPRITE_STATUS_ON_SCREEN)
@@ -314,7 +303,7 @@ void StartSpriteGraphicsLoading(void)
 
     // Base vram adress
     // We remove the buffer size because it's always added at the beginning of the update, that way we can start at the proper '0' address
-    gSpriteLoaderInfo.vramAddr = (u8*)(VRAM_BASE + PLAYER_GRAPHICS_RESERVED_AREA * 16 - ARRAY_SIZE(gSpriteGraphicsBuffer));
+    gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + PLAYER_GRAPHICS_RESERVED_AREA * 16 - ARRAY_SIZE(gGraphicsLoaderBuffer));
 
     // Prepare the first queued graphics, if there's any
     src = gQueuedGraphics[0];
@@ -322,10 +311,10 @@ void StartSpriteGraphicsLoading(void)
     if (src == NULL)
         return;
 
-    gSpriteLoaderInfo.nbrTilesToLoad = *src++;
-    gSpriteLoaderInfo.gfxAddr = src;
-    gSpriteLoaderInfo.nbrTilesLoaded = 0;
-    gSpriteLoaderInfo.state = SPRITE_LOADER_ON;
+    gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
+    gGraphicsLoaderInfo.gfxAddr = src;
+    gGraphicsLoaderInfo.nbrTilesLoaded = 0;
+    gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON;
 }
 
 void UpdateSpriteGraphicsLoading(void)
@@ -334,31 +323,31 @@ void UpdateSpriteGraphicsLoading(void)
     u8 gfxIndex;
     const u8* src;
 
-    if (gSpriteLoaderInfo.state == SPRITE_LOADER_LAST_UPDATE)
+    if (gGraphicsLoaderInfo.state == GRAPHICS_LOADER_LAST_UPDATE)
     {
         // At this point, we're on the frame after the last update, so the last graphics have been sent to VRAM properly
         // thus we can safely turn off the loader
-        gSpriteLoaderInfo.state = SPRITE_LOADER_OFF;
+        gGraphicsLoaderInfo.state = GRAPHICS_LOADER_OFF;
         return;
     }
 
     // Advance VRAM pointer, the buffer starts offset'd as explained above, so this is "behind" when we enter the function
-    gSpriteLoaderInfo.vramAddr += ARRAY_SIZE(gSpriteGraphicsBuffer);
+    gGraphicsLoaderInfo.vramAddr += ARRAY_SIZE(gGraphicsLoaderBuffer);
 
     // Loop goes to buffer size + 1 because it's necessary to properly perform the tile buffering check
     // if we stopped at the size, we would "miss" the last tile
     // For example if the buffer could only contain a single tile, it would have size 16, and the loop would go from 0 to 15
     // but then the i % 16 == 0 check to see if we've buffered a tile would never be true,
     // since it would require i to reach 16 which isn't in the loop range
-    for (i = 0, gfxIndex = 0; i < ARRAY_SIZE(gSpriteGraphicsBuffer) + 1; i++, gfxIndex++)
+    for (i = 0, gfxIndex = 0; i < ARRAY_SIZE(gGraphicsLoaderBuffer) + 1; i++, gfxIndex++)
     {
         // Check if we've buffered an entire tile
         if (i != 0 && i % 16 == 0)
         {
-            gSpriteLoaderInfo.nbrTilesLoaded++;
+            gGraphicsLoaderInfo.nbrTilesLoaded++;
 
             // Check if we've fully loaded these graphics
-            if (gSpriteLoaderInfo.nbrTilesLoaded == gSpriteLoaderInfo.nbrTilesToLoad)
+            if (gGraphicsLoaderInfo.nbrTilesLoaded == gGraphicsLoaderInfo.nbrTilesToLoad)
             {
                 // If yes, we can move on to next in the queue
                 gQueuedGraphicsIndex++;
@@ -368,33 +357,33 @@ void UpdateSpriteGraphicsLoading(void)
                 {
                     // There's no more graphics to load so we're done, but we can't turn off the loader yet,
                     // because otherwise what we just buffered will never be sent to VRAM, so we keep it in a "half" active state for a single frame
-                    gSpriteLoaderInfo.state = SPRITE_LOADER_LAST_UPDATE;
+                    gGraphicsLoaderInfo.state = GRAPHICS_LOADER_LAST_UPDATE;
                     // We might not have filled the buffer with valid data, so we only mark to load what we actually buffered
-                    gSpriteLoaderInfo.nbrBytesBuffered = i;
+                    gGraphicsLoaderInfo.nbrBytesBuffered = i;
                     return;
                 }
 
                 // Setup
-                gSpriteLoaderInfo.nbrTilesLoaded = 0;
-                gSpriteLoaderInfo.nbrTilesToLoad = *src++;
-                gSpriteLoaderInfo.gfxAddr = src;
+                gGraphicsLoaderInfo.nbrTilesLoaded = 0;
+                gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
+                gGraphicsLoaderInfo.gfxAddr = src;
                 // Reset the gfx index
                 gfxIndex = 0;
             }
 
             // Since the loop goes to buffer size + 1, we have to check if we should exit early to not r/w out of bounds
-            if (i == ARRAY_SIZE(gSpriteGraphicsBuffer))
+            if (i == ARRAY_SIZE(gGraphicsLoaderBuffer))
                 break;
         }
 
         // Write to the buffer
-        gSpriteGraphicsBuffer[i] = gSpriteLoaderInfo.gfxAddr[gfxIndex];
+        gGraphicsLoaderBuffer[i] = gGraphicsLoaderInfo.gfxAddr[gfxIndex];
     }
 
     // Advance the source graphics by what was loaded
-    gSpriteLoaderInfo.gfxAddr += gfxIndex;
+    gGraphicsLoaderInfo.gfxAddr += gfxIndex;
     // If we reached this part, it's garanteed we fully filled the buffer
-    gSpriteLoaderInfo.nbrBytesBuffered = ARRAY_SIZE(gSpriteGraphicsBuffer);
+    gGraphicsLoaderInfo.nbrBytesBuffered = ARRAY_SIZE(gGraphicsLoaderBuffer);
 }
 
 u8 QueueSpriteGraphics(u8 spriteId)

@@ -13,6 +13,7 @@
 #include "random.h"
 #include "io.h"
 #include "fading.h"
+#include "gfx_loader.h"
 #include "inventory.h"
 #include "callbacks.h"
 #include "game_state.h"
@@ -85,10 +86,13 @@ void main(void)
         else if (gChangedInput & KEY_START)
             PlaySound(SOUND_TUTUT);
 
-        // If the sprite graphics loader is active, it takes absolute priority and fully hangs the game until its done
-        if (gSpriteLoaderInfo.state != SPRITE_LOADER_OFF)
+        // If the graphics loader is active, it takes absolute priority and fully hangs the game until its done
+        if (gGraphicsLoaderInfo.state != GRAPHICS_LOADER_OFF)
         {
-            UpdateSpriteGraphicsLoading();
+            if (gGraphicsLoaderInfo.state & GRAPHICS_LOADER_TILESET)
+                TransitionUpdate();
+            else
+                UpdateSpriteGraphicsLoading();
         }
         else
         {
