@@ -20,14 +20,14 @@ const struct SoundData sSoundData[] = {
         .reg4 = 0x87,
     },
     [SOUND_WATER] = {
-        .channel = SOUND_CHANNEL_SQUARE_4,
+        .channel = SOUND_CHANNEL_NOISE,
         .reg1 = 0x32,
         .reg2 = 0x8A,
         .reg3 = 0x14,
         .reg4 = 0xC0,
     },
-    [SOUND_FIRE = {
-        .channel = SOUND_CHANNEL_SQUARE_4,
+    [SOUND_FIRE] = {
+        .channel = SOUND_CHANNEL_NOISE,
         .reg1 = 0x3F,
         .reg2 = 0x87,
         .reg3 = 0x74,
