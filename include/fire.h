@@ -10,5 +10,6 @@ u8 IsTileBurned(u16 x, u16 y);
 void PutOutFire(u8 cluster);
 void UpdateFire(void);
 void UpdateFireTimeTravel(void);
+void ClearFire(void);
 
 #endif /* FIRE_H */

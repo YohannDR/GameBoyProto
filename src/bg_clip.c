@@ -43,9 +43,6 @@ void GetClipdataValue(u16 x, u16 y)
     gCollisionInfo.left = x & BLOCK_POSITION_FLAG;
     gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
 
-    x -= gRoomOriginX;
-    y -= gRoomOriginY;
-
     clipdata = gTilemap.tilemap[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
     clipdata = gCurrentCollisionTable[clipdata];
 

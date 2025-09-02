@@ -62,7 +62,7 @@ static void DecompressTilemap(const u8* tilemap)
     }
 }
 
-void LoadTilemap(const u8* tilemap)
+void LoadTilemap(const u8* tilemap, u8 toVram)
 {
     u8 i;
     u8 j;
@@ -73,6 +73,9 @@ void LoadTilemap(const u8* tilemap)
     gTilemap.height = *tilemap++;
     DecompressTilemap(tilemap);
     gTilemap.tilemap = gDecompressedTilemap;
+
+    if (!toVram)
+        return;
 
     tilemap = &gTilemap.tilemap[gBackgroundInfo.blockY * gTilemap.width + gBackgroundInfo.blockX];
 

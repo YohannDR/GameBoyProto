@@ -730,6 +730,21 @@ void UpdateFireTimeTravel(void)
     }
 }
 
+void ClearFire(void)
+{
+    u8 i;
+    struct FireCluster* fire;
+    struct FireTile* tile;
+
+    fire = gFireClusters;
+    for (i = 0; i < gMaxAmountOfExistingFire; i++, fire++)
+        fire->status = 0;
+
+    tile = gFireTiles;
+    for (i = 0; i < gMaxAmountOfExistingFireTiles; i++, tile++)
+        tile->parentCluster = 0;
+}
+
 const u8 sFireGraphics[] = {
     5,
 
