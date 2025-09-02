@@ -39,24 +39,26 @@ void GetClipdataValue(u16 x, u16 y)
     u8 subPixel;
     u8 data;
 
-    gCollisionInfo.top = y & BLOCK_POSITION_FLAG;
-    gCollisionInfo.bottom = gCollisionInfo.top + BLOCK_SIZE;
-    gCollisionInfo.left = x & BLOCK_POSITION_FLAG;
-    gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
-
-    if (IsTileBurned(x, y))
-    {
-        gCollisionInfo.solidity = COLLISION_SOLID;
-        gCollisionInfo.behavior = CLIP_BEHAVIOR_AIR;
-        return;
-    }
-
     clipdata = gTilemap.tilemap[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
     clipdata = gCurrentCollisionTable[clipdata];
 
     data = sClipdataTable[clipdata];
     gCollisionInfo.solidity = GET_LOWER_NIBBLE(data);
     gCollisionInfo.behavior = GET_UPPER_NIBBLE(data);
+
+    if (data != CLIPDATA_AIR)
+    {
+        gCollisionInfo.top = y & BLOCK_POSITION_FLAG;
+        gCollisionInfo.bottom = gCollisionInfo.top + BLOCK_SIZE;
+        gCollisionInfo.left = x & BLOCK_POSITION_FLAG;
+        gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
+    }
+    else if (IsTileBurned(x, y))
+    {
+        gCollisionInfo.solidity = COLLISION_SOLID;
+        gCollisionInfo.behavior = CLIP_BEHAVIOR_AIR;
+        return;
+    }
 
     if (clipdata == CLIPDATA_LADDER_TOP)
     {

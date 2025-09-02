@@ -12,6 +12,7 @@
 #include "sprite.h"
 #include "items.h"
 #include "fading.h"
+#include "game_state.h"
 #include "macros.h"
 
 struct PlayerData gPlayerData;
@@ -199,15 +200,21 @@ static void HandleTopCollision(void)
 
 static void HandleTerrainCollision(void)
 {
-    if (gPlayerMovement.xVelocity < 0)
-        HandleLeftCollision();
-    else if (gPlayerMovement.xVelocity > 0)
-        HandleRightCollision();
-
-    if (gPlayerMovement.yVelocity < 0)
-        HandleTopCollision();
-    else if (gPlayerMovement.yVelocity > 0)
-        HandleBottomCollision();
+    // It creates a bit of jank but it's most efficient optimization I could find
+    if (gFrameCounter % 2 == 0)
+    {
+        if (gPlayerMovement.xVelocity < 0)
+            HandleLeftCollision();
+        else if (gPlayerMovement.xVelocity != 0)
+            HandleRightCollision();
+    }
+    else
+    {
+        if (gPlayerMovement.yVelocity < 0)
+            HandleTopCollision();
+        else if (gPlayerMovement.yVelocity != 0)
+            HandleBottomCollision();
+    }
 }
 
 static void ApplyMovement(void)
