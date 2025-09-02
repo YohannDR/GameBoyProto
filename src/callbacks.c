@@ -6,7 +6,7 @@
 #include "io.h"
 
 // Whether or not the v-blank intterupt has been fired
-static u8 gVblankFired;
+static vu8 gVblankFired;
 
 // Function pointers for interrupt callbacks
 
@@ -62,6 +62,8 @@ void CallbackCallTimer(void)
 
 void WaitForVblank(void)
 {
+    gVblankFired = FALSE;
+
     // We need to check specifically for v-blank, since any other interrupt could stop this halt
     while (!gVblankFired)
     {
