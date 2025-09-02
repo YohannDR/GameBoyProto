@@ -452,21 +452,21 @@ const u8 sRoom1_Tilemap[] = {
 
 const struct RoomSprite sRoom1_SpriteData[] = {
     [0] = {
-        .x = 31,
-        .y = 6,
-        .id = STYPE_NONE,
+        .x = 2,
+        .y = 4,
+        .id = STYPE_PORTAL,
         .part = 0
     },
     [1] = {
-        .x = 25,
-        .y = 14,
-        .id = STYPE_NONE,
+        .x = 15,
+        .y = 4,
+        .id = STYPE_PORTAL,
         .part = 0
     },
     [2] = {
-        .x = 10,
-        .y = 34,
-        .id = STYPE_NONE,
+        .x = 2,
+        .y = 19,
+        .id = STYPE_PORTAL,
         .part = 0
     },
     [3] = ROOM_SPRITE_TERMINATOR

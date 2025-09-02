@@ -16,7 +16,7 @@ struct BgTileChange {
     u8 newTile;
 };
 
-static struct BgTileChange gBgTileChanges[20];
+struct BgTileChange gBgTileChanges[20];
 static u8 gBgTileChangeSlot;
 
 struct CollisionInfo gCollisionInfo;
@@ -80,7 +80,8 @@ void SetBgValueTile(u8 x, u8 y, u8 value)
     gDecompressedTilemap[y * gTilemap.width + x] = value;
 
     // Handle specific case where the modified tile is currently on the screen
-    if (gCamera.left < x && x < gCamera.right && gCamera.top < y && y < gCamera.bottom)
+    // We need to cast to signed representations because it's possible for left and top to be negative (FF) even though they are unsigned
+    if ((s8)gCamera.left < (s16)x && x < gCamera.right && (s8)gCamera.top < (s16)y && y < gCamera.bottom)
     {
         // Also setup an update to VRAM is this case
         gBgTileChanges[gBgTileChangeSlot].offset = y * 32 + x;
