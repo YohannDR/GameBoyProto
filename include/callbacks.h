@@ -4,9 +4,6 @@
 #include "types.h"
 #include "macros.h"
 
-ASM_IMPL void EnableInterrupts(void);
-ASM_IMPL void DisableInterrupts(void);
-
 /**
  * @brief Sets the v-blank callback
  * 
@@ -20,13 +17,6 @@ void CallbackSetVblank(Func_T callback);
  * @param callback Callback
  */
 void CallbackSetLcd(Func_T callback);
-
-/**
- * @brief Sets the timer callback
- * 
- * @param callback Callback
- */
-void CallbackSetTimer(Func_T callback);
 
 /**
  * @brief Halts the CPU and waits for the next v-blank interrupt

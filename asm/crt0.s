@@ -31,8 +31,7 @@ ___sdcc_call_hl::
         .org    0x48            ; LCD
         jp _LcdHandler
 
-        .org    0x50            ; TIM
-        jp _TimerHandler
+;       .org    0x50            ; TIM
 
 ;       .org    0x58            ; SIO
 

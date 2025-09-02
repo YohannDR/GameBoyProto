@@ -46,11 +46,6 @@ void CallbackCallLcd(void)
         func();
 }
 
-void CallbackSetTimer(Func_T callback)
-{
-    gTimerCallback = callback;
-}
-
 void CallbackCallTimer(void)
 {
     Func_T func;

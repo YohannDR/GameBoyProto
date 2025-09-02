@@ -93,13 +93,6 @@ void LoadTilemap(const u8* tilemap, u8 toVram)
     }
 }
 
-void BindTilemap(const u8* tilemap)
-{
-    gTilemap.width = *tilemap++;
-    gTilemap.height = *tilemap++;
-    gTilemap.tilemap = tilemap;
-}
-
 void SetupTilemapUpdateX(u8 direction)
 {
     u8 offset;

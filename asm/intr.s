@@ -16,13 +16,6 @@
 
     .area _CODE
 
-_EnableInterrupts::
-    reti
-
-_DisableInterrupts::
-    di
-    ret
-
 ; Define the handlers for the different interrupts
 ; They first push every register, then call the callback if there's one, then pop every register
 ; before returning with interrupts enabled again
@@ -45,14 +38,6 @@ _LcdHandler::
     PUSH_ALL
 
     call _CallbackCallLcd
-
-    POP_ALL
-    reti
-
-_TimerHandler::
-    PUSH_ALL
-
-    call _CallbackCallTimer
 
     POP_ALL
     reti

@@ -10,7 +10,6 @@
 #include "scroll.h"
 #include "room.h"
 #include "fire.h"
-#include "random.h"
 #include "io.h"
 #include "fading.h"
 #include "gfx_loader.h"
@@ -53,7 +52,6 @@ static void InitGame(void)
     PlayerInit();
     LoadFireGraphics();
     LoadRoom(0, TRUE);
-    SetupRandomSeed();
     InitializeWindow();
 
     CallbackSetVblank(VblankCallback);
