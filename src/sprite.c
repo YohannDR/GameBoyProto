@@ -314,6 +314,7 @@ void StartSpriteGraphicsLoading(void)
     gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
     gGraphicsLoaderInfo.gfxAddr = src;
     gGraphicsLoaderInfo.nbrTilesLoaded = 0;
+    gGraphicsLoaderInfo.nbrBytesBuffered = 0;
     gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON;
 }
 

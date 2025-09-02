@@ -22,6 +22,8 @@ _UpdateTransitionVblank:
 
     ; Get amount of bytes to transfer
     ld a, (#_gGraphicsLoaderInfo + 7)
+    or a, a
+    ret Z
     ld e, a
 
 LoadSpriteGfxLoop:

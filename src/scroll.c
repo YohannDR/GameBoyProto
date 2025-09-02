@@ -24,12 +24,14 @@ static void CheckForTilemapUpdate(void)
         gCamera.left--;
         gCamera.right--;
         SetupTilemapUpdateX(TILEMAP_UPDATE_LEFT);
+        return;
     }
     else if (gCamera.xVelocity > 0 && gCamera.right == blockX + SCREEN_SIZE_X_BLOCK - 1)
     {
         gCamera.left++;
         gCamera.right++;
         SetupTilemapUpdateX(TILEMAP_UPDATE_RIGHT);
+        return;
     }
 
     blockY = SUB_PIXEL_TO_BLOCK(gCamera.y);
@@ -173,8 +175,8 @@ void SetCameraPosition(u16 x, u16 y)
 
     gCamera.left = SUB_PIXEL_TO_BLOCK(x);
     gCamera.right = gCamera.left + SCREEN_SIZE_X_BLOCK + 1;
-    gCamera.top = SUB_PIXEL_TO_BLOCK(y);
-    gCamera.bottom = gCamera.top + SCREEN_SIZE_Y_BLOCK + 1;
+    gCamera.top = SUB_PIXEL_TO_BLOCK(y) - 1;
+    gCamera.bottom = SUB_PIXEL_TO_BLOCK(y) + SCREEN_SIZE_Y_BLOCK + 1;
 }
 
 void ScrollUpdate(void)

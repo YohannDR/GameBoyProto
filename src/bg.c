@@ -6,7 +6,7 @@
 #include "macros.h"
 #include "scroll.h"
 
-#define TILEMAP_UPDATE_X_OVERDRAW 4
+#define TILEMAP_UPDATE_X_OVERDRAW 6
 #define TILEMAP_UPDATE_Y_OVERDRAW 4
 
 struct BackgroundInfo gBackgroundInfo;

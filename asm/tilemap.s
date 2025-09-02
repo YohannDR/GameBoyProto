@@ -29,8 +29,8 @@ UpdateHorizontal:
     ld de, #(_gTilemapUpdateBufferX)
 
     ; Use reserved tilemap byte as loop counter
-    ld hl, #_gTilemap + 4
-    ld (hl), #0x12 + 4
+    ld a, #0x12 + 6
+    ld (_gTilemap + 4), a
 
 UpdateHorizontalLoop:
     ld a, (de)
@@ -53,7 +53,8 @@ UpdateHorizontalLoop:
     ; Since the buffer is somewhat small, we might be able to get away with just increasing e
     ; but that would require the buffer to have a compatible RAM address, so this'll have to be investigated later
     ; near the end of production once RAM is basically fully determined
-    inc de
+    ;inc de
+    inc e
 
     jr UpdateHorizontalLoop
 
@@ -80,8 +81,8 @@ UpdateVertical:
     ld de, #(_gTilemapUpdateBufferY)
 
     ; Use reserved tilemap byte as loop counter
-    ld hl, #_gTilemap + 4
-    ld (hl), #0x14 + 4
+    ld a, #0x14 + 4
+    ld (_gTilemap + 4), a
 
 UpdateVerticalLoop:
     ld a, (de)
@@ -107,6 +108,7 @@ UpdateVerticalLoop:
     ; Since the buffer is somewhat small, we might be able to get away with just increasing e
     ; but that would require the buffer to have a compatible RAM address, so this'll have to be investigated later
     ; near the end of production once RAM is basically fully determined
-    inc de
+    ;inc de
+    inc e
 
     jr UpdateVerticalLoop
