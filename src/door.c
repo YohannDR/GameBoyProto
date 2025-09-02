@@ -36,7 +36,7 @@ enum TransitionStage {
     TRANSITION_STAGE_FADING_IN,
 };
 
-struct Door gDoors[4];
+static struct Door gDoors[4];
 static u8 gCurrentNumberOfDoors;
 
 static struct DoorTransition gDoorTransition;

@@ -5,6 +5,7 @@
 
 #include "bg.h"
 #include "math.h"
+#include "fire.h"
 #include "scroll.h"
 #include "room.h"
 
@@ -42,6 +43,13 @@ void GetClipdataValue(u16 x, u16 y)
     gCollisionInfo.bottom = gCollisionInfo.top + BLOCK_SIZE;
     gCollisionInfo.left = x & BLOCK_POSITION_FLAG;
     gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
+
+    if (IsTileBurned(x, y))
+    {
+        gCollisionInfo.solidity = COLLISION_SOLID;
+        gCollisionInfo.behavior = CLIP_BEHAVIOR_AIR;
+        return;
+    }
 
     clipdata = gTilemap.tilemap[ComputeIndexFromSpriteCoords(y, gTilemap.width, x)];
     clipdata = gCurrentCollisionTable[clipdata];

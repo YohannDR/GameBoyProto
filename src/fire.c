@@ -99,7 +99,7 @@ static u8 gMaxAmountOfExistingFire;
 static u8 gAnimationTimer;
 static u8 gCurrentAnimationFrame;
 
-static struct FireTile gFireTiles[50];
+struct FireTile gFireTiles[50];
 static u8 gMaxAmountOfExistingFireTiles;
 
 extern const u8 sFireGraphics[];
@@ -492,6 +492,7 @@ void StartFire(u16 x, u16 y)
 void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
 {
     u8 i;
+    u8 status;
 
     for (i = 0; i < ARRAY_SIZE(gFireClusters); i++)
     {
@@ -514,19 +515,20 @@ void SpawnCluster(u16 x, u16 y, u8 direction, u8 length)
 
         x = gFireClusters[i].x;
         y = gFireClusters[i].y;
+        status = gFireClusters[i].status;
 
         // i can safely be re-used here, we're exiting the loop afterwards
         for (i = 0; i < length + 1; i++)
         {
             BurnTile(x, y);
 
-            if (gFireClusters[i].status & FIRE_STATUS_UP)
+            if (status & FIRE_STATUS_UP)
                 y -= BLOCK_SIZE;
-            else if (gFireClusters[i].status & FIRE_STATUS_DOWN)
+            else if (status & FIRE_STATUS_DOWN)
                 y += BLOCK_SIZE;
-            else if (gFireClusters[i].status & FIRE_STATUS_LEFT)
+            else if (status & FIRE_STATUS_LEFT)
                 x -= BLOCK_SIZE;
-            else if (gFireClusters[i].status & FIRE_STATUS_RIGHT)
+            else if (status & FIRE_STATUS_RIGHT)
                 x += BLOCK_SIZE;
         }
 

@@ -29,9 +29,6 @@ struct Door {
     u8 tileset;
 };
 
-// Currently loaded doors
-extern struct Door gDoors[4];
-
 // "Invalid" door id
 #define DOOR_NONE UCHAR_MAX
 
