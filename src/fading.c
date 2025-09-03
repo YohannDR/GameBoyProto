@@ -106,7 +106,7 @@ void FadingUpdate(void)
 
     gColorFading.timer += DELTA_TIME;
 
-    if (gColorFading.timer != gColorFading.interval)
+    if (gColorFading.timer < gColorFading.interval)
         return;
 
     gColorFading.timer = 0;

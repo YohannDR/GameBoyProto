@@ -23,6 +23,10 @@
 _VblankHandler::
     PUSH_ALL
 
+    ld a, (_gIsIdleFrame)
+    or a, a
+    jr NZ, end
+
     ; We also need to update oam during v-blank
     call .refresh_OAM
     ; This is time critical, so it takes absolute priority
@@ -31,6 +35,10 @@ _VblankHandler::
     call _ApplyBgChanges
     call _CallbackCallVblank
 
+end:
+    ld a, (_gIsIdleFrame)
+    cpl
+    ld (_gIsIdleFrame), a
     POP_ALL
     reti
 

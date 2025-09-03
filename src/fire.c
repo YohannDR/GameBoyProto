@@ -170,7 +170,7 @@ static void FireUpdateAnimation(void)
 #else
     anim = &animPointer[gCurrentAnimationFrame];
 #endif
-    gAnimationTimer++;
+    gAnimationTimer += DELTA_TIME;
 
     if (gAnimationTimer >= anim->duration)
     {

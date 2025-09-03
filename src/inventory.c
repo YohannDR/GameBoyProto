@@ -196,7 +196,7 @@ void InventoryUpdate(void)
         {
             gGameMode.timer += DELTA_TIME;
 
-            if (gGameMode.timer == CONVERT_SECONDS(.4f))
+            if (gGameMode.timer == CONVERT_SECONDS(.6f))
             {
                 gGameMode.timer = 0;
                 gGameMode.work2++;

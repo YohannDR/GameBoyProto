@@ -198,21 +198,15 @@ static void HandleTopCollision(void)
 
 static void HandleTerrainCollision(void)
 {
-    // It creates a bit of jank but it's most efficient optimization I could find
-    if (gFrameCounter % 2 == 0)
-    {
-        if (gPlayerMovement.xVelocity < 0)
-            HandleLeftCollision();
-        else if (gPlayerMovement.xVelocity != 0)
-            HandleRightCollision();
-    }
-    else
-    {
-        if (gPlayerMovement.yVelocity < 0)
-            HandleTopCollision();
-        else if (gPlayerMovement.yVelocity != 0)
-            HandleBottomCollision();
-    }
+    if (gPlayerMovement.xVelocity < 0)
+        HandleLeftCollision();
+    else if (gPlayerMovement.xVelocity != 0)
+        HandleRightCollision();
+
+    if (gPlayerMovement.yVelocity < 0)
+        HandleTopCollision();
+    else if (gPlayerMovement.yVelocity != 0)
+        HandleBottomCollision();
 }
 
 static void ApplyMovement(void)
@@ -263,7 +257,7 @@ static void UpdateAnimation(void)
 #else
     anim = &gPlayerData.animPointer[gPlayerData.currentAnimFrame];
 #endif
-    gPlayerData.animTimer++;
+    gPlayerData.animTimer += DELTA_TIME;
 
     if (gPlayerData.animTimer >= anim->duration)
     {
@@ -319,14 +313,14 @@ static void PlayerOnLadder(void)
 {
     if (gButtonInput & KEY_DOWN)
     {
-        gPlayerData.y += LADDER_SPEED;
+        gPlayerData.y += LADDER_SPEED * DELTA_TIME;
 
         if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y) != CLIP_BEHAVIOR_LADDER)
             PlayerSetPose(PLAYER_POSE_IDLE);
     }
     else if (gButtonInput & KEY_UP)
     {
-        gPlayerData.y -= LADDER_SPEED;
+        gPlayerData.y -= LADDER_SPEED * DELTA_TIME;
 
         if (GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y - PIXEL_SIZE) != CLIP_BEHAVIOR_LADDER)
             PlayerSetPose(PLAYER_POSE_IDLE);
@@ -362,10 +356,17 @@ void PlayerUpdate(void)
             break;
 
         default:
+            // Wow, this sucks
             HandleHorizontalMovement();
             HandleVerticalMovement();
             HandleTerrainCollision();
             ApplyMovement();
+
+            HandleHorizontalMovement();
+            HandleVerticalMovement();
+            HandleTerrainCollision();
+            ApplyMovement();
+
             CheckForLadder();
 
             if (gPlayerMovement.direction & KEY_LEFT)

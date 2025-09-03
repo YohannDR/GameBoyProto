@@ -27,10 +27,22 @@ enum GameMode {
     GM_PORTAL,
 };
 
-// 8-bit frame counter
+/**
+ * @brief 8-bit frame counter
+ * 
+ */
 extern u8 gFrameCounter;
 
-// Game mode info
+/**
+ * @brief Whether the current frame is an idle frame
+ * 
+ */
+extern u8 gIsIdleFrame;
+
+/**
+ * @brief Game mode info
+ * 
+ */
 extern struct GameModeInfo gGameMode;
 
 #endif /* GAME_STATE_H */
