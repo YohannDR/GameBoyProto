@@ -6,8 +6,6 @@
 #include "fire.h"
 #include "sprites_AI/water_drop.h"
 
-#define ITEM_INPUT (KEY_B)
-
 #define OFFSET_X_LEFT (-(QUARTER_BLOCK_SIZE))
 #define OFFSET_X_RIGHT (PLAYER_WIDTH - QUARTER_BLOCK_SIZE)
 
@@ -63,7 +61,7 @@ static void WaterBucket(void)
     if (!gIsItemOn)
         CheckFillWithWater();
 
-    if (gIsItemOn && gChangedInput & ITEM_INPUT)
+    if (gIsItemOn && gChangedInput & INTERACTION_BUTTON)
     {
         // TODO, find a way to load graphics for dynamic sprites
         SpawnSprite(gItemX, gItemY, STYPE_WATER_DROP, WATER_DROP_FALLING, QueueSpriteGraphics(STYPE_WATER_DROP));
@@ -84,7 +82,7 @@ static void WaterGun(void)
     if (!gIsItemOn)
         CheckFillWithWater();
 
-    if (gIsItemOn && gChangedInput & ITEM_INPUT)
+    if (gIsItemOn && gChangedInput & INTERACTION_BUTTON)
     {
         if (gPlayerMovement.direction & KEY_LEFT)
             direction = WATER_DROP_FLYING_LEFT;

@@ -216,7 +216,7 @@ void InventoryUpdate(void)
         }
         else
         {
-            // Check if we should exit the inventory, either B or Select work
+            // Check if we should exit the inventory, either B or Select works
             if (gChangedInput & (KEY_B | KEY_SELECT))
             {
                 gGameMode.sub = INV_STATE_SCROLLING_DOWN;

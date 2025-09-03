@@ -24,8 +24,6 @@ extern const u8 sPlayerGraphics[];
 
 #define LADDER_SPEED (PIXEL_SIZE)
 
-#define JUMP_BUTTON (KEY_A)
-
 struct HitboxData {
     s8 axisOffset;
     s8 pointsOffset[3];
@@ -350,8 +348,8 @@ void PlayerInit(void)
     // gPlayerData.x = BLOCK_SIZE * 3;
     // gPlayerData.y = BLOCK_SIZE * 19;
 
-    gPlayerData.x = BLOCK_SIZE * 17;
-    gPlayerData.y = BLOCK_SIZE * 7;
+    gPlayerData.x = BLOCK_SIZE * 9;
+    gPlayerData.y = BLOCK_SIZE * 13;
     gPlayerData.animPointer = sPlayerAnim_Idle;
 }
 

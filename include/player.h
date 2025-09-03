@@ -6,6 +6,9 @@
 #define PLAYER_HEIGHT (BLOCK_SIZE * 3)
 #define PLAYER_WIDTH  (BLOCK_SIZE * 2)
 
+#define JUMP_BUTTON (KEY_A)
+#define INTERACTION_BUTTON (KEY_B)
+
 struct PlayerData {
     u16 x;
     u16 y;
@@ -22,7 +25,7 @@ struct PlayerData {
     u8 properties;
 
     // Work variable, essentially free space
-    u8 work1;
+    u8 carryingObject;
     // Work variable, essentially free space
     u8 work2;
     // Work variable, essentially free space
