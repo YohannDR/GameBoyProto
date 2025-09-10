@@ -4,7 +4,9 @@ const u8 sRoom10_Tilemap[] = {
     20, 18,
 
     0x14, 0x09,
-    0x13, 0x0A,
+    0x05, 0x0A,
+    0x01, 0x05,
+    0x0D, 0x0A,
     0x01, 0x09,
     0x13, 0x0A,
     0x01, 0x09,
@@ -95,5 +97,8 @@ const struct RoomSprite sRoom10_SpriteData[] = {
 };
 
 const u8 sRoom10_DoorData[] = {
+    17,
+    18,
+    20,
     DOOR_NONE
 };

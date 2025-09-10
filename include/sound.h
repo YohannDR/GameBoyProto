@@ -17,8 +17,12 @@ struct SoundData {
 };
 
 enum Sound {
-    SOUND_BIPBIP,
-    SOUND_TUTUT,
+    SOUND_UNLOCK,
+    SOUND_DOOR_OPEN,
+    SOUND_WATER,
+    SOUND_FIRE,
+    SOUND_PORTAL_PAST,
+    SOUND_PORTAL_FUTUR,
 };
 
 enum SoundChannel {

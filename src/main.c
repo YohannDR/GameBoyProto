@@ -13,6 +13,7 @@
 #include "random.h"
 #include "io.h"
 #include "fading.h"
+#include "gfx_loader.h"
 #include "inventory.h"
 #include "callbacks.h"
 #include "game_state.h"
@@ -21,6 +22,7 @@
 #include "sprite.h"
 #include "door.h"
 #include "sound.h"
+#include "time.h"
 
 #include "data/tilesets.h"
 
@@ -50,11 +52,17 @@ static void InitGame(void)
     SetCameraPosition(0, 0);
     PlayerInit();
     LoadFireGraphics();
-    LoadRoom(0);
+    LoadRoom(0, TRUE);
     SetupRandomSeed();
     InitializeWindow();
 
     CallbackSetVblank(VblankCallback);
+
+    gObj0Palette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK);
+    gObj1Palette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK);
+
+    Write8(REG_OBP0, gObj0Palette);
+    Write8(REG_OBP1, gObj1Palette);
 
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE | LCDC_WINDOW_ENABLE | LCDC_WINDOW_TILEMAP_SELECT);
@@ -73,21 +81,18 @@ void main(void)
 
         ClearAndResetOam();
 
-        if (gChangedInput & KEY_B)
-            PlaySound(SOUND_BIPBIP);
-        else if (gChangedInput & KEY_START)
-            PlaySound(SOUND_TUTUT);
-
-        // If the sprite graphics loader is active, it takes absolute priority and fully hangs the game until its done
-        if (gSpriteLoaderInfo.state != SPRITE_LOADER_OFF)
+        // If the graphics loader is active, it takes absolute priority and fully hangs the game until its done
+        if (gGraphicsLoaderInfo.state != GRAPHICS_LOADER_OFF)
         {
-            UpdateSpriteGraphicsLoading();
+            if (gGraphicsLoaderInfo.state & GRAPHICS_LOADER_TILESET)
+                TransitionUpdate();
+            else
+                UpdateSpriteGraphicsLoading();
         }
         else
         {
             if (gGameMode.main == GM_IN_GAME)
             {
-                // Do stuff...
                 PlayerUpdate();
                 DoorUpdate();
                 ScrollUpdate();
@@ -99,7 +104,10 @@ void main(void)
             else if (gGameMode.main == GM_TRANSITION)
             {
                 TransitionUpdate();
-                ScrollUpdate();
+            }
+            else if (gGameMode.main == GM_PORTAL)
+            {
+                UpdatePortalTransition();
             }
 
             PlayerDraw();

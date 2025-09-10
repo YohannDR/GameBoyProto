@@ -350,6 +350,10 @@ _UpdateSprites:
     ld a, (_gMaxAmountOfExistingSprites)
     ld (_gEnemiesLeftToProcess), a
 
+    ; Abort if there's no sprites to process
+    or a, a
+    ret Z
+
 .loopStart:
     ; Get status
     ld a, (hl)
@@ -372,6 +376,11 @@ _UpdateSprites:
 
     ; Check current game mode
     ld a, (_gGameMode + 0)
+    or a, a
+    jr Z, .callAi
+
+    ; We ignore the game mode restriction and call AI at least once to initialize sprites
+    ld a, (_gCurrentSprite + 8)
     or a, a
     jr Z, .callAi
 

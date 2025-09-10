@@ -274,23 +274,38 @@ static void CheckForLadder(void)
     u8 left;
     u8 right;
 
-    if (!(gChangedInput & KEY_UP))
-        return;
-
-    left = GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y - PLAYER_HEIGHT - PIXEL_SIZE);
-    right = GET_CLIPDATA_BEHAVIOR(gPlayerData.x, gPlayerData.y - PLAYER_HEIGHT - PIXEL_SIZE);
-
-    if (left == CLIP_BEHAVIOR_LADDER || right == CLIP_BEHAVIOR_LADDER)
+    if (gChangedInput & KEY_UP)
     {
-        PlayerSetPose(PLAYER_POSE_ON_LADDER);
-
-        gPlayerData.x &= BLOCK_POSITION_FLAG;
-
-        if (left != CLIP_BEHAVIOR_LADDER)
-            gPlayerData.x -= BLOCK_SIZE;
-        else if (right != CLIP_BEHAVIOR_LADDER)
-            gPlayerData.x += BLOCK_SIZE;
+        left = GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y - PLAYER_HEIGHT - PIXEL_SIZE);
+        right = GET_CLIPDATA_BEHAVIOR(gPlayerData.x, gPlayerData.y - PLAYER_HEIGHT - PIXEL_SIZE);
+    
+        if (left != CLIP_BEHAVIOR_LADDER && right != CLIP_BEHAVIOR_LADDER)
+            return;
     }
+    else if (gChangedInput & KEY_DOWN)
+    {
+        left = GET_CLIPDATA_BEHAVIOR(gPlayerData.x + PLAYER_WIDTH / 2, gPlayerData.y + BLOCK_SIZE);
+        right = GET_CLIPDATA_BEHAVIOR(gPlayerData.x, gPlayerData.y + BLOCK_SIZE);
+
+        if (left != CLIP_BEHAVIOR_LADDER && right != CLIP_BEHAVIOR_LADDER)
+            return;
+
+        gPlayerData.y &= BLOCK_POSITION_FLAG;
+        gPlayerData.y += PLAYER_HEIGHT / 2;
+    }
+    else
+    {
+        return;
+    }
+
+    PlayerSetPose(PLAYER_POSE_ON_LADDER);
+
+    gPlayerData.x &= BLOCK_POSITION_FLAG;
+
+    if (left != CLIP_BEHAVIOR_LADDER)
+        gPlayerData.x -= BLOCK_SIZE;
+    else if (right != CLIP_BEHAVIOR_LADDER)
+        gPlayerData.x += BLOCK_SIZE;
 }
 
 static void PlayerOnLadder(void)
@@ -316,8 +331,11 @@ void PlayerInit(void)
     PlayerInitPhysics();
     PlayerLoadGraphics();
 
-    gPlayerData.x = BLOCK_SIZE * 3;
-    gPlayerData.y = BLOCK_SIZE * 19;
+    // gPlayerData.x = BLOCK_SIZE * 3;
+    // gPlayerData.y = BLOCK_SIZE * 19;
+
+    gPlayerData.x = BLOCK_SIZE * 17;
+    gPlayerData.y = BLOCK_SIZE * 7;
     gPlayerData.animPointer = sPlayerAnim_Idle;
 }
 

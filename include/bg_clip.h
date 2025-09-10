@@ -62,22 +62,22 @@ extern const u8* gCurrentCollisionTable;
 void GetClipdataValue(u16 x, u16 y);
 
 /**
- * @brief Sets a background tilemap value at a given position
+ * @brief Sets a background tilemap value at a given position (in sub-pixels)
  * 
- * @param x X
- * @param y Y
+ * @param x X, sub-pixel
+ * @param y Y, sub-pixel
  * @param value Background tile value
  */
-void SetBgValue(u16 x, u16 y, u8 value);
+void SetBgValueSubPixel(u16 x, u16 y, u8 value);
 
 /**
- * @brief Draws a number of the screen
+ * @brief Sets a background tilemap value at a given position (in tiles)
  * 
- * @param x X
- * @param y Y
- * @param number Number
+ * @param x X, tiles
+ * @param y Y, tiles
+ * @param value Background tile value
  */
-void DrawNumber(u16 x, u16 y, u8 number);
+void SetBgValueTile(u8 x, u8 y, u8 value);
 
 /**
  * @brief Applies the background value changes during v-blank

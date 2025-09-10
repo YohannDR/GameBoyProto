@@ -29,36 +29,8 @@ struct Door {
     u8 tileset;
 };
 
-struct DoorTransition {
-    u8 type;
-    u8 stage;
-    u8 direction;
-    u8 timer;
-};
-
-/**
- * @brief The type of room transition
- * 
- */
-enum TransitionType {
-    // No transition currently active
-    TRANSITION_TYPE_NONE,
-    // A normal transition, nothing is loaded, no fade, just a simple scroll
-    TRANSITION_TYPE_NORMAL,
-    // A transition that requires loading graphics, has fading
-    TRANSITION_TYPE_LOADING,
-};
-
-enum TransitionStageNormal {
-    TRANSITION_STAGE_NORMAL_NONE,
-    TRANSITION_STAGE_NORMAL_SCROLLING,
-    TRANSITION_STAGE_NORMAL_LAST_UPDATE,
-    TRANSITION_STAGE_NORMAL_ENDING,
-};
-
 // Currently loaded doors
 extern struct Door gDoors[4];
-extern struct DoorTransition gDoorTransition;
 
 // "Invalid" door id
 #define DOOR_NONE UCHAR_MAX

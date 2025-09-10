@@ -84,31 +84,6 @@ struct Sprite {
 };
 
 /**
- * @brief Information about the multi frame sprite graphics loading process
- * 
- */
-struct SpriteLoaderInfo {
-    // The state of the loader
-    u8 state;
-    // The current VRAM address we're writting to
-    u8* vramAddr;
-    // The current ROM gfx address we're reading from
-    const u8* gfxAddr;
-    // The amount of tiles we have loaded so far
-    u8 nbrTilesLoaded;
-    // The number of tiles to load for the current graphics
-    u8 nbrTilesToLoad;
-    // The amount of bytes we actually buffered
-    u8 nbrBytesBuffered;
-};
-
-enum SpriteLoaderInfoState {
-    SPRITE_LOADER_OFF,
-    SPRITE_LOADER_ON,
-    SPRITE_LOADER_LAST_UPDATE,
-};
-
-/**
  * @brief The different types of sprites
  * 
  */
@@ -167,7 +142,6 @@ enum SpriteType {
 extern struct Sprite gSpriteData[20];
 // Holds the current sprite being processed
 extern struct Sprite gCurrentSprite;
-extern struct SpriteLoaderInfo gSpriteLoaderInfo;
 extern u8 gMaxAmountOfExistingSprites;
 
 /**
@@ -216,6 +190,12 @@ void UpdateSpriteGraphicsLoading(void);
  * @return u8 Graphics tile index
  */
 u8 QueueSpriteGraphics(u8 spriteId);
+
+/**
+ * @brief Kills every sprite
+ * 
+ */
+void ClearSprites(void);
 
 /**
  * @brief Updates the sprites

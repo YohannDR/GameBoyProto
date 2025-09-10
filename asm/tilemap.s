@@ -30,7 +30,7 @@ UpdateHorizontal:
 
     ; Use reserved tilemap byte as loop counter
     ld hl, #_gTilemap + 4
-    ld (hl), #0x12 + 6
+    ld (hl), #0x12 + 4
 
 UpdateHorizontalLoop:
     ld a, (de)
@@ -81,7 +81,7 @@ UpdateVertical:
 
     ; Use reserved tilemap byte as loop counter
     ld hl, #_gTilemap + 4
-    ld (hl), #0x14 + 6
+    ld (hl), #0x14 + 4
 
 UpdateVerticalLoop:
     ld a, (de)
