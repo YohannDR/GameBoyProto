@@ -57,6 +57,11 @@ void GetClipdataValue(u16 x, u16 y)
     {
         gCollisionInfo.solidity = COLLISION_SOLID;
         gCollisionInfo.behavior = CLIP_BEHAVIOR_AIR;
+
+        gCollisionInfo.top = y & BLOCK_POSITION_FLAG;
+        gCollisionInfo.bottom = gCollisionInfo.top + BLOCK_SIZE;
+        gCollisionInfo.left = x & BLOCK_POSITION_FLAG;
+        gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
         return;
     }
 
