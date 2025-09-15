@@ -54,9 +54,13 @@ static void PortalHidingDownHblank(void)
         return;
     }
 
-    Write8(REG_BGP, gBgPaletteBackup);
-    Write8(REG_OBP0, gObj0PaletteBackup);
-    Write8(REG_OBP1, gObj1PaletteBackup);
+    // This shouldn't happen but apparently it does, so patch a fix there
+    if (Read8(REG_LY) < SCREEN_SIZE_Y)
+    {
+        Write8(REG_BGP, gBgPaletteBackup);
+        Write8(REG_OBP0, gObj0PaletteBackup);
+        Write8(REG_OBP1, gObj1PaletteBackup);
+    }
 }
 
 static void PortalHidingUpVblank(void)
@@ -79,9 +83,12 @@ static void PortalHidingUpVblank(void)
 
 static void PortalHidingUpHblank(void)
 {
-    Write8(REG_BGP, PALETTE_BLACK);
-    Write8(REG_OBP0, PALETTE_BLACK);
-    Write8(REG_OBP1, PALETTE_BLACK);
+    if (Read8(REG_LY) < SCREEN_SIZE_Y)
+    {
+        Write8(REG_BGP, PALETTE_BLACK);
+        Write8(REG_OBP0, PALETTE_BLACK);
+        Write8(REG_OBP1, PALETTE_BLACK);
+    }
 }
 
 void StartPortalTransition(void)
