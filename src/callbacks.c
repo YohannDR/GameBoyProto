@@ -4,6 +4,7 @@
 
 #include "bg.h"
 #include "io.h"
+#include "game_state.h"
 
 // Whether or not the v-blank intterupt has been fired
 static vu8 gVblankFired;
@@ -24,7 +25,11 @@ void CallbackCallVblank(void)
     Func_T func;
 
     // Set this now to prevent the code below from compiling to ___sdcc_call_hl
-    gVblankFired = TRUE;
+    if (gIsIdleFrame)
+    {
+        // This code is run before the one that updates the gIsIdleFrame value, so the check is "reversed"
+        gVblankFired = TRUE;
+    }
 
     // Use a local variable to avoid reading the value of the global variable twice, same for every other callback below
     func = gVblankCallback;

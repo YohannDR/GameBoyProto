@@ -25,20 +25,22 @@ _VblankHandler::
 
     ld a, (_gIsIdleFrame)
     or a, a
-    jr NZ, end
+    jr NZ, .endVblank
 
     ; We also need to update oam during v-blank
     call .refresh_OAM
+
+.endVblank:
     ; This is time critical, so it takes absolute priority
     call _UpdateTransitionVblank
     call _TilemapUpdateVblank
     call _ApplyBgChanges
     call _CallbackCallVblank
 
-end:
     ld a, (_gIsIdleFrame)
     cpl
     ld (_gIsIdleFrame), a
+
     POP_ALL
     reti
 
@@ -47,5 +49,6 @@ _LcdHandler::
 
     call _CallbackCallLcd
 
+.endLcd:
     POP_ALL
     reti

@@ -227,9 +227,9 @@ const u8 sRoom0_Tilemap[] = {
 
 const struct RoomSprite sRoom0_SpriteData[] = {
     [0] = {
-        .x = 11,
-        .y = 11,
-        .id = STYPE_MOVABLE_OBJECT,
+        .x = 8,
+        .y = 7,
+        .id = STYPE_PORTAL,
         .part = 0
     },
     [1] = ROOM_SPRITE_TERMINATOR

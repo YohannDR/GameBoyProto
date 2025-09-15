@@ -26,7 +26,7 @@ enum PortalState {
     PORTAL_STATE_REVEALING_SCREEN,
 };
 
-#define TIME_TRANSITION_SPEED (3u)
+#define TIME_TRANSITION_SPEED (2u * DELTA_TIME)
 
 static void PortalHidingDownVblank(void)
 {
@@ -35,12 +35,15 @@ static void PortalHidingDownVblank(void)
     Write8(REG_OBP1, PALETTE_BLACK);
 
     // Setup to break on the next line on the next frame
-    if (gTransitionDirection)
-        gGameMode.work1 += TIME_TRANSITION_SPEED;
-    else
-        gGameMode.work1 -= TIME_TRANSITION_SPEED;
+    if (!gIsIdleFrame)
+    {
+        if (gTransitionDirection)
+            gGameMode.work1 += TIME_TRANSITION_SPEED;
+        else
+            gGameMode.work1 -= TIME_TRANSITION_SPEED;
 
-    Write8(REG_LYC, gGameMode.work1);
+        Write8(REG_LYC, gGameMode.work1);
+    }
 }
 
 static void PortalHidingDownHblank(void)
@@ -63,12 +66,15 @@ static void PortalHidingUpVblank(void)
     Write8(REG_OBP1, gObj1PaletteBackup);
 
     // Setup to break on the next line on the next frame
-    if (gTransitionDirection)
-        gGameMode.work1 -= TIME_TRANSITION_SPEED;
-    else
-        gGameMode.work1 += TIME_TRANSITION_SPEED;
-
-    Write8(REG_LYC, gGameMode.work1);
+    if (!gIsIdleFrame)
+    {
+        if (gTransitionDirection)
+            gGameMode.work1 -= TIME_TRANSITION_SPEED;
+        else
+            gGameMode.work1 += TIME_TRANSITION_SPEED;
+    
+        Write8(REG_LYC, gGameMode.work1);
+    }
 }
 
 static void PortalHidingUpHblank(void)
