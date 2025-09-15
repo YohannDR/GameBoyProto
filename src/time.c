@@ -116,6 +116,9 @@ void StartPortalTransition(void)
     Write8(REG_LYC, gGameMode.work1);
     Write8(REG_STAT, Read8(REG_STAT) | STAT_LCY);
     Write8(REG_IE, Read8(REG_IE) | INTR_LCD);
+
+    // We need to update it every frame regardless of 30fps, otherwise it causes flickering
+    gIgnoreIdleFrame = TRUE;
 }
 
 static void PortalTransitionHiding(void)
@@ -198,6 +201,7 @@ static void PortalTransitionRevealing(void)
         gGameMode.main = GM_IN_GAME;
 
         CallbackSetVblank(VblankCallback);
+        gIgnoreIdleFrame = FALSE;
     }
 }
 

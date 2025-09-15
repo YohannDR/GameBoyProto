@@ -386,7 +386,7 @@ _UpdateSprites:
 
     ; Only draw the sprites if we aren't in game
     call _SpriteComputeCameraPosition
-    jr .checkDrawSprite
+    jr .skipAi
 
 .callAi:
     ; Clear anim ended flag
@@ -418,7 +418,6 @@ _UpdateSprites:
     call _SpriteUpdateOnScreenFlag
     call _SpriteUpdateAnimation
 
-.checkDrawSprite:
     ; Check should draw
     ld a, (#_gCurrentSprite + 0)
     and a, #0x07

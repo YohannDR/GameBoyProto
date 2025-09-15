@@ -29,14 +29,25 @@ _VblankHandler::
 
     ; We also need to update oam during v-blank
     call .refresh_OAM
-
-.endVblank:
     ; This is time critical, so it takes absolute priority
     call _UpdateTransitionVblank
     call _TilemapUpdateVblank
     call _ApplyBgChanges
     call _CallbackCallVblank
 
+    ld hl, #_gVblankFired
+    ld (hl), #0x01
+
+    jr .skipCallback
+
+.endVblank:
+    ld a, (_gIgnoreIdleFrame)
+    or a, a
+    jr Z, .skipCallback
+
+    call _CallbackCallVblank
+
+.skipCallback:
     ld a, (_gIsIdleFrame)
     cpl
     ld (_gIsIdleFrame), a
