@@ -15,6 +15,8 @@ enum TimeCommandType {
 #define MAKE_SPRITE_COMMAND(x, y, spriteId, spritePart) TIME_COMMAND_SPAWN_SPRITE, (x), (y), (spriteId), (spritePart)
 #define MAKE_FIRE_COMMAND(x, y, direction, length) TIME_COMMAND_SPAWN_FIRE, (x), (y), (direction | length)
 
+extern u8 gAlreadyTimeTravelled;
+
 void ApplyTimeCommands(const u8* commands);
 void RevertTimeCommands(void);
 

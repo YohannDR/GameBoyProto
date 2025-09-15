@@ -639,11 +639,14 @@ void UpdateFire(void)
     }
 }
 
-void FirePastToFuture(void)
+static void FireGhost(u8 updateTile)
 {
     u8 i;
 
-    gCurrentFire.burnedTile = gTilemap.tilemap[ComputeIndexFromSpriteCoords(gCurrentFire.y, gTilemap.width, gCurrentFire.x)];
+    gCurrentFire.temporality |= FIRE_TEMPORALITY_GHOSTED;
+
+    if (updateTile)
+        gCurrentFire.burnedTile = gTilemap.tilemap[ComputeIndexFromSpriteCoords(gCurrentFire.y, gTilemap.width, gCurrentFire.x)];
 
     for (i = 0; i < gMaxAmountOfExistingFireTiles; i++)
     {
@@ -653,24 +656,27 @@ void FirePastToFuture(void)
         if (gFireTiles[i].parentCluster != (FIRE_TILE_EXISTS | gCurrentClusterId))
             continue;
 
-        SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, 0);
+        if (updateTile)
+            SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, 0);
+
         gFireTiles[i].parentCluster |= FIRE_TILE_GHOSTED;
     }
 }
 
-void FireFutureToPast(void)
+static void FireUnghost(u8 updateTile)
 {
     u8 i;
-    u8 tile;
 
-    tile = gCurrentFire.burnedTile;
+    gCurrentFire.temporality &= ~FIRE_TEMPORALITY_GHOSTED;
 
     for (i = 0; i < gMaxAmountOfExistingFireTiles; i++)
     {
         if (gFireTiles[i].parentCluster != (FIRE_TILE_EXISTS | FIRE_TILE_GHOSTED | gCurrentClusterId))
             continue;
 
-        SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, tile);
+        if (updateTile)
+            SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, gCurrentFire.burnedTile);
+
         gFireTiles[i].parentCluster &= ~FIRE_TILE_GHOSTED;
     }
 }
@@ -700,26 +706,16 @@ void UpdateFireTimeTravel(void)
         if (gCurrentTemporality == TEMPORALITY_FUTURE)
         {
             if (fireTemporality == TEMPORALITY_PAST)
-            {
-                gCurrentFire.temporality |= FIRE_TEMPORALITY_GHOSTED;
-                FirePastToFuture();
-            }
+                FireGhost(TRUE);
             else
-            {
-                gCurrentFire.temporality &= ~FIRE_TEMPORALITY_GHOSTED;
-            }
+                FireUnghost(FALSE);
         }
         else if (gCurrentTemporality == TEMPORALITY_PAST)
         {
             if (fireTemporality == TEMPORALITY_FUTURE)
-            {
-                gCurrentFire.temporality |= FIRE_TEMPORALITY_GHOSTED;
-            }
+                FireGhost(FALSE);
             else
-            {
-                gCurrentFire.temporality &= ~FIRE_TEMPORALITY_GHOSTED;
-                FireFutureToPast();
-            }
+                FireUnghost(TRUE);
         }
 
         gFireClusters[i].status = gCurrentFire.status;

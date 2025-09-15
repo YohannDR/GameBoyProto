@@ -87,6 +87,8 @@ void LoadRoom(u8 room, u8 loadTilemap)
     LoadSprites(roomInfo->spriteData);
     LoadTilemap(roomInfo->tilemap, loadTilemap);
 
+    gAlreadyTimeTravelled = FALSE;
+
     if (gCurrentTemporality == TEMPORALITY_FUTURE)
         ApplyTimeCommands(sRoomCommands[gCurrentRoom]);
 }

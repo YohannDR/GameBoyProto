@@ -5,6 +5,8 @@
 #include "fire.h"
 #include "sprite.h"
 
+u8 gAlreadyTimeTravelled;
+
 struct TileChange {
     u8 x;
     u8 y;
@@ -82,7 +84,11 @@ static const u8* ApplyFireCommand(const u8* commands)
     y = *commands++;
     data = *commands++;
 
-    SpawnCluster(BLOCK_TO_SUB_PIXEL((u8)(x + 1)), BLOCK_TO_SUB_PIXEL((u8)(y + 2)), GET_UPPER_NIBBLE(data), GET_LOWER_NIBBLE(data));
+    if (!gAlreadyTimeTravelled)
+    {
+        SpawnCluster(BLOCK_TO_SUB_PIXEL((u8)(x + 1)), BLOCK_TO_SUB_PIXEL((u8)(y + 2)),
+            GET_UPPER_NIBBLE(data), GET_LOWER_NIBBLE(data));
+    }
 
     return commands;
 }
@@ -138,6 +144,8 @@ void ApplyTimeCommands(const u8* commands)
         else if (type == TIME_COMMAND_SPAWN_FIRE)
             commands = ApplyFireCommand(commands);
     }
+
+    gAlreadyTimeTravelled = TRUE;
 }
 
 void RevertTimeCommands(void)
