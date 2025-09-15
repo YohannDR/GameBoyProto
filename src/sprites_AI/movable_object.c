@@ -2,6 +2,7 @@
 
 #include "gb/oam.h"
 
+#include "bg_clip.h"
 #include "input.h"
 #include "player.h"
 #include "sprite.h"
@@ -9,6 +10,7 @@
 enum MovableObjectPose {
     POSE_IDLE = 1,
     POSE_CARRIED,
+    POSE_DROPPED,
     POSE_LOCKED
 };
 
@@ -45,6 +47,59 @@ static void MovableObjectCarried(void)
 {
     gCurrentSprite.x = gPlayerData.x;
     gCurrentSprite.y = gPlayerData.y - (PLAYER_HEIGHT + HALF_BLOCK_SIZE);
+
+    if (!(gChangedInput & INTERACTION_BUTTON))
+        return;
+
+    // Move down
+    gCurrentSprite.y += BLOCK_SIZE;
+
+    // Move in front of the player
+    if (gPlayerMovement.direction & KEY_LEFT)
+        gCurrentSprite.x -= BLOCK_SIZE + HALF_BLOCK_SIZE;
+    else
+        gCurrentSprite.x += BLOCK_SIZE + HALF_BLOCK_SIZE;
+        
+    // Check if the object ended up in a wall, we push it out if yes
+    if (gPlayerMovement.direction & KEY_LEFT)
+    {
+        if (GET_CLIPDATA_SOLIDITY(gCurrentSprite.x + BLOCK_SIZE - HALF_BLOCK_SIZE, gCurrentSprite.y))
+            gCurrentSprite.x = gCollisionInfo.right - BLOCK_SIZE + HALF_BLOCK_SIZE;
+    }
+    else
+    {
+        if (GET_CLIPDATA_SOLIDITY(gCurrentSprite.x + BLOCK_SIZE + HALF_BLOCK_SIZE, gCurrentSprite.y))
+            gCurrentSprite.x = gCollisionInfo.left - BLOCK_SIZE - HALF_BLOCK_SIZE;
+    }
+
+    gPlayerData.carryingObject = FALSE;
+
+    gCurrentSprite.pose = POSE_DROPPED;
+}
+
+void MovableObjectDropped(void)
+{
+    gCurrentSprite.y += QUARTER_BLOCK_SIZE;
+
+    GetClipdataValue(gCurrentSprite.x + BLOCK_SIZE, gCurrentSprite.y + HALF_BLOCK_SIZE);
+
+    if (gCollisionInfo.solidity != COLLISION_SOLID)
+        return;
+
+    gCurrentSprite.y = gCollisionInfo.top - HALF_BLOCK_SIZE;
+
+    if (gCollisionInfo.behavior == CLIP_BEHAVIOR_RECEPTACLE)
+    {
+        gCurrentSprite.x &= BLOCK_POSITION_FLAG;
+        gCurrentSprite.x += HALF_BLOCK_SIZE;
+
+        gCurrentSprite.pose = POSE_LOCKED;
+        gCurrentSprite.status |= SPRITE_STATUS_DISABLED;
+    }
+    else
+    {
+        gCurrentSprite.pose = POSE_IDLE;
+    }
 }
 
 void MovableObject(void)
@@ -68,6 +123,8 @@ void MovableObject(void)
         MovableObjectIdle();
     else if (gCurrentSprite.pose == POSE_CARRIED)
         MovableObjectCarried();
+    else if (gCurrentSprite.pose == POSE_DROPPED)
+        MovableObjectDropped();
 }
 
 static const u8 sMovableObjectAnim_Frame0[OAM_DATA_SIZE(1)] = {

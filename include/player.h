@@ -70,7 +70,7 @@ enum PlayerPose {
     PLAYER_POSE_IDLE,
     PLAYER_POSE_RUNNING,
     PLAYER_POSE_JUMPING,
-    PLAYER_POSE_ON_LADDER,
+    PLAYER_POSE_ON_LADDER
 };
 
 extern struct PlayerData gPlayerData;
@@ -78,6 +78,7 @@ extern struct PlayerPhysics gPlayerPhysics;
 extern struct PlayerMovement gPlayerMovement;
 
 void PlayerInit(void);
+void PlayerSetPose(u8 pose);
 void PlayerUpdate(void);
 void PlayerDraw(void);
 

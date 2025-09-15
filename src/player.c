@@ -75,11 +75,6 @@ static void PlayerInitPhysics(void)
     gPlayerPhysics.jumpingVelocity = -12;
 }
 
-static void PlayerSetPose(u8 pose)
-{
-    gPlayerData.pose = pose;
-}
-
 static void HandleHorizontalMovement(void)
 {
     if (gButtonInput & KEY_LEFT)
@@ -344,7 +339,16 @@ void PlayerInit(void)
 
     gPlayerData.x = BLOCK_SIZE * 9;
     gPlayerData.y = BLOCK_SIZE * 13;
+
+    PlayerSetPose(PLAYER_POSE_IDLE);
     gPlayerData.animPointer = sPlayerAnim_Idle;
+}
+
+void PlayerSetPose(u8 pose)
+{
+    gPlayerData.pose = pose;
+    gPlayerData.currentAnimFrame = 0;
+    gPlayerData.animTimer = 0;
 }
 
 void PlayerUpdate(void)

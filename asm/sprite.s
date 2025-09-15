@@ -394,6 +394,10 @@ _UpdateSprites:
     res 3, a
     ld (#_gCurrentSprite + 0), a
 
+    ; Check for the disabled bit
+    bit 6, a
+    jr NZ, .skipAi
+
     ; Call AI
     ld a, (#_gCurrentSprite + 5)
     add a, a
@@ -407,6 +411,7 @@ _UpdateSprites:
     ld l, c
     call ___sdcc_call_hl
 
+.skipAi:
     ; Compute the screen coords of the sprite
     call _SpriteComputeCameraPosition
 

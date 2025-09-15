@@ -112,6 +112,8 @@ enum SpriteType {
 #define SPRITE_STATUS_MOVING_RIGHT  (1u << 4)
 // Whether the sprite is moving down
 #define SPRITE_STATUS_MOVING_DOWN   (1u << 5)
+// Whether the sprite is disabled (prevents calling the AI, but still draws it)
+#define SPRITE_STATUS_DISABLED      (1u << 6)
 
 // Whether the sprite uses object palette 1
 #define SPRITE_PROPERTY_OBP1        (1u << 0)

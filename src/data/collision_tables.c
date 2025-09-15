@@ -48,7 +48,7 @@ const u8 sCollisionTable_Apartment[] = {
     CLIPDATA_SOLID,
     CLIPDATA_SOLID,
     CLIPDATA_SOLID,
-    CLIPDATA_AIR,
+    CLIPDATA_SOLID,
     CLIPDATA_SOLID,
     CLIPDATA_SOLID,
     CLIPDATA_SOLID,
