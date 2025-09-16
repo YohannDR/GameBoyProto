@@ -84,8 +84,8 @@ void LoadRoom(u8 room, u8 loadTilemap)
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
 
     ClearFire();
-    LoadSprites(roomInfo->spriteData);
     LoadTilemap(roomInfo->tilemap, loadTilemap);
+    LoadSprites(roomInfo->spriteData);
 
     gAlreadyTimeTravelled = FALSE;
 

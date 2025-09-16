@@ -469,7 +469,13 @@ const struct RoomSprite sRoom1_SpriteData[] = {
         .id = STYPE_PORTAL,
         .part = 0
     },
-    [3] = ROOM_SPRITE_TERMINATOR
+    [3] = {
+        .x = 39,
+        .y = 20,
+        .id = STYPE_LOCKED_DOOR,
+        .part = 3
+    },
+    [4] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom1_DoorData[] = {
