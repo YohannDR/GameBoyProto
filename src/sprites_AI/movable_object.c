@@ -6,6 +6,7 @@
 #include "input.h"
 #include "player.h"
 #include "sprite.h"
+#include "sprites_AI/locked_door.h"
 
 enum MovableObjectPose {
     POSE_IDLE = 1,
@@ -77,7 +78,17 @@ static void MovableObjectCarried(void)
     gCurrentSprite.pose = POSE_DROPPED;
 }
 
-void MovableObjectDropped(void)
+static void TryUnlockDoor(void)
+{
+    u8 slot;
+
+    slot = FindSprite(STYPE_LOCKED_DOOR, UCHAR_MAX);
+
+    if (slot != UCHAR_MAX)
+        gSpriteData[slot].pose = LOCKED_DOOR_POSE_UNLOCK_LOCK;
+}
+
+static void MovableObjectDropped(void)
 {
     gCurrentSprite.y += QUARTER_BLOCK_SIZE;
 
@@ -95,6 +106,8 @@ void MovableObjectDropped(void)
 
         gCurrentSprite.pose = POSE_LOCKED;
         gCurrentSprite.status |= SPRITE_STATUS_DISABLED;
+
+        TryUnlockDoor();
     }
     else
     {

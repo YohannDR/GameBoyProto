@@ -273,8 +273,14 @@ u8 FindSprite(u8 type, u8 part)
         if (!gSpriteData[i].status & SPRITE_STATUS_EXISTS)
             continue;
 
-        if (gSpriteData[i].type == type && gSpriteData[i].part == part)
-            return i;
+        if (gSpriteData[i].type == type)
+        {
+            if (part == UCHAR_MAX)
+                return i;
+
+            if (gSpriteData[i].part == part)
+                return i;
+        }
     }
 
     return UCHAR_MAX;

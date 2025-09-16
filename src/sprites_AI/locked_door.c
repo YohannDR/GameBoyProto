@@ -5,15 +5,18 @@
 #include "bg_clip.h"
 #include "sprite.h"
 
-#define LOCKED_DOOR_DISAPPEARING_SPEED (QUARTER_BLOCK_SIZE * DELTA_TIME)
-
 enum DoorLockPose {
     DOOR_LOCK_POSE_IDLE = 1,
+    DOOR_LOCK_POSE_UNLOCKING_INIT,
     DOOR_LOCK_POSE_UNLOCKING,
     DOOR_LOCK_POSE_UNLOCKED,
 };
 
-extern const struct AnimData sLockedDoor_Anim[];
+extern const struct AnimData sLockedDoorAnim[];
+
+extern const struct AnimData sDoorLockAnim_Idle[];
+extern const struct AnimData sDoorLockAnim_Unlocking[];
+extern const struct AnimData sDoorLockAnim_Unlocked[];
 
 static void LockedDoorSetCollision(u8 tile)
 {
@@ -49,10 +52,14 @@ static void LockedDoorSpawnLocks(void)
 
 static void LockedDoorUnlockingInit(void)
 {
-    gCurrentSprite.pose = LOCKED_DOOR_POSE_UNLOCKING;
-    gCurrentSprite.work1 = 0;
-    
+    u8 i;
+
     LockedDoorSetCollision(0);
+
+    for (i = 0; i < gCurrentSprite.part; i++)
+        gSpriteData[(&gCurrentSprite.work1)[i]].status = 0;
+
+    gCurrentSprite.status = 0;
 }
 
 static void LockedDoorUnlockLock(void)
@@ -61,7 +68,8 @@ static void LockedDoorUnlockLock(void)
 
     lockSlot = (&gCurrentSprite.work1)[gCurrentSprite.ramSlot];
 
-    gSpriteData[lockSlot].pose = DOOR_LOCK_POSE_UNLOCKING;
+    gSpriteData[lockSlot].pose = DOOR_LOCK_POSE_UNLOCKING_INIT;
+    gSpriteData[lockSlot].status &= ~SPRITE_STATUS_DISABLED;
 
     gCurrentSprite.ramSlot++;
     if (gCurrentSprite.ramSlot == gCurrentSprite.part)
@@ -70,21 +78,11 @@ static void LockedDoorUnlockLock(void)
         gCurrentSprite.pose = LOCKED_DOOR_POSE_IDLE;
 }
 
-static void LockedDoorUnlocking(void)
-{
-    gCurrentSprite.y -= LOCKED_DOOR_DISAPPEARING_SPEED;
-
-    gCurrentSprite.work1 += DELTA_TIME;
-
-    if (gCurrentSprite.work1 >= BLOCK_SIZE * 4 / LOCKED_DOOR_DISAPPEARING_SPEED)
-        gCurrentSprite.status = 0;
-}
-
 void LockedDoor(void)
 {
     if (gCurrentSprite.pose == 0)
     {
-        gCurrentSprite.animPointer = sLockedDoor_Anim;
+        gCurrentSprite.animPointer = sLockedDoorAnim;
 
         gCurrentSprite.y -= BLOCK_SIZE;
 
@@ -101,16 +99,46 @@ void LockedDoor(void)
 
     if (gCurrentSprite.pose == LOCKED_DOOR_POSE_UNLOCK_LOCK)
         LockedDoorUnlockLock();
-    else if (gCurrentSprite.pose == LOCKED_DOOR_POSE_UNLOCKING)
-        LockedDoorUnlocking();
 }
 
 void DoorLock(void)
 {
-    gCurrentSprite.status |= SPRITE_STATUS_NOT_DRAWN;
+    if (gCurrentSprite.pose == 0)
+    {
+        gCurrentSprite.animPointer = sDoorLockAnim_Idle;
+
+        gCurrentSprite.drawDistanceTop = SUB_PIXEL_TO_PIXEL(0);
+        gCurrentSprite.drawDistanceBottom = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+        gCurrentSprite.drawDistanceLeft = SUB_PIXEL_TO_PIXEL(0);
+        gCurrentSprite.drawDistanceRight = SUB_PIXEL_TO_PIXEL(BLOCK_SIZE);
+
+        gCurrentSprite.pose = DOOR_LOCK_POSE_IDLE;
+
+        gCurrentSprite.status |= SPRITE_STATUS_DISABLED;
+    }
+    else if (gCurrentSprite.pose == DOOR_LOCK_POSE_UNLOCKING_INIT)
+    {
+        gCurrentSprite.animPointer = sDoorLockAnim_Unlocking;
+        gCurrentSprite.animTimer = 0;
+
+        gCurrentSprite.pose = DOOR_LOCK_POSE_UNLOCKING;
+    }
+    else if (gCurrentSprite.pose == DOOR_LOCK_POSE_UNLOCKING)
+    {
+        if (gCurrentSprite.status & SPRITE_STATUS_ANIM_ENDED)
+        {
+            gCurrentSprite.pose = DOOR_LOCK_POSE_UNLOCKED;
+
+            gCurrentSprite.animPointer = sDoorLockAnim_Unlocked;
+            gCurrentSprite.animTimer = 0;
+            gCurrentSprite.currentAnimFrame = 0;
+
+            gCurrentSprite.status |= SPRITE_STATUS_DISABLED;
+        }
+    }
 }
 
-static const u8 sLockedDoor_Anim_Frame0[OAM_DATA_SIZE(4)] = {
+static const u8 sLockedDoorAnim_Frame0[OAM_DATA_SIZE(4)] = {
     4,
     OAM_POS(0), OAM_POS(0), 0, 0,
     OAM_POS(8), OAM_POS(0), 0, 0,
@@ -118,16 +146,58 @@ static const u8 sLockedDoor_Anim_Frame0[OAM_DATA_SIZE(4)] = {
     OAM_POS(24), OAM_POS(0), 0, 0,
 };
 
-const struct AnimData sLockedDoor_Anim[] = {
+const struct AnimData sLockedDoorAnim[] = {
     [0] = {
-        .oamPointer = sLockedDoor_Anim_Frame0,
+        .oamPointer = sLockedDoorAnim_Frame0,
+        .duration = 255,
+    },
+    [1] = SPRITE_ANIM_TERMINATOR
+};
+
+static const u8 sDoorLockAnim_Idle_Frame0[OAM_DATA_SIZE(1)] = {
+    1,
+    OAM_POS(0), OAM_POS(-1), 1, 0,
+};
+
+const struct AnimData sDoorLockAnim_Idle[] = {
+    [0] = {
+        .oamPointer = sDoorLockAnim_Idle_Frame0,
+        .duration = 255,
+    },
+    [1] = SPRITE_ANIM_TERMINATOR
+};
+
+static const u8 sDoorLockAnim_Unlocking_Frame0[OAM_DATA_SIZE(1)] = {
+    1,
+    OAM_POS(0), OAM_POS(-1), 3, 0,
+};
+
+const struct AnimData sDoorLockAnim_Unlocking[] = {
+    [0] = {
+        .oamPointer = sDoorLockAnim_Unlocking_Frame0,
+        .duration = 60,
+    },
+    [1] = SPRITE_ANIM_TERMINATOR
+};
+
+static const u8 sDoorLockAnim_Unlocked_Frame0[OAM_DATA_SIZE(1)] = {
+    1,
+    OAM_POS(0), OAM_POS(-1), 2, 0,
+};
+
+const struct AnimData sDoorLockAnim_Unlocked[] = {
+    [0] = {
+        .oamPointer = sDoorLockAnim_Unlocked_Frame0,
         .duration = 255,
     },
     [1] = SPRITE_ANIM_TERMINATOR
 };
 
 const u8 sLockedDoorGraphics[] = {
-    1,
+    4,
 
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+    0x00, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x00,
+    0x00, 0x7E, 0x00, 0x7E, 0x00, 0x7E, 0x00, 0x7E, 0x00, 0x7E, 0x00, 0x7E, 0x00, 0x7E, 0x00, 0x7E,
+    0x00, 0x00, 0x18, 0x00, 0x3C, 0x00, 0x7E, 0x00, 0x7E, 0x00, 0x3C, 0x00, 0x18, 0x00, 0x00, 0x00,
 };

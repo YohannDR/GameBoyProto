@@ -376,6 +376,13 @@ _UpdateSprites:
     ; Save hl
     push hl
 
+    ; Clear anim ended flag
+    ld a, (#_gCurrentSprite + 0)
+    res 3, a
+    ld (#_gCurrentSprite + 0), a
+
+    call _SpriteUpdateAnimation
+
     ; Check current game mode
     ld a, (_gGameMode + 0)
     or a, a
@@ -391,11 +398,6 @@ _UpdateSprites:
     jr .skipAi
 
 .callAi:
-    ; Clear anim ended flag
-    ld a, (#_gCurrentSprite + 0)
-    res 3, a
-    ld (#_gCurrentSprite + 0), a
-
     ; Check for the disabled bit
     bit 6, a
     jr NZ, .skipAi
@@ -418,7 +420,6 @@ _UpdateSprites:
     call _SpriteComputeCameraPosition
 
     call _SpriteUpdateOnScreenFlag
-    call _SpriteUpdateAnimation
 
     ; Check should draw
     ld a, (#_gCurrentSprite + 0)
