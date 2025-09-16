@@ -256,6 +256,7 @@ _SpriteDraw:
         ld hl, #(_gCurrentSprite + 14)
         ld l, (hl)
         ld a, (bc)
+        inc bc
         add a, l
         pop hl
         ld (hl+), a
@@ -264,6 +265,7 @@ _SpriteDraw:
         push hl
         ld hl, #_gSpriteDrawAttributes
         ld a, (bc)
+        inc bc
         ; Xor the object attribute with the sprite attributes
         xor (hl)
         pop hl
