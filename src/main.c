@@ -80,11 +80,6 @@ void main(void)
 
         ClearAndResetOam();
 
-        if (gChangedInput & KEY_B)
-            PlaySound(SOUND_BIPBIP);
-        else if (gChangedInput & KEY_START)
-            PlaySound(SOUND_TUTUT);
-
         // If the graphics loader is active, it takes absolute priority and fully hangs the game until its done
         if (gGraphicsLoaderInfo.state != GRAPHICS_LOADER_OFF)
         {
