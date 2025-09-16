@@ -108,6 +108,8 @@ static void MovableObjectDropped(void)
         gCurrentSprite.status |= SPRITE_STATUS_DISABLED;
 
         TryUnlockDoor();
+
+        SetBgValueSubPixel(gCurrentSprite.x + HALF_BLOCK_SIZE, gCurrentSprite.y, DEFAULT_SOLID_TILE);
     }
     else
     {

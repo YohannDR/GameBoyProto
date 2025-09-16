@@ -94,7 +94,7 @@ void LockedDoor(void)
         gCurrentSprite.pose = LOCKED_DOOR_POSE_IDLE;
 
         LockedDoorSpawnLocks();
-        LockedDoorSetCollision(16);
+        LockedDoorSetCollision(DEFAULT_SOLID_TILE);
     }
 
     if (gCurrentSprite.pose == LOCKED_DOOR_POSE_UNLOCK_LOCK)

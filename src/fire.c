@@ -657,7 +657,7 @@ static void FireGhost(u8 updateTile)
             continue;
 
         if (updateTile)
-            SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, 0);
+            SetBgValueSubPixel(gFireTiles[i].x, gFireTiles[i].y, DEFAULT_AIR_TILE);
 
         gFireTiles[i].parentCluster |= FIRE_TILE_GHOSTED;
     }

@@ -31,6 +31,9 @@ enum ClipdataBehavior {
     CLIP_BEHAVIOR_INFLAMMABLE,
 };
 
+#define DEFAULT_AIR_TILE (0)
+#define DEFAULT_SOLID_TILE (1)
+
 /**
  * @brief Contains information about the last block collision checked
  * 
