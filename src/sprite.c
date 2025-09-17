@@ -4,6 +4,7 @@
 #include "gb/io.h"
 #include "gb/display.h"
 
+#include "bank.h"
 #include "bg.h"
 #include "gfx_loader.h"
 #include "macros.h"
@@ -304,6 +305,8 @@ void StartSpriteGraphicsLoading(void)
 {
     const u8* src;
 
+    SwitchBank(BANK_SPRITE);
+
     // We reset the counter, we'll be using it to count again
     gQueuedGraphicsIndex = 0;
 
@@ -314,14 +317,16 @@ void StartSpriteGraphicsLoading(void)
     // Prepare the first queued graphics, if there's any
     src = gQueuedGraphics[0];
 
-    if (src == NULL)
-        return;
+    if (src != NULL)
+    {
+        gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
+        gGraphicsLoaderInfo.gfxAddr = src;
+        gGraphicsLoaderInfo.nbrTilesLoaded = 0;
+        gGraphicsLoaderInfo.nbrBytesBuffered = 0;
+        gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON;
+    }
 
-    gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
-    gGraphicsLoaderInfo.gfxAddr = src;
-    gGraphicsLoaderInfo.nbrTilesLoaded = 0;
-    gGraphicsLoaderInfo.nbrBytesBuffered = 0;
-    gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON;
+    BankGoBack();
 }
 
 void UpdateSpriteGraphicsLoading(void)
@@ -329,6 +334,8 @@ void UpdateSpriteGraphicsLoading(void)
     u8 i;
     u8 gfxIndex;
     const u8* src;
+
+    SwitchBank(BANK_SPRITE);
 
     if (gGraphicsLoaderInfo.state == GRAPHICS_LOADER_LAST_UPDATE)
     {
@@ -400,12 +407,18 @@ u8 QueueSpriteGraphics(u8 spriteId)
     u8 size;
     u8 gfxSlot;
 
+    // Switch to the sprite bank, required to have access to the graphics
+    SwitchBank(BANK_SPRITE);
+
+    gfxSlot = 0;
+
     for (i = 0; i < ARRAY_SIZE(gSpriteGraphics); i++)
     {
         if (gSpriteGraphics[i].spriteId == spriteId)
         {
             // Graphics for this sprite have already been loaded
-            return gSpriteGraphics[i].gfxSlot;
+            gfxSlot = gSpriteGraphics[i].gfxSlot;
+            break;
         }
 
         if (gSpriteGraphics[i].spriteId != STYPE_NONE)
@@ -425,7 +438,8 @@ u8 QueueSpriteGraphics(u8 spriteId)
         if (*src == 0)
         {
             // We can skip sprites with empty graphics
-            return gSpriteGraphicsFreeIndex;
+            gfxSlot = gSpriteGraphicsFreeIndex;
+            break;
         }
 
         // Queue the graphics to be loaded
@@ -436,10 +450,12 @@ u8 QueueSpriteGraphics(u8 spriteId)
 
         gSpriteGraphicsFreeIndex += size;
 
-        return gfxSlot;
+        break;
     }
 
-    return 0;
+    // Don't forget to switch back
+    BankGoBack();
+    return gfxSlot;
 }
 
 void ClearSprites(void)

@@ -104,6 +104,26 @@
 #define ASM_IMPL
 
 /**
+ * @brief Indicates the the function is banked
+ * 
+ */
+#ifdef MODERN
+#define BANKED
+#else
+#define BANKED __banked
+#endif
+
+/**
+ * @brief Indicates that the functions is non-banked (allocated to bank 0)
+ * 
+ */
+#ifdef MODERN
+#define NONBANKED
+#else
+#define NONBANKED __nonbanked
+#endif
+
+/**
  * @brief Adds an asm block
  *  
  * @param Asm code

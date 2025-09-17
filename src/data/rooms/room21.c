@@ -1,3 +1,5 @@
+#pragma bank 1
+
 #include "data/rooms/room21.h"
 
 const u8 sRoom21_Tilemap[] = {

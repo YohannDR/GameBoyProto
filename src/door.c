@@ -5,6 +5,7 @@
 
 #include "bg.h"
 #include "io.h"
+#include "bank.h"
 #include "input.h"
 #include "fading.h"
 #include "macros.h"
@@ -25,7 +26,7 @@ struct DoorTransition {
     u8 direction;
     u8 timer;
     u8 tilesetToLoad;
-    const struct Door* targetDoor;
+    struct Door targetDoor;
 };
 
 enum TransitionStage {
@@ -36,7 +37,7 @@ enum TransitionStage {
     TRANSITION_STAGE_FADING_IN,
 };
 
-static struct Door gDoors[4];
+struct Door gDoors[4];
 static u8 gCurrentNumberOfDoors;
 
 static struct DoorTransition gDoorTransition;
@@ -105,7 +106,11 @@ void DoorUpdate(void)
         }
 
         gDoorTransition.tilesetToLoad = door->tileset;
-        gDoorTransition.targetDoor = &sDoors[door->targetDoor];
+
+        SwitchBank(BANK_DATA);
+        // Fully copy it because it's in another bank so it's a pain to use a pointer
+        gDoorTransition.targetDoor = sDoors[door->targetDoor];
+        BankGoBack();
 
         gGameMode.main = GM_TRANSITION;
         gGameMode.sub = TRANSITION_STAGE_FADING_OUT;
@@ -135,8 +140,8 @@ static void PrepareTransition(void)
     u16 width;
 
     // Set at origin of door
-    gPlayerData.x = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->x + 1);
-    gPlayerData.y = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->y + 2);
+    gPlayerData.x = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.x + 1);
+    gPlayerData.y = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.y + 2);
 
     gPlayerData.carryingObject = FALSE;
 
@@ -147,18 +152,18 @@ static void PrepareTransition(void)
     if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT || gDoorTransition.direction == TILEMAP_UPDATE_LEFT)
     {
         // Move the player at the bottom of the door
-        gPlayerData.y += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->height);
+        gPlayerData.y += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.height);
 
         if (gDoorTransition.tilesetToLoad != UCHAR_MAX)
         {
-            width = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width);
+            width = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width);
             gPlayerData.x += width / 2 - PLAYER_WIDTH / 2;
         }
         else
         {
             // Put the player on the side of the door
             if (gDoorTransition.direction == TILEMAP_UPDATE_RIGHT)
-                gPlayerData.x += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) + PIXEL_SIZE;
+                gPlayerData.x += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width) + PIXEL_SIZE;
             else
                 gPlayerData.x -= PLAYER_WIDTH + PIXEL_SIZE;
         }
@@ -166,9 +171,9 @@ static void PrepareTransition(void)
     else
     {
         // For some reason? sdcc emits a "control flow changed" warning with this code :
-        // BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) / 2
+        // BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width) / 2
         // And since the project is being compiled with warning as errors, I have to work around it so I use a local variable
-        width = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width);
+        width = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width);
         gPlayerData.x += width / 2 - PLAYER_WIDTH / 2;
 
         if (gDoorTransition.direction == TILEMAP_UPDATE_TOP)
@@ -181,7 +186,7 @@ static void PrepareTransition(void)
         }
         else
         {
-            gPlayerData.y += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor->width) + PLAYER_HEIGHT + PIXEL_SIZE;
+            gPlayerData.y += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width) + PLAYER_HEIGHT + PIXEL_SIZE;
         }
     }
 
@@ -199,7 +204,7 @@ static void TransitionFadeOut(void)
     gGameMode.sub = TRANSITION_STAGE_TRANSITION;
     gGameMode.timer = 0;
 
-    LoadRoom(gDoorTransition.targetDoor->ownerRoom, FALSE);
+    LoadRoom(gDoorTransition.targetDoor.ownerRoom, FALSE);
 
     PrepareTransition();
 }
@@ -224,10 +229,12 @@ void TransitionProcess(void)
 
     if (gDoorTransition.tilesetToLoad != UCHAR_MAX)
     {
+        SwitchBank(BANK_DATA);
         src = sTilesets[gDoorTransition.tilesetToLoad];
 
         gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
         gGraphicsLoaderInfo.gfxAddr = src;
+        BankGoBack();
 
         gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + 0x1000 - ARRAY_SIZE(gGraphicsLoaderBuffer));
         gGraphicsLoaderInfo.nbrTilesLoaded = 0;
@@ -251,6 +258,8 @@ static void TransitionLoadTileset(void)
 {
     u8 i;
 
+    SwitchBank(BANK_DATA);
+
     if (gGraphicsLoaderInfo.state == (GRAPHICS_LOADER_LAST_UPDATE | GRAPHICS_LOADER_TILESET))
     {
         // At this point, we're on the frame after the last update, so the last graphics have been sent to VRAM properly
@@ -263,6 +272,8 @@ static void TransitionLoadTileset(void)
         FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, ROOM_TRANSITION_FADE_SPEED);
         FadingStart(FADING_TARGET_OBJ0, gObj0Palette, ROOM_TRANSITION_FADE_SPEED);
         FadingStart(FADING_TARGET_OBJ1, gObj1Palette, ROOM_TRANSITION_FADE_SPEED);
+
+        BankGoBack();
         return;
     }
 

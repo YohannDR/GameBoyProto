@@ -1,11 +1,11 @@
-        ;; ****************************************
-        ;; Beginning of module
-        ;; BANKED: checked
+        ; ****************************************
+        ; Beginning of module
+        ; BANKED: checked
         .title  "Runtime"
         .module Runtime
         .area   _HEADER (ABS)
 
-        ;; RST vectors
+        ; RST vectors
 ;       .org    0x00            ; empty
 
 ;       .org    0x08            ; empty
@@ -24,7 +24,7 @@ ___sdcc_call_hl::
 
 ;       .org    0x38            ; empty
 
-        ;; Hardware interrupt vectors
+        ; Hardware interrupt vectors
         .org    0x40            ; VBL
         jp _VblankHandler
 
@@ -67,11 +67,10 @@ Memcpy::
         ; Get value from source
         ld a, (bc)
         ; Write value to destination
-        ld (hl), a
+        ld (hl+), a
 
         ; Incremnt src and dst
         inc bc
-        inc hl
 
         ; Decrement counter
         dec e
@@ -121,12 +120,12 @@ _TransferOam::
     ret
 _TransferOam_End::
 
-        ;; GameBoy Header
+        ; GameBoy Header
         .org    0x100
 .header:
         JR      CodeStart
 
-        ;; Nintendo logo
+        ; Nintendo logo
         .org    0x104
         .byte   0xCE,0xED,0x66,0x66
         .byte   0xCC,0x0D,0x00,0x0B
@@ -141,44 +140,43 @@ _TransferOam_End::
         .byte   0xDD,0xDC,0x99,0x9F
         .byte   0xBB,0xB9,0x33,0x3E
 
-        ;; Title of the game
-        .org    0x134
+        ; Title of the game
         .asciz  "Prototype"
 
         .org    0x144
         .byte   0,0,0
 
-        ;; Cartridge type is ROM only
+        ; We are now happily banked, using the basic MBC1
         .org    0x147
-        .byte   0
+        .byte   1
 
-        ;; ROM size is 32kB
+        ; ROM size is 32kB
         .org    0x148
-        .byte   0
+        .byte   1
 
-        ;; RAM size is 0kB
+        ; RAM size is 0kB
         .org    0x149
         .byte   0
 
-        ;; Maker ID
+        ; Maker ID
         .org    0x14A
         .byte   0x00,0x00
 
-        ;; Version number
+        ; Version number
         .org    0x14C
         .byte   0x01
 
-        ;; Complement check
+        ; Complement check
         .org    0x14D
         .byte   0x00
 
-        ;; Checksum
+        ; Checksum
         .org    0x14E
         .byte   0x00,0x00
 
-        ;; ****************************************
+        ; ****************************************
         .org    0x150
-        ;; Initialization code
+        ; Initialization code
 CodeStart::
         ; Disable interrupts while we're setting things up
         di
@@ -207,33 +205,33 @@ Exit::
         ; The console can exit this halt if an interrupt happens, but we don't care, so just go back to doing nothing
         jr Exit
 
-        ;; ****************************************
+        ; ****************************************
 
-        ;; Ordering of segments for the linker
-        ;; Code that really needs to be in bank 0
+        ; Ordering of segments for the linker
+        ; Code that really needs to be in bank 0
         .area   _HOME
-        ;; Similar to _HOME
+        ; Similar to _HOME
         .area   _BASE
-        ;; Code
+        ; Code
         .area   _CODE
-        ;; #pragma bank 0 workaround
+        ; #pragma bank 0 workaround
         .area   _CODE_0
-        ;; Constant data
+        ; Constant data
         .area   _LIT
-;       ;; since _CODE_1 area base address is pre-defined in the linker from 0x4000,
-;       ;; that moves initializer code and tables out of bank 0
+;       ; since _CODE_1 area base address is pre-defined in the linker from 0x4000,
+;       ; that moves initializer code and tables out of bank 0
 ;       .area   _CODE_1
-        ;; Constant data, used to init _DATA
+        ; Constant data, used to init _DATA
         .area   _INITIALIZER
-        ;; Code, used to init _DATA
+        ; Code, used to init _DATA
         .area   _GSINIT
         .area   _GSFINAL
-        ;; Uninitialised ram data
+        ; Uninitialised ram data
         .area   _DATA
         .area   _BSS
-        ;; Initialised in ram data
+        ; Initialised in ram data
         .area   _INITIALIZED
-        ;; For malloc
+        ; For malloc
         .area   _HEAP
         .area   _HEAP_END
 

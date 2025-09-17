@@ -52,4 +52,6 @@
 #define REG_IF (IO_BASE + 0x0F)
 #define REG_IE (IO_BASE + 0xFF)
 
+#define REG_BANK0 (0x2000)
+
 #endif /* GB_IO_H */

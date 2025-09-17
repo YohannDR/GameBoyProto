@@ -1,3 +1,5 @@
+#pragma bank 2
+
 #include "sprites_AI/movable_object.h"
 
 #include "gb/oam.h"

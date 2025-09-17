@@ -1,3 +1,5 @@
+#pragma bank 2
+
 #include "sprites_AI/portal.h"
 
 #include "gb/oam.h"

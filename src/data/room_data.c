@@ -1,3 +1,5 @@
+#pragma bank 1
+
 #include "data/room_data.h"
 
 #include "gb/display.h"

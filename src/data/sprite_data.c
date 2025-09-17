@@ -1,3 +1,5 @@
+#pragma bank 2
+
 #include "data/sprite_data.h"
 
 #include "sprites_AI/portal.h"

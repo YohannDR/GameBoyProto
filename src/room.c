@@ -2,6 +2,7 @@
 
 #include "gb/io.h"
 
+#include "bank.h"
 #include "bg.h"
 #include "bg_clip.h"
 #include "fading.h"
@@ -72,17 +73,18 @@ void LoadRoom(u8 room, u8 loadTilemap)
 
     gCurrentRoom = room;
 
+    // Switch to data bank where everything is located
+    SwitchBank(BANK_DATA);
+
     roomInfo = &sRooms[gCurrentRoom];
     gBackgroundPalette = roomInfo->bgPalette;
 
     if (loadTilemap)
-    {
         Write8(REG_BGP, gBackgroundPalette);
-    }
 
     LoadDoors(roomInfo->doorData);
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
-
+    
     ClearFire();
     LoadTilemap(roomInfo->tilemap, loadTilemap);
     LoadSprites(roomInfo->spriteData);

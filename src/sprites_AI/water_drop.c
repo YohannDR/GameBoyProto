@@ -1,3 +1,5 @@
+#pragma bank 2
+
 #include "sprites_AI/water_drop.h"
 
 #include "gb/oam.h"

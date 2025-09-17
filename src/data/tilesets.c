@@ -1,3 +1,5 @@
+#pragma bank 1
+
 #include "data/tilesets.h"
 
 #include "data/rooms.h"
