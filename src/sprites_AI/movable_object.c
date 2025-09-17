@@ -4,10 +4,13 @@
 
 #include "gb/oam.h"
 
+#include "bg.h"
 #include "bg_clip.h"
 #include "input.h"
 #include "player.h"
 #include "sprite.h"
+#include "time.h"
+#include "math.h"
 #include "sprites_AI/locked_door.h"
 
 enum MovableObjectPose {
@@ -109,6 +112,9 @@ static void MovableObjectDropped(void)
         gCurrentSprite.pose = POSE_LOCKED;
         gCurrentSprite.status |= SPRITE_STATUS_DISABLED;
 
+        gCurrentSprite.work1 = gCurrentTemporality;
+        gCurrentSprite.work2 = gTilemap.tilemap[ComputeIndexFromSpriteCoords(gCurrentSprite.y, gTilemap.width, gCurrentSprite.x + HALF_BLOCK_SIZE)];
+
         TryUnlockDoor();
 
         SetBgValueSubPixel(gCurrentSprite.x + HALF_BLOCK_SIZE, gCurrentSprite.y, DEFAULT_SOLID_TILE);
@@ -142,6 +148,23 @@ void MovableObject(void)
         MovableObjectCarried();
     else if (gCurrentSprite.pose == POSE_DROPPED)
         MovableObjectDropped();
+}
+
+void MovableObjectTimeFunc(void)
+{
+    if (gCurrentSprite.pose != POSE_LOCKED)
+        return;
+
+    if (gCurrentTemporality == gCurrentSprite.work1)
+    {
+        gCurrentSprite.status |= SPRITE_STATUS_DISABLED;
+
+        SetBgValueSubPixel(gCurrentSprite.x + HALF_BLOCK_SIZE, gCurrentSprite.y, DEFAULT_SOLID_TILE);
+    }
+    else
+    {
+        SetBgValueSubPixel(gCurrentSprite.x + HALF_BLOCK_SIZE, gCurrentSprite.y, gCurrentSprite.work2);
+    }
 }
 
 static const u8 sMovableObjectAnim_Frame0[OAM_DATA_SIZE(1)] = {

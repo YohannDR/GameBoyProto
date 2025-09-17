@@ -1,9 +1,13 @@
 #include "time_command.h"
 
+#include "bank.h"
 #include "bg.h"
 #include "bg_clip.h"
 #include "fire.h"
 #include "sprite.h"
+#include "time.h"
+
+#include "data/sprite_data.h"
 
 u8 gAlreadyTimeTravelled;
 
@@ -20,6 +24,52 @@ static u8 gTileChangesIndex;
 
 static u8 gSpawnedSprites[10];
 static u8 gSpawnedSpritesIndex;
+
+static void RevertTileCommands(void)
+{
+    u8 i;
+    u8 j;
+    u8 k;
+
+    for (i = 0; i < gTileChangesIndex; i++)
+    {
+        for (j = 0; j < gTileChanges[i].heigth; j++)
+        {
+            for (k = 0; k < gTileChanges[i].width; k++)
+            {
+                SetBgValueTile(gTileChanges[i].x + k, gTileChanges[i].y + j, gTileChanges[i].tiles[j][k]);
+            }
+        }
+    }
+}
+
+void RevertSpriteCommand(void)
+{
+    u8 i;
+
+    SwitchBank(BANK_SPRITE);
+
+    for (i = 0; i < gSpawnedSpritesIndex; i++)
+    {
+        if (gCurrentTemporality == TEMPORALITY_PAST)
+        {
+            // Disable AI and rendering for the sprites
+            gSpriteData[gSpawnedSprites[i]].status |= SPRITE_STATUS_DISABLED | SPRITE_STATUS_NOT_DRAWN;
+        }
+        else if (gCurrentTemporality == TEMPORALITY_FUTURE)
+        {
+            // Re-enable AI and rendering
+            gSpriteData[gSpawnedSprites[i]].status &= ~(SPRITE_STATUS_DISABLED | SPRITE_STATUS_NOT_DRAWN);
+        }
+
+        gCurrentSprite = gSpriteData[gSpawnedSprites[i]];
+        // Call sprite specific logic if necessary
+        sSpriteTimeFuncPointers[gSpriteData[gSpawnedSprites[i]].type]();
+        gSpriteData[gSpawnedSprites[i]] = gCurrentSprite;
+    }
+
+    BankGoBack();
+}
 
 static const u8* ApplyTileCommand(const u8* commands)
 {
@@ -68,8 +118,15 @@ static const u8* ApplySpriteCommand(const u8* commands)
     spriteId = *commands++;
     spritePart = *commands++;
 
-    gSpawnedSprites[gSpawnedSpritesIndex] = SpawnSprite(BLOCK_TO_SUB_PIXEL((u8)(x + 1)), BLOCK_TO_SUB_PIXEL((u8)(y + 2)), spriteId, spritePart, QueueSpriteGraphics(spriteId));
-    gSpawnedSpritesIndex++;
+    if (gAlreadyTimeTravelled)
+    {
+        RevertSpriteCommand();
+    }
+    else
+    {
+        gSpawnedSprites[gSpawnedSpritesIndex] = SpawnSprite(BLOCK_TO_SUB_PIXEL((u8)(x + 1)), BLOCK_TO_SUB_PIXEL((u8)(y + 2)), spriteId, spritePart, QueueSpriteGraphics(spriteId));
+        gSpawnedSpritesIndex++;
+    }
 
     return commands;
 }
@@ -93,38 +150,13 @@ static const u8* ApplyFireCommand(const u8* commands)
     return commands;
 }
 
-static void RevertTileCommands(void)
-{
-    u8 i;
-    u8 j;
-    u8 k;
-
-    for (i = 0; i < gTileChangesIndex; i++)
-    {
-        for (j = 0; j < gTileChanges[i].heigth; j++)
-        {
-            for (k = 0; k < gTileChanges[i].width; k++)
-            {
-                SetBgValueTile(gTileChanges[i].x + k, gTileChanges[i].y + j, gTileChanges[i].tiles[j][k]);
-            }
-        }
-    }
-}
-
-static void RevertSpriteCommand(void)
-{
-    u8 i;
-
-    // Just kill every spawned sprite
-    for (i = 0; i < gSpawnedSpritesIndex; i++)
-        gSpriteData[gSpawnedSprites[i]].status = 0;
-}
-
 void ApplyTimeCommands(const u8* commands)
 {
     u8 type;
 
-    gSpawnedSpritesIndex = 0;
+    if (!gAlreadyTimeTravelled)
+        gSpawnedSpritesIndex = 0;
+
     gTileChangesIndex = 0;
 
     for (;;)

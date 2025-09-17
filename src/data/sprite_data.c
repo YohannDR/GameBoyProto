@@ -42,3 +42,21 @@ const u8* const sSpriteGraphicsPointers[STYPE_END] = {
     [STYPE_LOCKED_DOOR] = sLockedDoorGraphics,
     [STYPE_DOOR_LOCK] = sDummyGraphics,
 };
+
+static void KillSprite(void)
+{
+    gCurrentSprite.status = 0;
+}
+
+const Func_T sSpriteTimeFuncPointers[STYPE_END] = {
+    [STYPE_NONE] = Dummy,
+    [STYPE_PORTAL] = Dummy,
+    [STYPE_SHIP] = Dummy,
+    [STYPE_WATER_DROP] = KillSprite,
+    [STYPE_MOVING_PLATFORM] = Dummy,
+    [STYPE_COLLECTIBLE] = Dummy,
+    [STYPE_MOVABLE_OBJECT] = MovableObjectTimeFunc,
+    [STYPE_FIRE_SPAWNER] = Dummy,
+    [STYPE_LOCKED_DOOR] = Dummy,
+    [STYPE_DOOR_LOCK] = Dummy,
+};
