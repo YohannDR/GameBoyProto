@@ -356,7 +356,9 @@ static void PropagateFire(void)
         if (gCurrentClusterId != otherCluster)
         {
             // We need to re-increment because lcc fucked up the variable, thanks a lot
+#ifdef COMPILER_FIXES
             otherCluster += gCurrentClusterId;
+#endif
             MergeClusters(otherCluster);
             return;
         }

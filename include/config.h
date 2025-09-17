@@ -4,6 +4,9 @@
 // Enables some hacky optimizations
 #define HACKY_OPTIMIZATIONS
 
+// Enables fixes for some compiler bugs (SDCC 4.5.1)
+#define COMPILER_FIXES
+
 // Indicates that the code is being compiled for modern platform
 // #define MODERN
 
