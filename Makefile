@@ -29,6 +29,9 @@ endif
 # Add --Werror for .c and .s files compilation only, using this flag during linking give a warning
 CFLAGS = $(LDFLAGS) -Wf--Werror
 
+# Make the "control flow changed" warning shut up
+CFLAGS += -Wf--less-pedantic
+
 # Specify rom type 1 (MBC1), and the amount of banks (4)
 LDFLAGS += -Wl-yt1 -Wl-yo4
 

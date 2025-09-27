@@ -6,6 +6,7 @@
 
 #include "bg_clip.h"
 #include "sprite.h"
+#include "room.h"
 
 enum DoorLockPose {
     DOOR_LOCK_POSE_IDLE = 1,
@@ -19,6 +20,34 @@ extern const struct AnimData sLockedDoorAnim[];
 extern const struct AnimData sDoorLockAnim_Idle[];
 extern const struct AnimData sDoorLockAnim_Unlocking[];
 extern const struct AnimData sDoorLockAnim_Unlocked[];
+
+/**
+ * @brief Which doors have been permanently opened
+ * 
+ */
+static u8 gOpenedDoors[4];
+
+static u8 IsDoorOpened(void)
+{
+    u8 index;
+    u8 bit;
+
+    index = gCurrentRoom / 8;
+    bit = 1 << (gCurrentRoom % 8);
+
+    return gOpenedDoors[index] & bit;
+}
+
+static void SetDoorAsOpened(void)
+{
+    u8 index;
+    u8 bit;
+
+    index = gCurrentRoom / 8;
+    bit = 1 << (gCurrentRoom % 8);
+
+    gOpenedDoors[index] |= bit;
+}
 
 static void LockedDoorSetCollision(u8 tile)
 {
@@ -57,6 +86,7 @@ static void LockedDoorUnlockingInit(void)
     u8 i;
 
     LockedDoorSetCollision(0);
+    SetDoorAsOpened();
 
     for (i = 0; i < gCurrentSprite.part; i++)
         gSpriteData[(&gCurrentSprite.work1)[i]].status = 0;
@@ -84,6 +114,12 @@ void LockedDoor(void)
 {
     if (gCurrentSprite.pose == 0)
     {
+        if (IsDoorOpened())
+        {
+            gCurrentSprite.status = 0;
+            return;
+        }
+
         gCurrentSprite.animPointer = sLockedDoorAnim;
 
         gCurrentSprite.y -= BLOCK_SIZE;
