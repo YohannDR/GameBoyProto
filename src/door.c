@@ -141,8 +141,6 @@ static void PrepareTransition(void)
     gPlayerData.x = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.x + 1);
     gPlayerData.y = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.y + 2);
 
-    gPlayerData.carryingObject = FALSE;
-
     gPlayerMovement.xVelocity = 0;
     gPlayerMovement.yVelocity = 0;
     gPlayerMovement.grounded = TRUE;
