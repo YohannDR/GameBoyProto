@@ -41,6 +41,9 @@ static void LoadSprites(const struct RoomSprite* sprites)
         SpawnSprite(x, y, id, part, QueueSpriteGraphics(id));
         sprites++;
     }
+
+    if (Read8(REG_LCDC) == 0)
+        StartSpriteGraphicsLoading();
 }
 
 static void LoadDoors(const u8* doorData)

@@ -332,9 +332,6 @@ void PlayerInit(void)
     PlayerInitPhysics();
     PlayerLoadGraphics();
 
-    // gPlayerData.x = BLOCK_SIZE * 3;
-    // gPlayerData.y = BLOCK_SIZE * 19;
-
     gPlayerData.x = BLOCK_SIZE * 9;
     gPlayerData.y = BLOCK_SIZE * 13;
 

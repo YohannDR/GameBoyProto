@@ -23,15 +23,14 @@ struct PlayerData {
     const struct AnimData* animPointer;
 
     u8 properties;
+    u8 size;
 
     // Work variable, essentially free space
-    u8 carryingObject;
+    u8 work1;
     // Work variable, essentially free space
     u8 work2;
     // Work variable, essentially free space
     u8 work3;
-    // Work variable, essentially free space
-    u8 work4;
 };
 
 /**
@@ -71,6 +70,11 @@ enum PlayerPose {
     PLAYER_POSE_RUNNING,
     PLAYER_POSE_JUMPING,
     PLAYER_POSE_ON_LADDER
+};
+
+enum PlayerSize {
+    PLAYER_SIZE_BIG,
+    PLAYER_SIZE_SMALL
 };
 
 extern struct PlayerData gPlayerData;

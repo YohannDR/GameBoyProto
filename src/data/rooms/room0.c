@@ -223,7 +223,13 @@ const u8 sRoom0_Tilemap[] = {
 };
 
 const struct RoomSprite sRoom0_SpriteData[] = {
-    [0] = ROOM_SPRITE_TERMINATOR
+    [0] = {
+        .x = 11,
+        .y = 11,
+        .id = STYPE_PRESSURE_PLATE,
+        .part = 0
+    },
+    [1] = ROOM_SPRITE_TERMINATOR
 };
 
 const u8 sRoom0_DoorData[] = {

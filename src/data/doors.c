@@ -22,5 +22,5 @@ const struct Door sDoors[] = {
         .exitX = 0,
         .exitY = 0,
         .tileset = 255,
-    }
+    },
 };

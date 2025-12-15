@@ -89,6 +89,8 @@ struct Sprite {
  */
 enum SpriteType {
     STYPE_NONE,
+    STYPE_PRESSURE_PLATE,
+    STYPE_PORTAL,
     STYPE_LOCKED_DOOR,
     STYPE_DOOR_LOCK,
 

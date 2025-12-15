@@ -1,5 +1,5 @@
-#ifndef LOCKED_DOOR
-#define LOCKED_DOOR
+#ifndef LOCKED_DOOR_H
+#define LOCKED_DOOR_H
 
 #include "types.h"
 
@@ -13,4 +13,4 @@ extern const u8 sLockedDoorGraphics[];
 void LockedDoor(void);
 void DoorLock(void);
 
-#endif /* LOCKED_DOOR */
+#endif /* LOCKED_DOOR_H */
