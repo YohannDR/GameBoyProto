@@ -204,7 +204,7 @@ static void TransitionFadeOut(void)
     gGameMode.sub = TRANSITION_STAGE_TRANSITION;
     gGameMode.timer = 0;
 
-    LoadRoom(gDoorTransition.targetDoor.ownerRoom, FALSE);
+    LoadRoom(gDoorTransition.targetDoor.ownerRoom);
 
     PrepareTransition();
 }
@@ -214,8 +214,6 @@ void TransitionProcess(void)
     const u8* src;
 
     gGameMode.timer++;
-
-    SetupTilemapUpdateX(TILEMAP_UPDATE_RIGHT);
 
     gCamera.right++;
     gBackgroundInfo.blockX++;

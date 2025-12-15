@@ -9,47 +9,6 @@ struct Camera gCamera;
 
 #define SCROLL_VELOCITY_CAP (HALF_BLOCK_SIZE)
 
-static void CheckForTilemapUpdate(void)
-{
-    u8 blockX;
-    u8 blockY;
-
-    gTilemapUpdateDirectionX = TILEMAP_UPDATE_NONE;
-    gTilemapUpdateDirectionY = TILEMAP_UPDATE_NONE;
-
-    blockX = SUB_PIXEL_TO_BLOCK(gCamera.x);
-
-    if (gCamera.xVelocity < 0 && gCamera.left == blockX)
-    {
-        gCamera.left--;
-        gCamera.right--;
-        SetupTilemapUpdateX(TILEMAP_UPDATE_LEFT);
-        return;
-    }
-    else if (gCamera.xVelocity > 0 && gCamera.right == blockX + SCREEN_SIZE_X_BLOCK - 1)
-    {
-        gCamera.left++;
-        gCamera.right++;
-        SetupTilemapUpdateX(TILEMAP_UPDATE_RIGHT);
-        return;
-    }
-
-    blockY = SUB_PIXEL_TO_BLOCK(gCamera.y);
-
-    if (gCamera.yVelocity < 0 && gCamera.top == blockY)
-    {
-        gCamera.bottom--;
-        gCamera.top--;
-        SetupTilemapUpdateY(TILEMAP_UPDATE_TOP);
-    }
-    else if (gCamera.yVelocity > 0 && gCamera.bottom == blockY + SCREEN_SIZE_Y_BLOCK - 1)
-    {
-        gCamera.bottom++;
-        gCamera.top++;
-        SetupTilemapUpdateY(TILEMAP_UPDATE_BOTTOM);
-    }
-}
-
 static void UpdateCamera(void)
 {
     // Apply camera velocity
@@ -68,8 +27,6 @@ static void UpdateCamera(void)
 
     gBackgroundX = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
     gBackgroundY = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
-
-    CheckForTilemapUpdate();
 }
 
 u16 GetCameraTargetX(void)

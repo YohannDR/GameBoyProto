@@ -7,10 +7,8 @@
 #include "callbacks.h"
 #include "bg.h"
 #include "bg_clip.h"
-#include "inventory.h"
 #include "io.h"
 #include "sprite.h"
-#include "items.h"
 #include "fading.h"
 #include "game_state.h"
 #include "macros.h"
@@ -380,12 +378,6 @@ void PlayerUpdate(void)
     }
 
     UpdateAnimation();
-
-    if (gPlayerData.pose != PLAYER_POSE_ON_LADDER)
-        UpdateItem();
-
-    if (gChangedInput & KEY_SELECT)
-        OpenInventory();
 }
 
 void PlayerDraw(void)

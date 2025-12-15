@@ -61,9 +61,6 @@ extern u8 gWindowY;
 
 extern struct TilemapInfo gTilemap;
 
-extern u8 gTilemapUpdateDirectionX;
-extern u8 gTilemapUpdateDirectionY;
-
 extern u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 4];
 
 /**
@@ -71,21 +68,7 @@ extern u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 4];
  * 
  * @param tilemap Tilemap
  */
-void LoadTilemap(const u8* tilemap, u8 toVram);
-
-/**
- * @brief Sets up a tilemap update in the desired direction (only for X, so left or right)
- * 
- * @param direction Direction
- */
-void SetupTilemapUpdateX(u8 direction);
-
-/**
- * @brief Sets up a tilemap update in the desired direction (only for Y, so top or bottom)
- * 
- * @param direction Direction
- */
-void SetupTilemapUpdateY(u8 direction);
+void LoadTilemap(const u8* tilemap);
 
 /**
  * @brief Updates the tilemap during v-blank

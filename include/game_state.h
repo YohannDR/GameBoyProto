@@ -22,9 +22,7 @@ struct GameModeInfo {
 
 enum GameMode {
     GM_IN_GAME,
-    GM_INVENTORY,
-    GM_TRANSITION,
-    GM_PORTAL,
+    GM_TRANSITION
 };
 
 /**

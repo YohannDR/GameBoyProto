@@ -10,11 +10,9 @@
 #include "input.h"
 #include "scroll.h"
 #include "room.h"
-#include "fire.h"
 #include "io.h"
 #include "fading.h"
 #include "gfx_loader.h"
-#include "inventory.h"
 #include "callbacks.h"
 #include "game_state.h"
 #include "macros.h"
@@ -22,7 +20,6 @@
 #include "sprite.h"
 #include "door.h"
 #include "sound.h"
-#include "time.h"
 
 #include "data/tilesets.h"
 
@@ -50,18 +47,14 @@ static void InitGame(void)
 
     InitSound();
 
-    gCurrentItem = ITEM_NONE;
-
     SetCameraPosition(0, 0);
     PlayerInit();
-    LoadFireGraphics();
-    LoadRoom(0, TRUE);
-    InitializeWindow();
+    LoadRoom(0);
 
     CallbackSetVblank(VblankCallback);
 
-    gObj0Palette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK);
-    gObj1Palette = MAKE_PALETTE(COLOR_WHITE, COLOR_LIGHT_GRAY, COLOR_DARK_GRAY, COLOR_BLACK);
+    gObj0Palette = PALETTE_ALL;
+    gObj1Palette = PALETTE_ALL;
 
     Write8(REG_OBP0, gObj0Palette);
     Write8(REG_OBP1, gObj1Palette);
@@ -99,22 +92,13 @@ void main(void)
                 DoorUpdate();
                 ScrollUpdate();
             }
-            else if (gGameMode.main == GM_INVENTORY)
-            {
-                InventoryUpdate();
-            }
             else if (gGameMode.main == GM_TRANSITION)
             {
                 TransitionUpdate();
             }
-            else if (gGameMode.main == GM_PORTAL)
-            {
-                UpdatePortalTransition();
-            }
 
             PlayerDraw();
             UpdateSprites();
-            UpdateFire();
             FadingUpdate();
         }
 

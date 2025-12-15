@@ -7,17 +7,13 @@
 #include "bg_clip.h"
 #include "fading.h"
 #include "sprite.h"
-#include "fire.h"
 #include "callbacks.h"
-#include "time.h"
-#include "time_command.h"
 #include "io.h"
 
 #include "data/room_data.h"
 #include "data/tilesets.h"
 #include "data/collision_tables.h"
 #include "data/doors.h"
-#include "data/rooms/room_commands.h"
 
 u8 gCurrentRoom;
 u8 gCurrentTileset;
@@ -67,30 +63,22 @@ static void LoadDoors(const u8* doorData)
     }
 }
 
-void LoadRoom(u8 room, u8 loadTilemap)
+void LoadRoom(u8 room)
 {
     const struct RoomInfo* roomInfo;
 
     gCurrentRoom = room;
-
+    
     // Switch to data bank where everything is located
     SwitchBank(BANK_DATA);
-
+    
     roomInfo = &sRooms[gCurrentRoom];
     gBackgroundPalette = roomInfo->bgPalette;
-
-    if (loadTilemap)
-        Write8(REG_BGP, gBackgroundPalette);
+    Write8(REG_BGP, gBackgroundPalette);
 
     LoadDoors(roomInfo->doorData);
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
     
-    ClearFire();
-    LoadTilemap(roomInfo->tilemap, loadTilemap);
+    LoadTilemap(roomInfo->tilemap);
     LoadSprites(roomInfo->spriteData);
-
-    gAlreadyTimeTravelled = FALSE;
-
-    if (gCurrentTemporality == TEMPORALITY_FUTURE)
-        ApplyTimeCommands(sRoomCommands[gCurrentRoom]);
 }

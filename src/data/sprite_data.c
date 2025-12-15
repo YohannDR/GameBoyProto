@@ -2,13 +2,6 @@
 
 #include "data/sprite_data.h"
 
-#include "sprites_AI/portal.h"
-#include "sprites_AI/water_drop.h"
-#include "sprites_AI/moving_platform.h"
-#include "sprites_AI/collectible.h"
-#include "sprites_AI/movable_object.h"
-#include "sprites_AI/ship.h"
-#include "sprites_AI/fire_spawner.h"
 #include "sprites_AI/locked_door.h"
 
 static void Dummy(void) {}
@@ -19,44 +12,18 @@ static const u8 sDummyGraphics[] = {
 
 const Func_T sSpriteAiPointers[STYPE_END] = {
     [STYPE_NONE] = Dummy,
-    [STYPE_PORTAL] = Portal,
-    [STYPE_SHIP] = Ship,
-    [STYPE_WATER_DROP] = WaterDrop,
-    [STYPE_MOVING_PLATFORM] = MovingPlatform,
-    [STYPE_COLLECTIBLE] = Collectible,
-    [STYPE_MOVABLE_OBJECT] = MovableObject,
-    [STYPE_FIRE_SPAWNER] = FireSpawner,
     [STYPE_LOCKED_DOOR] = LockedDoor,
     [STYPE_DOOR_LOCK] = DoorLock,
 };
 
 const u8* const sSpriteGraphicsPointers[STYPE_END] = {
     [STYPE_NONE] = sDummyGraphics,
-    [STYPE_PORTAL] = sPortalGraphics,
-    [STYPE_SHIP] = sShipGraphics,
-    [STYPE_WATER_DROP] = sWaterDropGraphics,
-    [STYPE_MOVING_PLATFORM] = sMovingPlatformGraphics,
-    [STYPE_COLLECTIBLE] = sCollectibleGraphics,
-    [STYPE_MOVABLE_OBJECT] = sMovableObjectGraphics,
-    [STYPE_FIRE_SPAWNER] = sDummyGraphics,
     [STYPE_LOCKED_DOOR] = sLockedDoorGraphics,
     [STYPE_DOOR_LOCK] = sDummyGraphics,
 };
 
-static void KillSprite(void)
-{
-    gCurrentSprite.status = 0;
-}
-
 const Func_T sSpriteTimeFuncPointers[STYPE_END] = {
     [STYPE_NONE] = Dummy,
-    [STYPE_PORTAL] = Dummy,
-    [STYPE_SHIP] = Dummy,
-    [STYPE_WATER_DROP] = KillSprite,
-    [STYPE_MOVING_PLATFORM] = Dummy,
-    [STYPE_COLLECTIBLE] = Dummy,
-    [STYPE_MOVABLE_OBJECT] = MovableObjectTimeFunc,
-    [STYPE_FIRE_SPAWNER] = Dummy,
     [STYPE_LOCKED_DOOR] = Dummy,
     [STYPE_DOOR_LOCK] = Dummy,
 };

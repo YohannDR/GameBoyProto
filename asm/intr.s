@@ -31,7 +31,6 @@ _VblankHandler::
     call .refresh_OAM
     ; This is time critical, so it takes absolute priority
     call _UpdateTransitionVblank
-    call _TilemapUpdateVblank
     call _ApplyBgChanges
     call _CallbackCallVblank
 
