@@ -1,5 +1,3 @@
-#pragma bank 2
-
 #include "sprites_AI/locked_door.h"
 
 #include "gb/oam.h"

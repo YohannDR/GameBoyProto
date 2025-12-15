@@ -4,7 +4,6 @@
 #include "gb/io.h"
 #include "gb/display.h"
 
-#include "bank.h"
 #include "bg.h"
 #include "gfx_loader.h"
 #include "macros.h"
@@ -305,8 +304,6 @@ void StartSpriteGraphicsLoading(void)
 {
     const u8* src;
 
-    SwitchBank(BANK_SPRITE);
-
     // We reset the counter, we'll be using it to count again
     gQueuedGraphicsIndex = 0;
 
@@ -325,8 +322,6 @@ void StartSpriteGraphicsLoading(void)
         gGraphicsLoaderInfo.nbrBytesBuffered = 0;
         gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON;
     }
-
-    BankGoBack();
 }
 
 void UpdateSpriteGraphicsLoading(void)
@@ -334,8 +329,6 @@ void UpdateSpriteGraphicsLoading(void)
     u8 i;
     u8 gfxIndex;
     const u8* src;
-
-    SwitchBank(BANK_SPRITE);
 
     if (gGraphicsLoaderInfo.state == GRAPHICS_LOADER_LAST_UPDATE)
     {
@@ -407,9 +400,6 @@ u8 QueueSpriteGraphics(u8 spriteId)
     u8 size;
     u8 gfxSlot;
 
-    // Switch to the sprite bank, required to have access to the graphics
-    SwitchBank(BANK_SPRITE);
-
     gfxSlot = 0;
 
     for (i = 0; i < ARRAY_SIZE(gSpriteGraphics); i++)
@@ -453,8 +443,6 @@ u8 QueueSpriteGraphics(u8 spriteId)
         break;
     }
 
-    // Don't forget to switch back
-    BankGoBack();
     return gfxSlot;
 }
 

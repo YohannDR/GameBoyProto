@@ -355,10 +355,6 @@ _UpdateSprites:
     or a, a
     ret Z
 
-    ; Switch to the sprite bank
-    ld a, #0x02
-    call _SwitchBank
-
     ld hl, #(_gSpriteData)
 
 .loopStart:
@@ -456,14 +452,10 @@ _UpdateSprites:
     ld a, (_gEnemiesLeftToProcess)
     dec a
     ld (_gEnemiesLeftToProcess), a
-    jr Z, .updateSpritesEnd
+    ret Z
 
     ; Increment sprite pointer
     ld bc, #0x17
     add hl, bc
 
     jr .loopStart
-
-.updateSpritesEnd:
-    call _BankGoBack
-    ret

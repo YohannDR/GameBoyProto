@@ -2,7 +2,6 @@
 
 #include "gb/io.h"
 
-#include "bank.h"
 #include "bg.h"
 #include "bg_clip.h"
 #include "fading.h"
@@ -68,9 +67,6 @@ void LoadRoom(u8 room)
     const struct RoomInfo* roomInfo;
 
     gCurrentRoom = room;
-    
-    // Switch to data bank where everything is located
-    SwitchBank(BANK_DATA);
     
     roomInfo = &sRooms[gCurrentRoom];
     gBackgroundPalette = roomInfo->bgPalette;

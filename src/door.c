@@ -5,7 +5,6 @@
 
 #include "bg.h"
 #include "io.h"
-#include "bank.h"
 #include "input.h"
 #include "fading.h"
 #include "macros.h"
@@ -107,10 +106,8 @@ void DoorUpdate(void)
 
         gDoorTransition.tilesetToLoad = door->tileset;
 
-        SwitchBank(BANK_DATA);
         // Fully copy it because it's in another bank so it's a pain to use a pointer
         gDoorTransition.targetDoor = sDoors[door->targetDoor];
-        BankGoBack();
 
         gGameMode.main = GM_TRANSITION;
         gGameMode.sub = TRANSITION_STAGE_FADING_OUT;
@@ -227,12 +224,10 @@ void TransitionProcess(void)
 
     if (gDoorTransition.tilesetToLoad != UCHAR_MAX)
     {
-        SwitchBank(BANK_DATA);
         src = sTilesets[gDoorTransition.tilesetToLoad];
 
         gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
         gGraphicsLoaderInfo.gfxAddr = src;
-        BankGoBack();
 
         gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + 0x1000 - ARRAY_SIZE(gGraphicsLoaderBuffer));
         gGraphicsLoaderInfo.nbrTilesLoaded = 0;
@@ -256,8 +251,6 @@ static void TransitionLoadTileset(void)
 {
     u8 i;
 
-    SwitchBank(BANK_DATA);
-
     if (gGraphicsLoaderInfo.state == (GRAPHICS_LOADER_LAST_UPDATE | GRAPHICS_LOADER_TILESET))
     {
         // At this point, we're on the frame after the last update, so the last graphics have been sent to VRAM properly
@@ -270,8 +263,6 @@ static void TransitionLoadTileset(void)
         FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, ROOM_TRANSITION_FADE_SPEED);
         FadingStart(FADING_TARGET_OBJ0, gObj0Palette, ROOM_TRANSITION_FADE_SPEED);
         FadingStart(FADING_TARGET_OBJ1, gObj1Palette, ROOM_TRANSITION_FADE_SPEED);
-
-        BankGoBack();
         return;
     }
 

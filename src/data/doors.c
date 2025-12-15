@@ -1,5 +1,3 @@
-#pragma bank 1
-
 #include "data/doors.h"
 
 const struct Door sDoors[] = {

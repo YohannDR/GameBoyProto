@@ -5,7 +5,6 @@
 
 #include "bg.h"
 #include "bg_clip.h"
-#include "bank.h"
 #include "player.h"
 #include "input.h"
 #include "scroll.h"
@@ -29,8 +28,6 @@ struct GameModeInfo gGameMode;
 static void InitGame(void)
 {
     gGameMode.main = GM_IN_GAME;
-
-    BankInit();
 
     // Enable v-blank interrupt
     Write8(REG_IE, INTR_VBLANK);

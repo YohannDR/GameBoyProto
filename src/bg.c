@@ -2,7 +2,6 @@
 
 #include "gb/memory.h"
 
-#include "bank.h"
 #include "door.h"
 #include "macros.h"
 #include "scroll.h"

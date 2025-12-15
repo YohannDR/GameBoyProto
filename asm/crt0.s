@@ -148,11 +148,11 @@ _TransferOam_End::
 
         ; We are now happily banked, using the basic MBC1
         .org    0x147
-        .byte   1
+        .byte   0
 
         ; ROM size is 32kB
         .org    0x148
-        .byte   1
+        .byte   0
 
         ; RAM size is 0kB
         .org    0x149
