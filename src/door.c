@@ -372,7 +372,7 @@ void TransitionUpdate(void)
     {
         if (gGraphicsLoaderInfo.state == GRAPHICS_LOADER_OFF)
         {
-            TransitionLoadTileset();
+            StartTilesetLoading();
         }
     }
     else if (gGameMode.sub == TRANSITION_STAGE_LOADING_TILESET)
