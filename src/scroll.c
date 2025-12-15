@@ -3,7 +3,7 @@
 #include "bg.h"
 #include "game_state.h"
 #include "room.h"
-#include "player.h"
+#include "player/player.h"
 
 struct Camera gCamera;
 

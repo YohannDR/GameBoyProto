@@ -2,7 +2,7 @@
 
 #include "gb/oam.h"
 #include "sprite.h"
-#include "player.h"
+#include "player/player.h"
 
 enum PressurePlatePose {
     POSE_IDLE = 1,

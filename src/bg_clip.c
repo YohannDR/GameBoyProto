@@ -25,11 +25,9 @@ static const u8 sClipdataTable[] = {
     [CLIPDATA_AIR]                  = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_AIR),
     [CLIPDATA_SOLID]                = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_AIR),
     [CLIPDATA_LADDER]               = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_LADDER),
-    [CLIPDATA_LADDER_TOP]           = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_LADDER),
-    [CLIPDATA_WATER]                = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_WATER),
-    [CLIPDATA_ACCESS_CARD_READER]   = MAKE_CLIPDATA_PROP(COLLISION_AIR, CLIP_BEHAVIOR_ACCESS_CARD_READER),
-    [CLIPDATA_RECEPTACLE]           = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_RECEPTACLE),
-    [CLIPDATA_INFLAMMABLE]          = MAKE_CLIPDATA_PROP(COLLISION_SOLID, CLIP_BEHAVIOR_INFLAMMABLE),
+    [CLIPDATA_LADDER_TOP]           = MAKE_CLIPDATA_PROP(COLLISION_HALF_TOP, CLIP_BEHAVIOR_LADDER),
+    [CLIPDATA_HALF_TOP]             = MAKE_CLIPDATA_PROP(COLLISION_HALF_TOP, CLIP_BEHAVIOR_LADDER),
+    [CLIPDATA_HALF_BOTTOM]          = MAKE_CLIPDATA_PROP(COLLISION_HALF_BOTTOM, CLIP_BEHAVIOR_LADDER),
 };
 
 void GetClipdataValue(u16 x, u16 y)
@@ -53,7 +51,7 @@ void GetClipdataValue(u16 x, u16 y)
         gCollisionInfo.right = gCollisionInfo.left + BLOCK_SIZE;
     }
 
-    if (clipdata == CLIPDATA_LADDER_TOP)
+    if (gCollisionInfo.solidity == COLLISION_HALF_TOP)
     {
         subPixel = y & SUB_PIXEL_POSITION_FLAG;
 
@@ -61,6 +59,19 @@ void GetClipdataValue(u16 x, u16 y)
             gCollisionInfo.solidity = CLIPDATA_AIR;
         else
             gCollisionInfo.solidity = CLIPDATA_SOLID;
+
+        gCollisionInfo.bottom -= HALF_BLOCK_SIZE;
+    }
+    else if (gCollisionInfo.solidity == COLLISION_HALF_BOTTOM)
+    {
+        subPixel = y & SUB_PIXEL_POSITION_FLAG;
+
+        if (subPixel <= BLOCK_SIZE / 2)
+            gCollisionInfo.solidity = CLIPDATA_AIR;
+        else
+            gCollisionInfo.solidity = CLIPDATA_SOLID;
+
+        gCollisionInfo.top += HALF_BLOCK_SIZE;
     }
 }
 
@@ -74,16 +85,11 @@ void SetBgValueTile(u8 x, u8 y, u8 value)
     // Write the value to the tilemap
     gDecompressedTilemap[y * gTilemap.width + x] = value;
 
-    // Handle specific case where the modified tile is currently on the screen
-    // We need to cast to signed representations because it's possible for left and top to be negative (FF) even though they are unsigned
-    if ((s8)gCamera.left < (s16)x && x < gCamera.right && (s8)gCamera.top < (s16)y && y < gCamera.bottom)
-    {
-        // Also setup an update to VRAM is this case
-        gBgTileChanges[gBgTileChangeSlot].offset = y * 32 + x;
-        gBgTileChanges[gBgTileChangeSlot].newTile = value;
+    // Also setup an update to VRAM is this case
+    gBgTileChanges[gBgTileChangeSlot].offset = y * 32 + x;
+    gBgTileChanges[gBgTileChangeSlot].newTile = value;
 
-        gBgTileChangeSlot++;
-    }
+    gBgTileChangeSlot++;
 }
 
 void ApplyBgChanges(void)

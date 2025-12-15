@@ -5,7 +5,7 @@
 
 #include "bg.h"
 #include "bg_clip.h"
-#include "player.h"
+#include "player/player.h"
 #include "input.h"
 #include "scroll.h"
 #include "room.h"

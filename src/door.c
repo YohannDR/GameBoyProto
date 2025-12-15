@@ -13,7 +13,8 @@
 #include "room.h"
 #include "game_state.h"
 #include "gfx_loader.h"
-#include "player.h"
+#include "player/player.h"
+#include "player/player_movement.h"
 
 #include "data/doors.h"
 #include "data/tilesets.h"

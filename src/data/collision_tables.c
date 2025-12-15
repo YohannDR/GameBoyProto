@@ -21,7 +21,7 @@ const u8 sCollisionTable_Apartment[] = {
     CLIPDATA_AIR,
     CLIPDATA_AIR,
     CLIPDATA_AIR,
-    CLIPDATA_RECEPTACLE,
+    CLIPDATA_SOLID,
     CLIPDATA_SOLID,
     CLIPDATA_AIR,
     CLIPDATA_SOLID,
@@ -167,6 +167,16 @@ const u8 sCollisionTable_Apartment[] = {
     CLIPDATA_SOLID,
     CLIPDATA_SOLID,
     CLIPDATA_SOLID,
+    CLIPDATA_AIR,
+    CLIPDATA_AIR,
+    CLIPDATA_AIR,
+    CLIPDATA_AIR,
+    CLIPDATA_AIR,
+    CLIPDATA_AIR,
+    CLIPDATA_AIR,
+    CLIPDATA_AIR,
+    CLIPDATA_HALF_BOTTOM,
+    CLIPDATA_HALF_TOP,
 };
 
 const u8 sCollisionTable_Outside[] = {
