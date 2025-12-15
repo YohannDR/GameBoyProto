@@ -103,13 +103,13 @@ typedef void(*Func_T)(void);
  * @brief Target FPS
  * 
  */
-#define FRAMES_PER_SECOND 30
+#define FRAMES_PER_SECOND 60
 
 /**
  * @brief The amount of time that passes in a single frame
  * 
  */
-#define DELTA_TIME 2
+#define DELTA_TIME 1
 
 /**
  * @brief Convertes a floating point value to an amount of frames

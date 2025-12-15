@@ -358,12 +358,6 @@ void PlayerUpdate(void)
             break;
 
         default:
-            // Wow, this sucks
-            HandleHorizontalMovement();
-            HandleVerticalMovement();
-            HandleTerrainCollision();
-            ApplyMovement();
-
             HandleHorizontalMovement();
             HandleVerticalMovement();
             HandleTerrainCollision();

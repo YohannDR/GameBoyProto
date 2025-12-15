@@ -5,13 +5,6 @@
 #include "macros.h"
 
 /**
- * @brief Calls the callbacks every "frame", regardless of the idle frame status
- * (i.e. enables 60fps callbacks even when running at 30fps)
- * 
- */
-extern u8 gIgnoreIdleFrame;
-
-/**
  * @brief Sets the v-blank callback
  * 
  * @param callback Callback

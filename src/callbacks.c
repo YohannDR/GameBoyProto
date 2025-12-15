@@ -6,8 +6,6 @@
 #include "io.h"
 #include "game_state.h"
 
-u8 gIgnoreIdleFrame;
-
 // Whether or not the v-blank intterupt has been fired
 vu8 gVblankFired;
 

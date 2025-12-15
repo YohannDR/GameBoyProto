@@ -24,7 +24,6 @@
 #include "data/tilesets.h"
 
 u8 gFrameCounter;
-u8 gIsIdleFrame;
 struct GameModeInfo gGameMode;
 
 static void InitGame(void)

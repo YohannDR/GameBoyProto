@@ -23,10 +23,6 @@
 _VblankHandler::
     PUSH_ALL
 
-    ld a, (_gIsIdleFrame)
-    or a, a
-    jr NZ, .endVblank
-
     ; We also need to update oam during v-blank
     call .refresh_OAM
     ; This is time critical, so it takes absolute priority
@@ -37,19 +33,7 @@ _VblankHandler::
     ld hl, #_gVblankFired
     ld (hl), #0x01
 
-    jr .skipCallback
-
-.endVblank:
-    ld a, (_gIgnoreIdleFrame)
-    or a, a
-    jr Z, .skipCallback
-
     call _CallbackCallVblank
-
-.skipCallback:
-    ld a, (_gIsIdleFrame)
-    cpl
-    ld (_gIsIdleFrame), a
 
     POP_ALL
     reti
@@ -59,6 +43,5 @@ _LcdHandler::
 
     call _CallbackCallLcd
 
-.endLcd:
     POP_ALL
     reti

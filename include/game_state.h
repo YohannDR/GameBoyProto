@@ -32,12 +32,6 @@ enum GameMode {
 extern u8 gFrameCounter;
 
 /**
- * @brief Whether the current frame is an idle frame
- * 
- */
-extern u8 gIsIdleFrame;
-
-/**
  * @brief Game mode info
  * 
  */
