@@ -19,9 +19,6 @@ struct RoomInfo {
     const struct RoomSprite* spriteData;
     const u8* doorData;
     u8 collisionTable;
-    // TODO remove room origin, has to be kept for editor compatibility for now
-    u16 originX;
-    u16 originY;
 };
 
 #define ROOM_SPRITE_TERMINATOR { .x = UCHAR_MAX, .y = UCHAR_MAX, .id = STYPE_NONE, .part = 0 }
