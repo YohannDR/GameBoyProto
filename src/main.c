@@ -54,6 +54,7 @@ static void InitGame(void)
 
     Write8(REG_OBP0, gObj0Palette);
     Write8(REG_OBP1, gObj1Palette);
+    Write8(REG_BGP, gBackgroundPalette);
 
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE | LCDC_WINDOW_ENABLE | LCDC_WINDOW_TILEMAP_SELECT);
@@ -75,7 +76,7 @@ void main(void)
         // If the graphics loader is active, it takes absolute priority and fully hangs the game until its done
         if (gGraphicsLoaderInfo.state != GRAPHICS_LOADER_OFF)
         {
-            if (gGraphicsLoaderInfo.state & GRAPHICS_LOADER_TILESET)
+            if (gGraphicsLoaderInfo.state & (GRAPHICS_LOADER_TILEMAP | GRAPHICS_LOADER_TILESET))
                 TransitionUpdate();
             else
                 UpdateSpriteGraphicsLoading();

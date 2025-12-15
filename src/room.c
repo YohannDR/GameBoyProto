@@ -41,8 +41,6 @@ static void LoadSprites(const struct RoomSprite* sprites)
         SpawnSprite(x, y, id, part, QueueSpriteGraphics(id));
         sprites++;
     }
-
-    StartSpriteGraphicsLoading();
 }
 
 static void LoadDoors(const u8* doorData)
@@ -67,10 +65,9 @@ void LoadRoom(u8 room)
     const struct RoomInfo* roomInfo;
 
     gCurrentRoom = room;
-    
+
     roomInfo = &sRooms[gCurrentRoom];
     gBackgroundPalette = roomInfo->bgPalette;
-    Write8(REG_BGP, gBackgroundPalette);
 
     LoadDoors(roomInfo->doorData);
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];

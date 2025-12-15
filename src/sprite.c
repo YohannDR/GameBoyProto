@@ -303,24 +303,24 @@ void PrepareSpriteGraphicsLoading(void)
 void StartSpriteGraphicsLoading(void)
 {
     const u8* src;
+    
+    // Prepare the first queued graphics, if there's any
+    src = gQueuedGraphics[0];
 
     // We reset the counter, we'll be using it to count again
     gQueuedGraphicsIndex = 0;
 
-    // Base vram adress
-    // We remove the buffer size because it's always added at the beginning of the update, that way we can start at the proper '0' address
-    gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + PLAYER_GRAPHICS_RESERVED_AREA * 16 - ARRAY_SIZE(gGraphicsLoaderBuffer));
-
-    // Prepare the first queued graphics, if there's any
-    src = gQueuedGraphics[0];
-
     if (src != NULL)
     {
+        gQueuedGraphics[0] = NULL;
         gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
         gGraphicsLoaderInfo.gfxAddr = src;
+        gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON;
+        // Base vram adress
+        // We remove the buffer size because it's always added at the beginning of the update, that way we can start at the proper '0' address
+        gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + PLAYER_GRAPHICS_RESERVED_AREA * 16 - ARRAY_SIZE(gGraphicsLoaderBuffer));
         gGraphicsLoaderInfo.nbrTilesLoaded = 0;
         gGraphicsLoaderInfo.nbrBytesBuffered = 0;
-        gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON;
     }
 }
 

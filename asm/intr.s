@@ -26,7 +26,7 @@ _VblankHandler::
     ; We also need to update oam during v-blank
     call .refresh_OAM
     ; This is time critical, so it takes absolute priority
-    call _UpdateTransitionVblank
+    call _UpdateGraphicsLoader
     call _ApplyBgChanges
     call _CallbackCallVblank
 

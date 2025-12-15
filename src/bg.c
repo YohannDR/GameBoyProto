@@ -1,8 +1,12 @@
 #include "bg.h"
 
+#include "gb/io.h"
+#include "gb/display.h"
 #include "gb/memory.h"
 
+#include "io.h"
 #include "door.h"
+#include "gfx_loader.h"
 #include "macros.h"
 #include "scroll.h"
 
@@ -15,10 +19,8 @@ u16 gBackgroundY;
 
 struct TilemapInfo gTilemap;
 
-u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 4];
-
-#define DEFAULT_LOAD_Y 32
-#define DEFAULT_LOAD_X 32
+u8 gDecompressedTilemap[DEFAULT_LOAD_Y * DEFAULT_LOAD_X];
+u8 gTilemapVramCopy[DEFAULT_LOAD_Y * DEFAULT_LOAD_X];
 
 static void DecompressTilemap(const u8* tilemap)
 {
@@ -53,9 +55,15 @@ void LoadTilemap(const u8* tilemap)
     DecompressTilemap(tilemap);
     gTilemap.tilemap = gDecompressedTilemap;
 
-    tilemap = &gTilemap.tilemap[gBackgroundInfo.blockY * gTilemap.width + gBackgroundInfo.blockX];
+    tilemap = gTilemap.tilemap;
 
-    addr = (u8*)(VRAM_BASE + 0x1800);
+    addr = gTilemapVramCopy;
+
+    if (Read8(REG_LCDC) == 0)
+    {
+        // Directly write to vram if we can
+        addr = (u8*)(VRAM_BASE + 0x1800);
+    }
 
     for (i = 0; i < DEFAULT_LOAD_Y; i++)
     {
@@ -64,5 +72,15 @@ void LoadTilemap(const u8* tilemap)
 
         addr += 32 - DEFAULT_LOAD_X;
         tilemap += gTilemap.width - DEFAULT_LOAD_X;
+    }
+
+    if (Read8(REG_LCDC) != 0)
+    {
+        gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON | GRAPHICS_LOADER_TILEMAP;
+        gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + 0x1800 - ARRAY_SIZE(gGraphicsLoaderBuffer));
+        gGraphicsLoaderInfo.gfxAddr = gTilemapVramCopy;
+        gGraphicsLoaderInfo.nbrTilesLoaded = 0;
+        gGraphicsLoaderInfo.nbrTilesToLoad = 64;
+        gGraphicsLoaderInfo.nbrBytesBuffered = 0;
     }
 }

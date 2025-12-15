@@ -31,7 +31,8 @@ struct DoorTransition {
 enum TransitionStage {
     TRANSITION_STAGE_NONE,
     TRANSITION_STAGE_FADING_OUT,
-    TRANSITION_STAGE_TRANSITION,
+    TRANSITION_STAGE_LOADING_TILEMAP,
+    TRANSITION_STAGE_LOADING_SPRITES,
     TRANSITION_STAGE_LOADING_TILESET,
     TRANSITION_STAGE_FADING_IN,
 };
@@ -167,11 +168,8 @@ static void PrepareTransition(void)
     }
     else
     {
-        // For some reason? sdcc emits a "control flow changed" warning with this code :
-        // BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width) / 2
-        // And since the project is being compiled with warning as errors, I have to work around it so I use a local variable
         width = BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width);
-        gPlayerData.x += width / 2 - PLAYER_WIDTH / 2;
+        gPlayerData.x += BLOCK_TO_SUB_PIXEL(gDoorTransition.targetDoor.width) / 2 - PLAYER_WIDTH / 2;
 
         if (gDoorTransition.direction == TILEMAP_UPDATE_TOP)
         {
@@ -190,6 +188,85 @@ static void PrepareTransition(void)
     SetupCameraForTransition();
 }
 
+static void StartTilesetLoading()
+{
+    const u8* src;
+
+    StartSpriteGraphicsLoading();
+
+    if (gGraphicsLoaderInfo.state != GRAPHICS_LOADER_OFF)
+    {
+        gGameMode.sub = TRANSITION_STAGE_LOADING_SPRITES;
+        return;
+    }
+
+    if (gDoorTransition.tilesetToLoad == UCHAR_MAX)
+    {
+        // Fade back to the original palette
+        FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, ROOM_TRANSITION_FADE_SPEED);
+        FadingStart(FADING_TARGET_OBJ0, gObj0Palette, ROOM_TRANSITION_FADE_SPEED);
+        FadingStart(FADING_TARGET_OBJ1, gObj1Palette, ROOM_TRANSITION_FADE_SPEED);
+
+        gGameMode.sub = TRANSITION_STAGE_FADING_IN;
+        return;
+    }
+
+    src = sTilesets[gDoorTransition.tilesetToLoad];
+
+    gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
+    gGraphicsLoaderInfo.gfxAddr = src;
+
+    gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON | GRAPHICS_LOADER_TILESET;
+    gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + 0x1000 - ARRAY_SIZE(gGraphicsLoaderBuffer));
+    gGraphicsLoaderInfo.nbrTilesLoaded = 0;
+    gGraphicsLoaderInfo.nbrBytesBuffered = 0;
+
+    gGameMode.sub = TRANSITION_STAGE_LOADING_TILESET;
+}
+
+static void TransitionLoadTilemap(void)
+{
+    u8 i;
+
+    if (gGraphicsLoaderInfo.state == (GRAPHICS_LOADER_LAST_UPDATE | GRAPHICS_LOADER_TILEMAP))
+    {
+        gGraphicsLoaderInfo.state = GRAPHICS_LOADER_OFF;
+        StartTilesetLoading();
+        return;
+    }
+
+    gGraphicsLoaderInfo.vramAddr += ARRAY_SIZE(gGraphicsLoaderBuffer);
+
+    for (i = 0; i < ARRAY_SIZE(gGraphicsLoaderBuffer) + 1; i++)
+    {
+        gGraphicsLoaderBuffer[i] = gGraphicsLoaderInfo.gfxAddr[i];
+
+        if (i != 0 && i % 16 == 0)
+        {
+            gGraphicsLoaderInfo.nbrTilesLoaded++;
+
+            // Check if we've fully loaded these graphics
+            if (gGraphicsLoaderInfo.nbrTilesLoaded == gGraphicsLoaderInfo.nbrTilesToLoad)
+            {
+                // There's no more graphics to load so we're done, but we can't turn off the loader yet,
+                // because otherwise what we just buffered will never be sent to VRAM, so we keep it in a "half" active state for a single frame
+                gGraphicsLoaderInfo.state = GRAPHICS_LOADER_LAST_UPDATE | GRAPHICS_LOADER_TILEMAP;
+                // We might not have filled the buffer with valid data, so we only mark to load what we actually buffered
+                gGraphicsLoaderInfo.nbrBytesBuffered = i;
+                return;
+            }
+
+            // Since the loop goes to buffer size + 1, we have to check if we should exit early to not r/w out of bounds
+            if (i == ARRAY_SIZE(gGraphicsLoaderBuffer))
+                break;
+        }
+    }
+
+    gGraphicsLoaderInfo.gfxAddr += i;
+    gGraphicsLoaderInfo.nbrBytesBuffered = ARRAY_SIZE(gGraphicsLoaderBuffer);
+}
+
+
 static void TransitionFadeOut(void)
 {
     if (gColorFading.target != FADING_TARGET_NONE)
@@ -198,53 +275,12 @@ static void TransitionFadeOut(void)
         return;
     }
 
-    gGameMode.sub = TRANSITION_STAGE_TRANSITION;
+    gGameMode.sub = TRANSITION_STAGE_LOADING_TILEMAP;
     gGameMode.timer = 0;
 
     LoadRoom(gDoorTransition.targetDoor.ownerRoom);
 
     PrepareTransition();
-}
-
-void TransitionProcess(void)
-{
-    const u8* src;
-
-    gGameMode.timer++;
-
-    gCamera.right++;
-    gBackgroundInfo.blockX++;
-
-    // Overdraw a column
-    if (gGameMode.timer != SCREEN_SIZE_X_BLOCK + 2)
-        return;
-
-    // Offset back to proper position (screen size + 1)
-    gCamera.right--;
-
-    if (gDoorTransition.tilesetToLoad != UCHAR_MAX)
-    {
-        src = sTilesets[gDoorTransition.tilesetToLoad];
-
-        gGraphicsLoaderInfo.nbrTilesToLoad = *src++;
-        gGraphicsLoaderInfo.gfxAddr = src;
-
-        gGraphicsLoaderInfo.vramAddr = (u8*)(VRAM_BASE + 0x1000 - ARRAY_SIZE(gGraphicsLoaderBuffer));
-        gGraphicsLoaderInfo.nbrTilesLoaded = 0;
-        gGraphicsLoaderInfo.nbrBytesBuffered = 0;
-        gGraphicsLoaderInfo.state = GRAPHICS_LOADER_ON | GRAPHICS_LOADER_TILESET;
-
-        gGameMode.sub = TRANSITION_STAGE_LOADING_TILESET;
-    }
-    else
-    {
-        // Fade back to the original palette
-        FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, ROOM_TRANSITION_FADE_SPEED);
-        FadingStart(FADING_TARGET_OBJ0, gObj0Palette, ROOM_TRANSITION_FADE_SPEED);
-        FadingStart(FADING_TARGET_OBJ1, gObj1Palette, ROOM_TRANSITION_FADE_SPEED);
-
-        gGameMode.sub = TRANSITION_STAGE_FADING_IN;
-    }
 }
 
 static void TransitionLoadTileset(void)
@@ -328,9 +364,16 @@ void TransitionUpdate(void)
     {
         TransitionFadeOut();
     }
-    else if (gGameMode.sub == TRANSITION_STAGE_TRANSITION)
+    else if (gGameMode.sub == TRANSITION_STAGE_LOADING_TILEMAP)
     {
-        TransitionProcess();
+        TransitionLoadTilemap();
+    }
+    else if (gGameMode.sub == TRANSITION_STAGE_LOADING_SPRITES)
+    {
+        if (gGraphicsLoaderInfo.state == GRAPHICS_LOADER_OFF)
+        {
+            TransitionLoadTileset();
+        }
     }
     else if (gGameMode.sub == TRANSITION_STAGE_LOADING_TILESET)
     {

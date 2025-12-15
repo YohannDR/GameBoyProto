@@ -27,6 +27,7 @@ enum GraphicsLoaderInfoState {
     GRAPHICS_LOADER_ON,
     GRAPHICS_LOADER_LAST_UPDATE,
 
+    GRAPHICS_LOADER_TILEMAP = 1u << 6,
     GRAPHICS_LOADER_TILESET = 1u << 7
 };
 

@@ -1,16 +1,16 @@
     .module transition
 
-    .globl _UpdateTransitionVblank
+    .globl _UpdateGraphicsLoader
 
 ; This function is time critical, and has to be perfectly optimized to run as fast as possible
 ; this allows us to barely have enough time to load 4 tiles
-_UpdateTransitionVblank:
+_UpdateGraphicsLoader:
     ; Check whether the loader is busy
     ld a, (#_gGraphicsLoaderInfo + 0)
     or a, a
     ret Z
 
-    ; Get the vram addr in de
+    ; Get the vram addr in bc
     ld hl, #(_gGraphicsLoaderInfo + 1)
     ld a, (hl+)
     ld c, a
@@ -26,7 +26,7 @@ _UpdateTransitionVblank:
     ret Z
     ld e, a
 
-LoadSpriteGfxLoop:
+LoadGfxLoop:
     ; Perform the copy
     ld a, (hl+)
     ld (bc), a
@@ -40,6 +40,6 @@ LoadSpriteGfxLoop:
     ; Increment vram address
     inc bc
 
-    jr LoadSpriteGfxLoop
+    jr LoadGfxLoop
 
     ret

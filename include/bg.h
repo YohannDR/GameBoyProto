@@ -4,6 +4,9 @@
 #include "types.h"
 #include "macros.h"
 
+#define DEFAULT_LOAD_Y 32
+#define DEFAULT_LOAD_X 32
+
 /**
  * @brief Holds information about the current tilemap
  * 
@@ -15,12 +18,6 @@ struct TilemapInfo {
     u8 width;
     // Height of the tilemap
     u8 height;
-
-    // Reserved field, used in an assembly function
-    u8 reserved;
-    // Vram address for the tilemap update
-    u16 tilemapUpdateVramAddrHorizontal;
-    u16 tilemapUpdateVramAddrVertical;
 };
 
 /**
@@ -48,8 +45,6 @@ struct BackgroundInfo {
     u8 blockX;
     // Block Y position
     u8 blockY;
-    u8 tilemapAnchorX;
-    u8 tilemapAnchorY;
 };
 
 extern struct BackgroundInfo gBackgroundInfo;
@@ -61,7 +56,7 @@ extern u8 gWindowY;
 
 extern struct TilemapInfo gTilemap;
 
-extern u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 4];
+extern u8 gDecompressedTilemap[DEFAULT_LOAD_Y * DEFAULT_LOAD_X];
 
 /**
  * @brief Loads a specified tilemap
@@ -70,10 +65,6 @@ extern u8 gDecompressedTilemap[SCREEN_SIZE_X_BLOCK * SCREEN_SIZE_Y_BLOCK * 4];
  */
 void LoadTilemap(const u8* tilemap);
 
-/**
- * @brief Updates the tilemap during v-blank
- * 
- */
-ASM_IMPL void TilemapUpdateVblank(void);
+void UpdateTilemapLoading(void);
 
 #endif /* BG_H */
