@@ -22,9 +22,6 @@ static void UpdateCamera(void)
     gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
     gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
 
-    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX;
-    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY;
-
     gBackgroundX = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
     gBackgroundY = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
 }
@@ -121,9 +118,6 @@ void SetCameraPosition(u16 x, u16 y)
     gBackgroundInfo.blockX = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.x);
     gBackgroundInfo.blockY = SUB_PIXEL_TO_BLOCK(gBackgroundInfo.y);
 
-    gBackgroundInfo.tilemapAnchorX = gBackgroundInfo.blockX;
-    gBackgroundInfo.tilemapAnchorY = gBackgroundInfo.blockY;
-    
     gBackgroundX = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.x);
     gBackgroundY = SUB_PIXEL_TO_PIXEL(gBackgroundInfo.y);
 
