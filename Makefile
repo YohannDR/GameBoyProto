@@ -33,7 +33,7 @@ CFLAGS = $(LDFLAGS) -Wf--Werror
 CFLAGS += -Wf--less-pedantic
 
 # Specify rom type 1 (MBC1), and the amount of banks (4)
-LDFLAGS += -Wl-yt1 -Wl-yo4
+# LDFLAGS += -Wl-yt1 -Wl-yo4
 
 
 # Enable verbose output
