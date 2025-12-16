@@ -20,7 +20,7 @@
 #include "data/tilesets.h"
 
 #define ROOM_TRANSITION_SPEED (HALF_BLOCK_SIZE)
-#define ROOM_TRANSITION_FADE_SPEED (CONVERT_SECONDS(.1f))
+#define ROOM_TRANSITION_FADE_SPEED (CONVERT_SECONDS(.05f))
 
 struct DoorTransition {
     u8 direction;
