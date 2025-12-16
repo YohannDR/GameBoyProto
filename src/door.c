@@ -202,9 +202,9 @@ static void StartTilesetLoading()
     if (gDoorTransition.tilesetToLoad == UCHAR_MAX)
     {
         // Fade back to the original palette
-        FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, ROOM_TRANSITION_FADE_SPEED);
-        FadingStart(FADING_TARGET_OBJ0, gObj0Palette, ROOM_TRANSITION_FADE_SPEED);
-        FadingStart(FADING_TARGET_OBJ1, gObj1Palette, ROOM_TRANSITION_FADE_SPEED);
+        FadingStart(FADING_TARGET_BACKGROUND, gRoomPalette, ROOM_TRANSITION_FADE_SPEED);
+        FadingStart(FADING_TARGET_OBJ0, PALETTE_ALL, ROOM_TRANSITION_FADE_SPEED);
+        FadingStart(FADING_TARGET_OBJ1, PALETTE_ALL, ROOM_TRANSITION_FADE_SPEED);
 
         gGameMode.sub = TRANSITION_STAGE_FADING_IN;
         return;
@@ -296,8 +296,8 @@ static void TransitionLoadTileset(void)
 
         // Fade back to the original palette
         FadingStart(FADING_TARGET_BACKGROUND, gBackgroundPalette, ROOM_TRANSITION_FADE_SPEED);
-        FadingStart(FADING_TARGET_OBJ0, gObj0Palette, ROOM_TRANSITION_FADE_SPEED);
-        FadingStart(FADING_TARGET_OBJ1, gObj1Palette, ROOM_TRANSITION_FADE_SPEED);
+        FadingStart(FADING_TARGET_OBJ0, PALETTE_ALL, ROOM_TRANSITION_FADE_SPEED);
+        FadingStart(FADING_TARGET_OBJ1, PALETTE_ALL, ROOM_TRANSITION_FADE_SPEED);
         return;
     }
 

@@ -4,6 +4,7 @@
 
 #include "bg.h"
 #include "io.h"
+#include "fading.h"
 #include "game_state.h"
 
 // Whether or not the v-blank intterupt has been fired
@@ -73,4 +74,8 @@ void VblankCallback(void)
 {
     Write8(REG_SCX, gBackgroundX);
     Write8(REG_SCY, gBackgroundY);
+
+    Write8(REG_BGP, gBackgroundPalette);
+    Write8(REG_OBP0, gObj0Palette);
+    Write8(REG_OBP1, gObj1Palette);
 }

@@ -25,6 +25,7 @@ struct RoomInfo {
 
 extern u8 gCurrentRoom;
 extern u8 gCurrentTileset;
+extern u8 gRoomPalette;
 
 void LoadRoom(u8 room);
 ASM_IMPL void LoadGraphics(const u8* graphics);

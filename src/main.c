@@ -49,12 +49,9 @@ static void InitGame(void)
 
     CallbackSetVblank(VblankCallback);
 
+    gBackgroundPalette = gRoomPalette;
     gObj0Palette = PALETTE_ALL;
     gObj1Palette = PALETTE_ALL;
-
-    Write8(REG_OBP0, gObj0Palette);
-    Write8(REG_OBP1, gObj1Palette);
-    Write8(REG_BGP, gBackgroundPalette);
 
     // Enable display, background and objects
     Write8(REG_LCDC, LCDC_LCD_ENABLE | LCDC_BG_ENABLE | LCDC_OBJ_ENABLE | LCDC_WINDOW_ENABLE | LCDC_WINDOW_TILEMAP_SELECT);

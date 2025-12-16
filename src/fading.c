@@ -110,8 +110,8 @@ void FadingUpdate(void)
         return;
 
     gColorFading.timer = 0;
-
-    FadingApply((u8*)REG_BGP, FADING_TARGET_BACKGROUND);
-    FadingApply((u8*)REG_OBP0, FADING_TARGET_OBJ0);
-    FadingApply((u8*)REG_OBP1, FADING_TARGET_OBJ1);
+    
+    FadingApply(&gBackgroundPalette, FADING_TARGET_BACKGROUND);
+    FadingApply(&gObj0Palette, FADING_TARGET_OBJ0);
+    FadingApply(&gObj1Palette, FADING_TARGET_OBJ1);
 }

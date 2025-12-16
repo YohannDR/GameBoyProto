@@ -16,6 +16,7 @@
 
 u8 gCurrentRoom;
 u8 gCurrentTileset;
+u8 gRoomPalette;
 
 static void LoadSprites(const struct RoomSprite* sprites)
 {
@@ -70,7 +71,7 @@ void LoadRoom(u8 room)
     gCurrentRoom = room;
 
     roomInfo = &sRooms[gCurrentRoom];
-    gBackgroundPalette = roomInfo->bgPalette;
+    gRoomPalette = roomInfo->bgPalette;
 
     LoadDoors(roomInfo->doorData);
     gCurrentCollisionTable = sCollisionTables[roomInfo->collisionTable];
