@@ -6,10 +6,15 @@
 
 struct HitboxData {
     s8 axisOffset;
+    s8 pointsOffset[3];
+};
+
+struct HitboxDataPrecise {
+    s8 axisOffset;
     s8 pointsOffset[6];
 };
 
-static const struct HitboxData sHitboxLeft = {
+static const struct HitboxDataPrecise sHitboxLeft = {
     .axisOffset = -QUARTER_BLOCK_SIZE,
     .pointsOffset = {
         [0] = -(PLAYER_HEIGHT / 6 * 1 - PIXEL_SIZE),
@@ -21,7 +26,7 @@ static const struct HitboxData sHitboxLeft = {
     }
 };
 
-static const struct HitboxData sHitboxRight = {
+static const struct HitboxDataPrecise sHitboxRight = {
     .axisOffset = PLAYER_WIDTH,
     .pointsOffset = {
         [0] = -(PLAYER_HEIGHT / 6 * 1 - PIXEL_SIZE),

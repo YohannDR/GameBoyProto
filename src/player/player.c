@@ -141,6 +141,9 @@ void PlayerUpdate(void)
             PlayerLadderMovement();
             break;
 
+        case PLAYER_POSE_JUMPING:
+            PlayerJumpMovement();
+
         default:
             PlayerHorizontalMovement();
             PlayerVerticalMovement();

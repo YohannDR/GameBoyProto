@@ -10,6 +10,8 @@
 struct PlayerPhysics {
     // The acceleration applied when moving horizontally
     u8 xAcceleration;
+    // The decelration applied to stop the horizontal movement when no button is held
+    u8 xDeceleration;
     // The maximum horizontal speed
     s8 xVelocityCap;
     // The maximum vertical speed when falling
@@ -33,6 +35,7 @@ struct PlayerMovement {
     s8 yVelocity;
     u8 grounded;
     u8 direction;
+    u8 gravity;
 };
 
 extern struct PlayerPhysics gPlayerPhysics;
@@ -42,6 +45,8 @@ void PlayerInitPhysics(void);
 void PlayerHorizontalMovement(void);
 void PlayerVerticalMovement(void);
 void PlayerLadderMovement(void);
+void PlayerInitJump(void);
+void PlayerJumpMovement(void);
 void PlayerApplyMovement(void);
 
 #endif /* PLAYER_MOVEMENT_H */
