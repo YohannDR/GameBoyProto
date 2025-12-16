@@ -146,7 +146,7 @@ _TransferOam_End::
         .org    0x144
         .byte   0,0,0
 
-        ; We are now happily banked, using the basic MBC1
+        ; Cartridge type is ROM only
         .org    0x147
         .byte   0
 
