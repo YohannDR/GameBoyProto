@@ -14,12 +14,38 @@ void PlayerInitPhysics(void)
     gPlayerPhysics.xAcceleration = PIXEL_TO_SUB_PIXEL(.5);
     gPlayerPhysics.xDeceleration = PIXEL_TO_SUB_PIXEL(.75);
     gPlayerPhysics.xVelocityCap = PIXEL_TO_SUB_PIXEL(6);
-    gPlayerPhysics.yVelocityCap = PIXEL_TO_SUB_PIXEL(8);
+    gPlayerPhysics.yVelocityCap = PIXEL_TO_SUB_PIXEL(10);
     gPlayerPhysics.gravityUpwards = PIXEL_TO_SUB_PIXEL(.75);
     gPlayerPhysics.gravityDownwards = PIXEL_TO_SUB_PIXEL(1);
     gPlayerPhysics.jumpingVelocity = PIXEL_TO_SUB_PIXEL(-14);
 
     gPlayerMovement.gravity = gPlayerPhysics.gravityDownwards;
+}
+
+static void ApplyDeceleration(void)
+{
+    // Immediatly cancel velocity if we're changing direction
+    if (gPlayerMovement.xVelocity < 0 && gButtonInput & KEY_RIGHT)
+        gPlayerMovement.xVelocity = 0;
+    if (gPlayerMovement.xVelocity > 0 && gButtonInput & KEY_LEFT)
+        gPlayerMovement.xVelocity = 0;
+
+    // Apply deceleration only if we aren't holding an horizontal direction
+    if (gButtonInput & (KEY_RIGHT | KEY_LEFT))
+        return;
+
+    if (gPlayerMovement.xVelocity > 0)
+    {
+        gPlayerMovement.xVelocity -= gPlayerPhysics.xDeceleration;
+        if (gPlayerMovement.xVelocity < 0)
+            gPlayerMovement.xVelocity = 0;
+    }
+    else if (gPlayerMovement.xVelocity < 0)
+    {
+        gPlayerMovement.xVelocity += gPlayerPhysics.xDeceleration;
+        if (gPlayerMovement.xVelocity > 0)
+            gPlayerMovement.xVelocity = 0;
+    }
 }
 
 void PlayerHorizontalMovement(void)
@@ -42,22 +68,7 @@ void PlayerHorizontalMovement(void)
             gPlayerMovement.xVelocity = gPlayerPhysics.xVelocityCap;
     }
 
-    // Apply deceleration
-    if (!(gButtonInput & (KEY_RIGHT | KEY_LEFT)))
-    {
-        if (gPlayerMovement.xVelocity > 0)
-        {
-            gPlayerMovement.xVelocity -= gPlayerPhysics.xDeceleration;
-            if (gPlayerMovement.xVelocity < 0)
-                gPlayerMovement.xVelocity = 0;
-        }
-        else if (gPlayerMovement.xVelocity < 0)
-        {
-            gPlayerMovement.xVelocity += gPlayerPhysics.xDeceleration;
-            if (gPlayerMovement.xVelocity > 0)
-                gPlayerMovement.xVelocity = 0;
-        }
-    }
+    ApplyDeceleration();
 }
 
 void PlayerVerticalMovement(void)
@@ -122,6 +133,20 @@ void PlayerJumpMovement(void)
 
 void PlayerApplyMovement(void)
 {
-    gPlayerData.x += SUB_PIXEL_TO_PIXEL(gPlayerMovement.xVelocity);
-    gPlayerData.y += SUB_PIXEL_TO_PIXEL(gPlayerMovement.yVelocity);
+    s8 xVelocity;
+    s8 yVelocity;
+
+    xVelocity = gPlayerMovement.xVelocity;
+    yVelocity = gPlayerMovement.yVelocity;
+
+    /*
+    if (gPlayerData.size == PLAYER_SIZE_SMALL)
+    {
+        xVelocity = xVelocity * 3 / 2;
+        yVelocity = yVelocity * 3 / 4;
+    }
+    */
+
+    gPlayerData.x += SUB_PIXEL_TO_PIXEL(xVelocity);
+    gPlayerData.y += SUB_PIXEL_TO_PIXEL(yVelocity);
 }

@@ -5,6 +5,7 @@
 
 // Define flags for each key
 
+#define KEY_NONE    (0)
 #define KEY_A       (1 << 0)
 #define KEY_B       (1 << 1)
 #define KEY_SELECT  (1 << 2)
